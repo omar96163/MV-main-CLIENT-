@@ -83,7 +83,7 @@ const UploadPage: React.FC = () => {
     };
 
     try {
-      const res = await fetch('https://contactpro-backend.vercel.app/profiles', {
+      const res = await fetch('https://mv-main-server.vercel.app/profiles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contact)
@@ -235,7 +235,7 @@ const UploadPage: React.FC = () => {
       console.log('Sending profiles for processing:', processedData);
       
       // Call backend API for LinkedIn scraping with phone info
-      const response = await fetch('https://contactpro-backend.vercel.app/api/scrape-linkedin', {
+      const response = await fetch('https://mv-main-server.vercel.app/api/scrape-linkedin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

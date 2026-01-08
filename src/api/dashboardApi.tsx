@@ -12,7 +12,7 @@ interface DashboardData {
   updatedAt?: Date;
 }
 
-const API_BASE_URL = 'https://contactpro-backend.vercel.app';
+const API_BASE_URL = 'https://mv-main-server.vercel.app';
 
 export const getDashboardForCurrentUser = async (): Promise<DashboardData> => {
   try {

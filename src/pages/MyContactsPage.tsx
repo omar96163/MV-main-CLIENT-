@@ -51,7 +51,7 @@ const MyContactsPage: React.FC = () => {
         }
         
         // Fetch all profiles and filter for unlocked ones
-        const response = await fetch(`https://contactpro-backend.vercel.app/profiles?userId=${user.id}`);
+        const response = await fetch(`https://mv-main-server.vercel.app/profiles?userId=${user.id}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch contacts');

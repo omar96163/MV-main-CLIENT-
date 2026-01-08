@@ -16,7 +16,7 @@ const TokenHandler: React.FC<TokenHandlerProps> = ({ setUser }) => {
     if (token) {
       localStorage.setItem("token", token);
 
-      fetch("https://contactpro-backend.vercel.app/api/auth/me", {
+      fetch("https://mv-main-server.vercel.app/api/auth/me", {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.json())

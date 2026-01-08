@@ -37,7 +37,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
     
     try {
       // Call backend API to unlock profile and deduct points
-      const response = await fetch(`https://contactpro-backend.vercel.app/profiles/${contact.id}/unlock`, {
+      const response = await fetch(`https://mv-main-server.vercel.app/profiles/${contact.id}/unlock`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

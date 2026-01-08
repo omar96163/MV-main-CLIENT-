@@ -16,15 +16,15 @@ export default defineConfig({
   server: {
   proxy: {
     '/api': {
-      target: 'https://contactpro-backend.vercel.app',
+      target: 'https://mv-main-server.vercel.app',
       changeOrigin: true,
     },
     '/auth': {
-      target: 'https://contactpro-backend.vercel.app',
+      target: 'https://mv-main-server.vercel.app',
       changeOrigin: true,
     },
     '/dashboard': {
-        target: 'https://contactpro-backend.vercel.app',
+        target: 'https://mv-main-server.vercel.app',
         changeOrigin: true,
       },
   },

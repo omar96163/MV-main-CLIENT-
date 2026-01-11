@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { X, Mail, Lock, User } from 'lucide-react';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { X, Mail, Lock, User } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface AuthModalProps {
-  mode: 'login' | 'register';
+  mode: "login" | "register";
   onClose: () => void;
-  onSwitchMode: (mode: 'login' | 'register') => void;
+  onSwitchMode: (mode: "login" | "register") => void;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSwitchMode }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+const AuthModal: React.FC<AuthModalProps> = ({
+  mode,
+  onClose,
+  onSwitchMode,
+}) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const { login, register } = useAuth();
 
@@ -21,17 +25,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSwitchMode }) =>
     setLoading(true);
 
     try {
-      if (mode === 'login') {
+      if (mode === "login") {
         await login(email, password);
-        toast.success('Successfully signed in!');
+        toast.success("Successfully signed in!");
       } else {
         await register(email, password, name);
-        toast.success('Account created successfully!');
+        toast.success("Account created successfully!");
       }
       onClose();
     } catch (error: any) {
-      console.error('Auth error:', error);
-      toast.error(error?.message || 'Authentication failed');
+      console.error("Auth error:", error);
+      toast.error(error?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -52,17 +56,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSwitchMode }) =>
             <User className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+            {mode === "login" ? "Welcome Back" : "Create Account"}
           </h2>
           <p className="text-gray-600">
-            {mode === 'login'
-              ? 'Sign in to access your dashboard'
-              : 'Join thousands of professionals'}
+            {mode === "login"
+              ? "Sign in to access your dashboard"
+              : "Join thousands of professionals"}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === 'register' && (
+          {mode === "register" && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name
@@ -120,18 +124,26 @@ const AuthModal: React.FC<AuthModalProps> = ({ mode, onClose, onSwitchMode }) =>
             disabled={loading}
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
           >
-            {loading ? 'Processing...' : mode === 'login' ? 'Sign In' : 'Create Account'}
+            {loading
+              ? "Processing..."
+              : mode === "login"
+              ? "Sign In"
+              : "Create Account"}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+            {mode === "login"
+              ? "Don't have an account? "
+              : "Already have an account? "}
             <button
-              onClick={() => onSwitchMode(mode === 'login' ? 'register' : 'login')}
+              onClick={() =>
+                onSwitchMode(mode === "login" ? "register" : "login")
+              }
               className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
             >
-              {mode === 'login' ? 'Sign up' : 'Sign in'}
+              {mode === "login" ? "Sign up" : "Sign in"}
             </button>
           </p>
         </div>

@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Search, Users, Zap, Shield, Mail, Phone, ArrowRight, Star, Unlock} from 'lucide-react';
-import AuthModal from '../components/AuthModal';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  Search,
+  Users,
+  Zap,
+  Shield,
+  Mail,
+  Phone,
+  ArrowRight,
+  Star,
+  Unlock,
+} from "lucide-react";
+import AuthModal from "../components/AuthModal";
 
 const LandingPage: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const { user } = useAuth();
   const navigate = useNavigate();
 
   React.useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     }
   }, [user, navigate]);
 
-  const handleAuthClick = (mode: 'login' | 'register') => {
+  const handleAuthClick = (mode: "login" | "register") => {
     setAuthMode(mode);
     setShowAuthModal(true);
   };
@@ -28,21 +38,17 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-2">
-              <img
-                src="/logo.png"
-                alt="Logo"
-                className="h-10 w-auto"
-              />
+              <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
             </div>
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => handleAuthClick('login')}
+                onClick={() => handleAuthClick("login")}
                 className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
               >
                 Sign In
               </button>
               <button
-                onClick={() => handleAuthClick('register')}
+                onClick={() => handleAuthClick("register")}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
               >
                 Get Started
@@ -64,12 +70,14 @@ const LandingPage: React.FC = () => {
               Instantly
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed">
-              Join Thousands of professionals exchanging verified contacts daily. Earn points by sharing, unlock valuable leads for your business.
+              Join Thousands of professionals exchanging verified contacts
+              daily. Earn points by sharing, unlock valuable leads for your
+              business.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
             <button
-              onClick={() => handleAuthClick('register')}
+              onClick={() => handleAuthClick("register")}
               className="bg-gradient-to-r from-[#0b07f0] to-[#0b07f0] text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 flex items-center space-x-2 shadow-md hover:shadow-lg transition-all"
             >
               <span>Start now to get free credits</span>
@@ -77,7 +85,7 @@ const LandingPage: React.FC = () => {
             </button>
 
             <button
-              onClick={() => handleAuthClick('login')}
+              onClick={() => handleAuthClick("login")}
               className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:border-gray-400 hover:bg-white transition-all duration-200"
             >
               Start exchanging for free
@@ -85,8 +93,6 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      
 
       {/* Features Section */}
       <section className="py-20 bg-white/50 backdrop-blur-sm">
@@ -99,7 +105,8 @@ const LandingPage: React.FC = () => {
               The smartest way to grow your professional network
             </p>
             <p className="text-lg text-gray-500 max-w-3xl mx-auto mt-2">
-              Everything you need to find, manage, and connect with the right professionals
+              Everything you need to find, manage, and connect with the right
+              professionals
             </p>
           </div>
 
@@ -108,9 +115,12 @@ const LandingPage: React.FC = () => {
               <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-6">
                 <Star className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Earn Points</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Earn Points
+              </h3>
               <p className="text-gray-600">
-                Add verified contacts and earn points. Build your network while helping others.
+                Add verified contacts and earn points. Build your network while
+                helping others.
               </p>
             </div>
 
@@ -118,9 +128,12 @@ const LandingPage: React.FC = () => {
               <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mb-6">
                 <Unlock className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Unlock Access</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Unlock Access
+              </h3>
               <p className="text-gray-600">
-                Spend points to unlock real professional data. Get direct contact information.
+                Spend points to unlock real professional data. Get direct
+                contact information.
               </p>
             </div>
 
@@ -128,9 +141,12 @@ const LandingPage: React.FC = () => {
               <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mb-6">
                 <Shield className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Accurate Data</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Accurate Data
+              </h3>
               <p className="text-gray-600">
-                Community-validated contacts ensure high accuracy and up-to-date information.
+                Community-validated contacts ensure high accuracy and up-to-date
+                information.
               </p>
             </div>
 
@@ -138,9 +154,12 @@ const LandingPage: React.FC = () => {
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-6">
                 <Zap className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Advanced Search</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                Advanced Search
+              </h3>
               <p className="text-gray-600">
-                LinkedIn-style filters with AI-powered matching and boolean search operators
+                LinkedIn-style filters with AI-powered matching and boolean
+                search operators
               </p>
             </div>
           </div>
@@ -154,14 +173,11 @@ const LandingPage: React.FC = () => {
             {/* Logo and Description */}
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <img
-                  src="/logo.png"
-                  alt="Logo"
-                  className="h-10 w-auto"
-                />
+                <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
               </div>
               <p className="text-gray-400 leading-relaxed">
-                The most advanced B2B contact search platform with AI-powered matching and collaborative data sharing.
+                The most advanced B2B contact search platform with AI-powered
+                matching and collaborative data sharing.
               </p>
             </div>
 
@@ -175,19 +191,25 @@ const LandingPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="font-medium">Email Us</p>
-                    <a href="mailto:support@contactpro.com" className="text-blue-400 hover:text-blue-300 transition-colors">
+                    <a
+                      href="mailto:support@contactpro.com"
+                      className="text-blue-400 hover:text-blue-300 transition-colors"
+                    >
                       info@talentnavigator.net
                     </a>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
                     <p className="font-medium">Call Us</p>
-                    <a href="tel:+1-555-0123" className="text-green-400 hover:text-green-300 transition-colors">
+                    <a
+                      href="tel:+1-555-0123"
+                      className="text-green-400 hover:text-green-300 transition-colors"
+                    >
                       +201030252979
                     </a>
                   </div>
@@ -199,16 +221,28 @@ const LandingPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-6">Quick Links</h3>
               <div className="space-y-3">
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
                   About Us
                 </a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
                   Privacy Policy
                 </a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
                   Terms of Service
                 </a>
-                <a href="#" className="block text-gray-400 hover:text-white transition-colors">
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
                   Help Center
                 </a>
               </div>
@@ -224,7 +258,7 @@ const LandingPage: React.FC = () => {
         </div>
       </footer>
 
-            {/* Auth Modal */}
+      {/* Auth Modal */}
       {showAuthModal && (
         <AuthModal
           mode={authMode}

@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
-  Search,
-  Users,
   Zap,
   Shield,
   Mail,
@@ -260,11 +258,7 @@ const LandingPage: React.FC = () => {
 
       {/* Auth Modal */}
       {showAuthModal && (
-        <AuthModal
-          mode={authMode}
-          onClose={() => setShowAuthModal(false)}
-          onSwitchMode={(mode) => setAuthMode(mode)}
-        />
+        <AuthModal mode={authMode} onClose={() => setShowAuthModal(false)} />
       )}
     </div>
   );

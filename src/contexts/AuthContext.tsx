@@ -1,3 +1,4 @@
+// src/contexts/AuthContext.tsx
 import React, {
   createContext,
   useContext,
@@ -17,10 +18,15 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>; // ✅ added
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  requestSignup: (
+    name: string,
+    email: string,
+    password: string
+  ) => Promise<void>;
+  verifySignup: (email: string, verificationCode: string) => Promise<void>;
   logout: () => void;
   updatePoints: (points: number) => void;
   loading: boolean;
@@ -79,8 +85,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem("token", data.token);
   };
 
-  const register = async (email: string, password: string, name: string) => {
-    const res = await fetch("https://mv-main-server.vercel.app/auth/signup", {
+  const requestSignup = async (
+    name: string,
+    email: string,
+    password: string
+  ) => {
+    const res = await fetch("https://mv-main-server.vercel.app/auth/request-signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
@@ -89,7 +99,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.message || "Registration failed");
+      throw new Error(data.message || "Failed to send verification code");
+    }
+  };
+
+  const verifySignup = async (email: string, verificationCode: string) => {
+    const res = await fetch("https://mv-main-server.vercel.app/auth/verify-signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, verificationCode }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Invalid verification code");
     }
 
     const user: User = {
@@ -126,10 +150,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value = {
     user,
-    setUser, // ✅ added here
+    setUser,
     login,
     loginWithGoogle,
-    register,
+    requestSignup,
+    verifySignup,
     logout,
     updatePoints,
     loading,

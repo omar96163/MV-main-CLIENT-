@@ -14,7 +14,7 @@ import AuthModal from "../components/AuthModal";
 
 const LandingPage: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [authMode, setAuthMode] = useState<"login" | "requestSignup">("login");
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ const LandingPage: React.FC = () => {
     }
   }, [user, navigate]);
 
-  const handleAuthClick = (mode: "login" | "register") => {
+  const handleAuthClick = (mode: "login" | "requestSignup") => {
     setAuthMode(mode);
     setShowAuthModal(true);
   };
@@ -46,7 +46,7 @@ const LandingPage: React.FC = () => {
                 Sign In
               </button>
               <button
-                onClick={() => handleAuthClick("register")}
+                onClick={() => handleAuthClick("requestSignup")}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
               >
                 Get Started
@@ -75,7 +75,7 @@ const LandingPage: React.FC = () => {
           </div>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
             <button
-              onClick={() => handleAuthClick("register")}
+              onClick={() => handleAuthClick("requestSignup")}
               className="bg-gradient-to-r from-[#0b07f0] to-[#0b07f0] text-white px-8 py-4 rounded-xl font-semibold text-lg hover:scale-105 flex items-center space-x-2 shadow-md hover:shadow-lg transition-all"
             >
               <span>Start now to get free credits</span>

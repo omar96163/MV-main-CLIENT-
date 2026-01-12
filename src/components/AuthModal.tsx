@@ -4,10 +4,15 @@ import { useAuth } from "../contexts/AuthContext";
 import { X, Mail, Lock, User, Key } from "lucide-react";
 import toast from "react-hot-toast";
 
-type AuthMode = "login" | "register" | "forgotPassword" | "enterResetCode";
+type AuthMode =
+  | "login"
+  | "requestSignup"
+  | "verifySignup"
+  | "forgotPassword"
+  | "enterResetCode";
 
 interface AuthModalProps {
-  mode: "login" | "register";
+  mode: "login" | "requestSignup";
   onClose: () => void;
 }
 
@@ -19,25 +24,55 @@ const AuthModal: React.FC<AuthModalProps> = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login, register } = useAuth();
+  const { login, requestSignup, verifySignup } = useAuth();
+
+  const handleRequestSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await requestSignup(name, email, password);
+      toast.success("Verification code sent! Check your email.");
+      setCurrentMode("verifySignup");
+    } catch (error: any) {
+      console.error("Signup request error:", error);
+      toast.error(error?.message || "Failed to send verification code");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifySignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await verifySignup(email, verificationCode);
+      toast.success("Account created successfully! Welcome aboard.");
+      // لا حاجة لـ onClose() — الـ redirect هيحصل في الـ context
+    } catch (error: any) {
+      console.error("Signup verification error:", error);
+      toast.error(error?.message || "Invalid or expired verification code");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "https://mv-main-server.vercel.app/auth/forgot-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const res = await fetch("https://mv-main-server.vercel.app/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
       const data = await res.json();
 
@@ -64,14 +99,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
     setLoading(true);
     try {
-      const res = await fetch(
-        "https://mv-main-server.vercel.app/auth/reset-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ resetCode, newPassword }),
-        }
-      );
+      const res = await fetch("https://mv-main-server.vercel.app/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resetCode, newPassword }),
+      });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
@@ -85,7 +117,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // --- تسجيل الدخول أو التسجيل ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -94,21 +125,138 @@ const AuthModal: React.FC<AuthModalProps> = ({
       if (currentMode === "login") {
         await login(email, password);
         toast.success("Successfully signed in!");
-      } else if (currentMode === "register") {
-        await register(email, password, name);
-        toast.success("Account created successfully!");
+        // لا حاجة لـ onClose()
       }
-      onClose();
     } catch (error: any) {
-      console.error("Auth error:", error);
+      console.error("Login error:", error);
       toast.error(error?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // --- عرض النموذج المناسب ---
   const renderForm = () => {
+    if (currentMode === "verifySignup") {
+      return (
+        <form onSubmit={handleVerifySignup} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Verification Code
+            </label>
+            <div className="relative">
+              <Key className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter 6-digit code"
+                required
+                maxLength={6}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
+          >
+            {loading ? "Verifying..." : "Verify & Create Account"}
+          </button>
+
+          <div className="text-center mt-4">
+            <button
+              type="button"
+              onClick={() => setCurrentMode("requestSignup")}
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              ← Back to Sign Up
+            </button>
+          </div>
+        </form>
+      );
+    }
+
+    if (currentMode === "requestSignup") {
+      return (
+        <>
+          <form onSubmit={handleRequestSignup} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
+            >
+              {loading ? "Sending Code..." : "Send Verification Code"}
+            </button>
+          </form>
+
+          <div className="text-center mt-6">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <button
+                onClick={() => setCurrentMode("login")}
+                className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              >
+                Sign in
+              </button>
+            </p>
+          </div>
+        </>
+      );
+    }
+
     if (currentMode === "enterResetCode") {
       return (
         <form onSubmit={handleResetPassword} className="space-y-4">
@@ -229,25 +377,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
     return (
       <>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {currentMode === "register" && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-            </div>
-          )}
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -287,69 +416,57 @@ const AuthModal: React.FC<AuthModalProps> = ({
             disabled={loading}
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
           >
-            {loading
-              ? "Processing..."
-              : currentMode === "login"
-              ? "Sign In"
-              : "Create Account"}
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
-        <div className="text-center">
-          {currentMode === "login" ? (
-            <p className="text-gray-600">
+        <div className="text-center mt-6">
+          <p className="text-gray-600">
+            <button
+              onClick={() => setCurrentMode("forgotPassword")}
+              className="my-3 text-red-400 hover:text-red-700 font-medium transition-colors hover:underline"
+            >
+              Forgot password?
+            </button>
+            <p>
+              Don't have an account?{" "}
               <button
-                onClick={() => setCurrentMode("forgotPassword")}
-                className="my-3 text-red-400 hover:text-red-700 font-medium transition-colors hover:underline"
+                onClick={() => setCurrentMode("requestSignup")}
+                className="text-blue-400 hover:text-blue-700 font-medium transition-colors hover:underline"
               >
-                Forgot password ?
-              </button>
-              <p>
-                Don't have an account ?{" "}
-                <button
-                  onClick={() => setCurrentMode("register")}
-                  className="text-blue-400 hover:text-blue-700 font-medium transition-colors hover:underline"
-                >
-                  Sign up
-                </button>
-              </p>
-            </p>
-          ) : (
-            <p className="text-gray-600">
-              Already have an account?{" "}
-              <button
-                onClick={() => setCurrentMode("login")}
-                className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-              >
-                Sign in
+                Sign up
               </button>
             </p>
-          )}
+          </p>
         </div>
       </>
     );
   };
 
   const getTitle = () => {
+    if (currentMode === "verifySignup") return "Verify Your Account";
+    if (currentMode === "requestSignup") return "Create Account";
     if (currentMode === "enterResetCode") return "Enter Reset Code";
     if (currentMode === "forgotPassword") return "Reset Password";
-    return currentMode === "login" ? "Welcome Back" : "Create Account";
+    return "Welcome Back";
   };
 
   const getDescription = () => {
+    if (currentMode === "verifySignup")
+      return "Enter the 6-digit code sent to your email to activate your account.";
+    if (currentMode === "requestSignup")
+      return "Join thousands of professionals";
     if (currentMode === "enterResetCode")
       return "Enter the 6-digit code sent to your email.";
     if (currentMode === "forgotPassword")
       return "Enter your email to receive a reset code.";
-    return currentMode === "login"
-      ? "Sign in to access your dashboard"
-      : "Join thousands of professionals";
+    return "Sign in to access your dashboard";
   };
 
   const getIcon = () => {
-    if (currentMode === "enterResetCode")
+    if (currentMode === "verifySignup" || currentMode === "enterResetCode")
       return <Key className="w-8 h-8 text-white" />;
-    if (currentMode === "forgotPassword")
+    if (currentMode === "requestSignup" || currentMode === "forgotPassword")
       return <Mail className="w-8 h-8 text-white" />;
     return <User className="w-8 h-8 text-white" />;
   };

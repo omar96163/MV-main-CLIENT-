@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 interface User {
   id: string;
@@ -25,7 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -39,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -47,16 +53,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await fetch('https://mv-main-server.vercel.app/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("https://mv-main-server.vercel.app/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.message || 'Login failed');
+      throw new Error(data.message || "Login failed");
     }
 
     const user: User = {
@@ -65,25 +71,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       name: data.user.name,
       points: 0,
       isAdmin: false,
-      avatar: '',
+      avatar: "",
     };
 
     setUser(user);
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('token', data.token);
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", data.token);
   };
 
   const register = async (email: string, password: string, name: string) => {
-    const res = await fetch('https://mv-main-server.vercel.app/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("https://mv-main-server.vercel.app/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.message || 'Registration failed');
+      throw new Error(data.message || "Registration failed");
     }
 
     const user: User = {
@@ -92,12 +98,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       name: data.user.name,
       points: 0,
       isAdmin: false,
-      avatar: '',
+      avatar: "",
     };
 
     setUser(user);
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('token', data.token);
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", data.token);
   };
 
   const loginWithGoogle = async () => {
@@ -106,15 +112,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   const updatePoints = (points: number) => {
     if (user) {
       const updatedUser = { ...user, points };
       setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem("user", JSON.stringify(updatedUser));
     }
   };
 

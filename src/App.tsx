@@ -97,7 +97,9 @@ function App() {
   return (
     <AuthProvider>
       <ContactProvider>
-        <DashboardProvider> {/* Wrap DashboardProvider here */}
+        <DashboardProvider>
+          {" "}
+          {/* Wrap DashboardProvider here */}
           <Router>
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
               <AppRoutes />

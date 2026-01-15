@@ -3,9 +3,9 @@ import React, {
   useContext,
   useState,
   useEffect,
-  ReactNode
-} from 'react';
-import { useAuth } from './AuthContext'; // Import to get current user
+  ReactNode,
+} from "react";
+import { useAuth } from "./AuthContext"; // Import to get current user
 
 export interface Contact {
   id: string;
@@ -51,7 +51,7 @@ interface ContactContextType {
   loading: boolean;
   error: string | null;
   addContact: (
-    contact: Omit<Contact, 'id' | 'uploadedAt' | 'isUnlocked'>
+    contact: Omit<Contact, "id" | "uploadedAt" | "isUnlocked">
   ) => Promise<void>;
   searchContacts: (filters: SearchFilters) => void;
   unlockContact: (contactId: string) => void;
@@ -59,14 +59,12 @@ interface ContactContextType {
   refreshContacts: () => Promise<void>; // New function to refresh contacts
 }
 
-const ContactContext = createContext<ContactContextType | undefined>(
-  undefined
-);
+const ContactContext = createContext<ContactContextType | undefined>(undefined);
 
 export const useContacts = () => {
   const context = useContext(ContactContext);
   if (context === undefined) {
-    throw new Error('useContacts must be used within a ContactProvider');
+    throw new Error("useContacts must be used within a ContactProvider");
   }
   return context;
 };
@@ -76,7 +74,7 @@ interface ContactProviderProps {
 }
 
 export const ContactProvider: React.FC<ContactProviderProps> = ({
-  children
+  children,
 }) => {
   const { user } = useAuth(); // Get current user
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -89,54 +87,57 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     try {
       setLoading(true);
       setError(null);
-      
-      console.log('Fetching contacts from backend...');
-      
+
+      console.log("Fetching contacts from backend...");
+
       // Build URL with userId if available
-      const url = user?.id 
+      const url = user?.id
         ? `https://mv-main-server.vercel.app/profiles?userId=${user.id}`
-        : 'https://mv-main-server.vercel.app/profiles';
-      
+        : "https://mv-main-server.vercel.app/profiles";
+
       const res = await fetch(url);
-      
+
       if (!res.ok) {
-        throw new Error(`Failed to fetch contacts: ${res.status} ${res.statusText}`);
+        throw new Error(
+          `Failed to fetch contacts: ${res.status} ${res.statusText}`
+        );
       }
-      
+
       const data = await res.json();
-      
+
       // Transform the data to match our Contact interface
       const transformedContacts = data.map((profile: any) => ({
         id: profile.id || profile._id,
-        name: profile.name || '',
-        jobTitle: profile.jobTitle || '',
-        company: profile.company || '',
-        location: profile.location || '',
-        industry: profile.industry || '',
+        name: profile.name || "",
+        jobTitle: profile.jobTitle || "",
+        company: profile.company || "",
+        location: profile.location || "",
+        industry: profile.industry || "",
         experience: profile.experience || 0,
-        seniorityLevel: profile.seniorityLevel || '',
-        companySize: profile.companySize || '',
+        seniorityLevel: profile.seniorityLevel || "",
+        companySize: profile.companySize || "",
         skills: Array.isArray(profile.skills) ? profile.skills : [],
-        education: profile.education || '',
-        workExperience: profile.workExperience || '', // Include work experience
+        education: profile.education || "",
+        workExperience: profile.workExperience || "", // Include work experience
         email: profile.email,
         phone: profile.phone,
-        avatar: profile.avatar || '',
+        avatar: profile.avatar || "",
         isUnlocked: profile.isUnlocked || false, // Per-user unlock status
-        uploadedBy: profile.uploadedBy || '',
-        uploadedAt: profile.uploadedAt ? new Date(profile.uploadedAt) : new Date(),
+        uploadedBy: profile.uploadedBy || "",
+        uploadedAt: profile.uploadedAt
+          ? new Date(profile.uploadedAt)
+          : new Date(),
         verified: profile.verified || false,
-        hasContactInfo: !!(profile.email || profile.phone)
+        hasContactInfo: !!(profile.email || profile.phone),
       }));
-      
-      console.log('Contacts loaded successfully:', transformedContacts.length);
-      console.log('User-specific unlock status applied for user:', user?.id);
+
+      console.log("Contacts loaded successfully:", transformedContacts.length);
+      console.log("User-specific unlock status applied for user:", user?.id);
       setContacts(transformedContacts);
       setSearchResults([]); // Reset search results when contacts are loaded
-      
     } catch (err) {
-      console.error('Error fetching contacts:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load contacts');
+      console.error("Error fetching contacts:", err);
+      setError(err instanceof Error ? err.message : "Failed to load contacts");
     } finally {
       setLoading(false);
     }
@@ -155,22 +156,21 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     if (filters.query?.trim()) {
       const query = filters.query.toLowerCase().trim();
       results = results.filter(
-        contact =>
+        (contact) =>
           contact.name.toLowerCase().includes(query) ||
           contact.jobTitle.toLowerCase().includes(query) ||
           contact.company.toLowerCase().includes(query) ||
           contact.location.toLowerCase().includes(query) ||
           contact.industry.toLowerCase().includes(query) ||
-          (contact.workExperience && contact.workExperience.toLowerCase().includes(query)) ||
-          contact.skills.some(skill =>
-            skill.toLowerCase().includes(query)
-          )
+          (contact.workExperience &&
+            contact.workExperience.toLowerCase().includes(query)) ||
+          contact.skills.some((skill) => skill.toLowerCase().includes(query))
       );
     }
 
     // Job title filter
     if (filters.jobTitle?.trim()) {
-      results = results.filter(contact =>
+      results = results.filter((contact) =>
         contact.jobTitle
           .toLowerCase()
           .includes(filters.jobTitle!.toLowerCase().trim())
@@ -179,7 +179,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
     // Company filter
     if (filters.company?.trim()) {
-      results = results.filter(contact =>
+      results = results.filter((contact) =>
         contact.company
           .toLowerCase()
           .includes(filters.company!.toLowerCase().trim())
@@ -188,7 +188,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
     // Location filter
     if (filters.location?.trim()) {
-      results = results.filter(contact =>
+      results = results.filter((contact) =>
         contact.location
           .toLowerCase()
           .includes(filters.location!.toLowerCase().trim())
@@ -198,16 +198,15 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     // Industry filter
     if (filters.industry) {
       results = results.filter(
-        contact =>
-          contact.industry.toLowerCase() ===
-          filters.industry!.toLowerCase()
+        (contact) =>
+          contact.industry.toLowerCase() === filters.industry!.toLowerCase()
       );
     }
 
     // Seniority level filter
     if (filters.seniorityLevel) {
       results = results.filter(
-        contact => contact.seniorityLevel === filters.seniorityLevel
+        (contact) => contact.seniorityLevel === filters.seniorityLevel
       );
     }
 
@@ -215,17 +214,15 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     if (filters.experience) {
       const { min = 0, max = 50 } = filters.experience;
       results = results.filter(
-        contact =>
-          contact.experience >= min &&
-          contact.experience <= max
+        (contact) => contact.experience >= min && contact.experience <= max
       );
     }
 
     // Skills filter
     if (filters.skills && filters.skills.length > 0) {
-      results = results.filter(contact =>
-        filters.skills!.some(skill =>
-          contact.skills.some(contactSkill =>
+      results = results.filter((contact) =>
+        filters.skills!.some((skill) =>
+          contact.skills.some((contactSkill) =>
             contactSkill.toLowerCase().includes(skill.toLowerCase().trim())
           )
         )
@@ -234,15 +231,15 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
     // Verified filter
     if (filters.verified !== undefined) {
-      results = results.filter(contact => 
-        contact.verified === filters.verified
+      results = results.filter(
+        (contact) => contact.verified === filters.verified
       );
     }
 
     // Has contact info filter
     if (filters.hasContactInfo !== undefined) {
-      results = results.filter(contact => 
-        (contact.email || contact.phone) === filters.hasContactInfo
+      results = results.filter(
+        (contact) => (contact.email || contact.phone) === filters.hasContactInfo
       );
     }
 
@@ -251,43 +248,41 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
   // Add new contact to backend + update state
   const addContact = async (
-    contactData: Omit<Contact, 'id' | 'uploadedAt' | 'isUnlocked'>
+    contactData: Omit<Contact, "id" | "uploadedAt" | "isUnlocked">
   ) => {
     try {
-      const res = await fetch('https://mv-main-server.vercel.app/profiles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("https://mv-main-server.vercel.app/profiles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...contactData,
-          uploadedBy: user?.id // Add current user as uploader
-        })
+          uploadedBy: user?.id, // Add current user as uploader
+        }),
       });
-      if (!res.ok) throw new Error('Failed to save contact');
+      if (!res.ok) throw new Error("Failed to save contact");
       const savedContact = await res.json();
-      
+
       const transformedContact = {
         ...savedContact,
         id: savedContact.id || savedContact._id,
         uploadedAt: new Date(savedContact.uploadedAt),
-        isUnlocked: false // New contacts are locked for everyone initially
+        isUnlocked: false, // New contacts are locked for everyone initially
       };
-      
-      setContacts(prev => [transformedContact, ...prev]);
+
+      setContacts((prev) => [transformedContact, ...prev]);
     } catch (err) {
       console.error(err);
-      alert('Could not save contact to the server');
+      alert("Could not save contact to the server");
     }
   };
 
   // Unlock contact locally (after successful backend call)
   const unlockContact = (contactId: string) => {
     const updateContact = (contact: Contact) =>
-      contact.id === contactId
-        ? { ...contact, isUnlocked: true }
-        : contact;
+      contact.id === contactId ? { ...contact, isUnlocked: true } : contact;
 
-    setContacts(prev => prev.map(updateContact));
-    setSearchResults(prev => prev.map(updateContact));
+    setContacts((prev) => prev.map(updateContact));
+    setSearchResults((prev) => prev.map(updateContact));
   };
 
   const resetSearch = () => {
@@ -308,12 +303,10 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     searchContacts,
     unlockContact,
     resetSearch,
-    refreshContacts
+    refreshContacts,
   };
 
   return (
-    <ContactContext.Provider value={value}>
-      {children}
-    </ContactContext.Provider>
+    <ContactContext.Provider value={value}>{children}</ContactContext.Provider>
   );
 };

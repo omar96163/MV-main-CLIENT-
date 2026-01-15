@@ -90,11 +90,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     email: string,
     password: string
   ) => {
-    const res = await fetch("https://mv-main-server.vercel.app/auth/request-signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
+    const res = await fetch(
+      "https://mv-main-server.vercel.app/auth/request-signup",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      }
+    );
 
     const data = await res.json();
 
@@ -104,11 +107,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const verifySignup = async (email: string, verificationCode: string) => {
-    const res = await fetch("https://mv-main-server.vercel.app/auth/verify-signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, verificationCode }),
-    });
+    const res = await fetch(
+      "https://mv-main-server.vercel.app/auth/verify-signup",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, verificationCode }),
+      }
+    );
 
     const data = await res.json();
 

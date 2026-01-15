@@ -16,8 +16,8 @@ const GoogleSuccess = () => {
       fetch("https://mv-main-server.vercel.app/auth/me", {
         headers: { Authorization: `Bearer ${token}` },
       })
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           setUser(data);
           navigate("/dashboard");
         })

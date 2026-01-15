@@ -20,7 +20,6 @@ interface AuthContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   login: (email: string, password: string) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
   requestSignup: (
     name: string,
     email: string,
@@ -136,10 +135,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem("token", data.token);
   };
 
-  const loginWithGoogle = async () => {
-    window.location.href = "https://mv-main-server.vercel.app/auth/google";
-  };
-
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
@@ -158,7 +153,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     setUser,
     login,
-    loginWithGoogle,
     requestSignup,
     verifySignup,
     logout,

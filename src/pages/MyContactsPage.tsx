@@ -80,8 +80,8 @@ const MyContactsPage: React.FC = () => {
           email: profile.email,
           phone: profile.phone,
           avatar: profile.avatar || "",
-          isUnlocked: true, 
-          isOwnUpload: profile.isOwnUpload || false, 
+          isUnlocked: true,
+          isOwnUpload: profile.isOwnUpload || false,
           uploadedBy: profile.uploadedBy || "",
           uploadedAt: profile.uploadedAt
             ? new Date(profile.uploadedAt)

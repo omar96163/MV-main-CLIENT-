@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useContacts } from '../contexts/ContactContext';
-import { 
-  Users, 
-  Download, 
-  TrendingUp, 
+import {
+  Users,
+  Download,
+  TrendingUp,
   Award,
   Search,
   MoreVertical,
@@ -73,7 +73,7 @@ const AdminPage: React.FC = () => {
   const handleExportData = () => {
     const csvContent = [
       'Name,Job Title,Company,Location,Industry,Experience,Skills,Email,Phone',
-      ...contacts.map(contact => 
+      ...contacts.map(contact =>
         `"${contact.name}","${contact.jobTitle}","${contact.company}","${contact.location}","${contact.industry}",${contact.experience},"${contact.skills.join('; ')}","${contact.email || ''}","${contact.phone || ''}"`
       )
     ].join('\n');
@@ -136,31 +136,28 @@ const AdminPage: React.FC = () => {
         <div className="flex border-b border-gray-200">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${
-              activeTab === 'overview'
-                ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+            className={`flex-1 py-4 px-6 font-medium transition-colors ${activeTab === 'overview'
+              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveTab('users')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${
-              activeTab === 'users'
-                ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+            className={`flex-1 py-4 px-6 font-medium transition-colors ${activeTab === 'users'
+              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
           >
             Users
           </button>
           <button
             onClick={() => setActiveTab('contacts')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${
-              activeTab === 'contacts'
-                ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+            className={`flex-1 py-4 px-6 font-medium transition-colors ${activeTab === 'contacts'
+              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
           >
             Contacts
           </button>
@@ -347,11 +344,10 @@ const AdminPage: React.FC = () => {
                           {contact.uploadedAt.toLocaleDateString()}
                         </td>
                         <td className="py-4 px-4">
-                          <span className={`px-2 py-1 rounded-full text-sm font-medium ${
-                            contact.isUnlocked
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
+                          <span className={`px-2 py-1 rounded-full text-sm font-medium ${contact.isUnlocked
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                            }`}>
                             {contact.isUnlocked ? 'Unlocked' : 'Locked'}
                           </span>
                         </td>

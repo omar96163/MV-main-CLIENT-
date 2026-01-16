@@ -44,7 +44,7 @@ export const getDashboardForCurrentUser = async (): Promise<DashboardData> => {
     }
 
     const dashboardData = await dashboardResponse.json();
-    
+
     // Transform the data to ensure proper types
     return {
       ...dashboardData,

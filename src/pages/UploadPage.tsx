@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useContacts } from '../contexts/ContactContext';
 import { useDashboard } from '../contexts/DashboardContext';
-import { Upload, FileText, Plus, User, Linkedin, Globe, AlertCircle, CheckCircle, Loader,Download } from 'lucide-react';
+import { Upload, FileText, Plus, User, Linkedin, Globe, AlertCircle, CheckCircle, Loader, Download } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 const UploadPage: React.FC = () => {
@@ -36,7 +36,7 @@ const UploadPage: React.FC = () => {
   const [linkedinFile, setLinkedinFile] = useState<File | null>(null);
   const [scrapingMode, setScrapingMode] = useState<'single' | 'bulk'>('single');
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   // Contact info for LinkedIn scraping
   const [linkedinExtraLinks, setLinkedinExtraLinks] = useState('');
   const [linkedinPhone, setLinkedinPhone] = useState('');
@@ -135,7 +135,7 @@ const UploadPage: React.FC = () => {
     setIsProcessing(true);
     setProcessingResults(null);
 
-    let processedData: Array<{ url: string; phone?: string; email: string;extraLinks?: string[] }> = [];
+    let processedData: Array<{ url: string; phone?: string; email: string; extraLinks?: string[] }> = [];
 
     try {
       if (scrapingMode === 'single') {
@@ -145,20 +145,20 @@ const UploadPage: React.FC = () => {
         }
         // Ensure URL has https:// prefix and www.
         let formattedUrl = linkedinUrl.trim();
-        
+
         // Remove any existing protocol
         formattedUrl = formattedUrl.replace(/^https?:\/\//, '');
-        
+
         // Remove any existing www.
         formattedUrl = formattedUrl.replace(/^www\./, '');
-        
+
         // Add https://www.
         formattedUrl = 'https://www.' + formattedUrl;
-        
+
         // Debug URL formatting
         console.log('Original URL:', linkedinUrl);
         console.log('Formatted URL:', formattedUrl);
-        
+
         processedData = [{
           url: formattedUrl,
           phone: linkedinPhone.trim(),
@@ -174,7 +174,7 @@ const UploadPage: React.FC = () => {
 
         const fileContent = await linkedinFile.text();
         const lines = fileContent.split('\n').map(line => line.trim()).filter(line => line);
-        
+
         if (lines.length === 0) {
           toast.error('CSV file is empty');
           return;
@@ -195,23 +195,23 @@ const UploadPage: React.FC = () => {
         // Parse CSV data
         const dataRows = lines.slice(1); // Skip header row
         processedData = dataRows.map(row => {
-        const columns = row.split(',').map(col => col.trim().replace(/"/g, ''));
+          const columns = row.split(',').map(col => col.trim().replace(/"/g, ''));
 
-        // get links column for this row
-        const linksRaw = extraLinksIndex !== -1 ? columns[extraLinksIndex] || '' : '';
+          // get links column for this row
+          const linksRaw = extraLinksIndex !== -1 ? columns[extraLinksIndex] || '' : '';
 
-        return {
-          url: columns[urlIndex] || '',
-          phone: phoneIndex !== -1 ? columns[phoneIndex] || '' : '',
-          email: emailIndex !== -1 ? columns[emailIndex] || '' : '',
-          extraLinks: linksRaw
-            .split(',')
-            .map(s => s.trim())
-            .filter(Boolean) // removes empty entries
-        };
-      }).filter(item => 
-        item.url && (item.url.includes('linkedin.com/in/') || item.url.includes('linkedin.com/pub/'))
-      );
+          return {
+            url: columns[urlIndex] || '',
+            phone: phoneIndex !== -1 ? columns[phoneIndex] || '' : '',
+            email: emailIndex !== -1 ? columns[emailIndex] || '' : '',
+            extraLinks: linksRaw
+              .split(',')
+              .map(s => s.trim())
+              .filter(Boolean) // removes empty entries
+          };
+        }).filter(item =>
+          item.url && (item.url.includes('linkedin.com/in/') || item.url.includes('linkedin.com/pub/'))
+        );
 
 
         if (processedData.length === 0) {
@@ -233,7 +233,7 @@ const UploadPage: React.FC = () => {
 
       // Debug the URL being sent
       console.log('Sending profiles for processing:', processedData);
-      
+
       // Call backend API for LinkedIn scraping with phone info
       const response = await fetch('https://mv-main-server.vercel.app/api/scrape-linkedin', {
         method: 'POST',
@@ -253,7 +253,7 @@ const UploadPage: React.FC = () => {
       }
 
       const result = await response.json();
-      
+
       // Update processing results with final data
       setProcessingResults(result.results);
 
@@ -287,7 +287,7 @@ const UploadPage: React.FC = () => {
 
     } catch (error) {
       console.error('LinkedIn scraping error:', error);
-      
+
       // Update results to show all failed
       if (processedData.length > 0) {
         const failedResults = {
@@ -303,7 +303,7 @@ const UploadPage: React.FC = () => {
         };
         setProcessingResults(failedResults);
       }
-      
+
       toast.error(error instanceof Error ? error.message : 'Failed to process LinkedIn profiles');
     } finally {
       setIsProcessing(false);
@@ -316,7 +316,7 @@ const UploadPage: React.FC = () => {
       // Validate file type - only CSV for structured data
       const validTypes = ['text/csv', 'application/vnd.ms-excel'];
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
-      
+
       if (fileExtension === 'csv' || file.type === 'text/csv' || file.type === 'application/vnd.ms-excel') {
         setLinkedinFile(file);
       } else {
@@ -325,23 +325,23 @@ const UploadPage: React.FC = () => {
       }
     }
   };
-    const exampleCSV = `url,phone,email,links
+  const exampleCSV = `url,phone,email,links
     https://www.linkedin.com/in/johnsmith/,+1-555-0001,john@example.com,"https://a.com,https://b.com"
     https://www.linkedin.com/in/janedoe/,+1-555-0002,jane@example.com,"https://c.com,https://d.com"
     https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e.com,https://f.com"`;
 
 
 
-    const downloadExample = () => {
-      const blob = new Blob([exampleCSV], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "example.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
+  const downloadExample = () => {
+    const blob = new Blob([exampleCSV], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "example.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -360,24 +360,22 @@ const UploadPage: React.FC = () => {
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="flex border-b border-gray-200">
-            <button
+          <button
             onClick={() => setActiveTab('linkedin')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors flex items-center justify-center space-x-2 ${
-              activeTab === 'linkedin'
-                ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+            className={`flex-1 py-4 px-6 font-medium transition-colors flex items-center justify-center space-x-2 ${activeTab === 'linkedin'
+              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
           >
             <Linkedin className="w-5 h-5" />
             <span>LinkedIn Scraper</span>
           </button>
           <button
             onClick={() => setActiveTab('single')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors flex items-center justify-center space-x-2 ${
-              activeTab === 'single'
-                ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-            }`}
+            className={`flex-1 py-4 px-6 font-medium transition-colors flex items-center justify-center space-x-2 ${activeTab === 'single'
+              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
           >
             <User className="w-5 h-5" />
             <span>Manual Upload</span>
@@ -419,7 +417,7 @@ const UploadPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Company 
+                  Company
                 </label>
                 <input
                   type="text"
@@ -433,7 +431,7 @@ const UploadPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Location 
+                  Location
                 </label>
                 <input
                   type="text"
@@ -447,7 +445,7 @@ const UploadPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Industry 
+                  Industry
                 </label>
                 <select
                   name="industry"
@@ -467,7 +465,7 @@ const UploadPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Years of Experience 
+                  Years of Experience
                 </label>
                 <input
                   type="number"
@@ -483,7 +481,7 @@ const UploadPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Seniority Level 
+                  Seniority Level
                 </label>
                 <select
                   name="seniorityLevel"
@@ -503,7 +501,7 @@ const UploadPage: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email 
+                  Email
                 </label>
                 <input
                   type="email"
@@ -533,7 +531,7 @@ const UploadPage: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Skills (comma-separated) 
+                Skills (comma-separated)
               </label>
               <input
                 type="text"
@@ -547,7 +545,7 @@ const UploadPage: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Education 
+                Education
               </label>
               <input
                 type="text"
@@ -771,14 +769,14 @@ const UploadPage: React.FC = () => {
                   </div>
 
                   <div className="mb-6">
-                    <button 
+                    <button
                       onClick={downloadExample}
                       className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
                     >
                       <Download className="w-4 h-4 mr-2" />
                       Download Example CSV
                     </button>
-                   </div>
+                  </div>
                   {/* Optional Note */}
                   {/* <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded">
                     <p className="text-xs text-amber-700">
@@ -804,8 +802,8 @@ const UploadPage: React.FC = () => {
                   <>
                     <Linkedin className="w-5 h-5" />
                     <span>
-                      {scrapingMode === 'single' 
-                        ? 'Scrape Profile (+10 points)' 
+                      {scrapingMode === 'single'
+                        ? 'Scrape Profile (+10 points)'
                         : 'Scrape Profiles (+10 points each)'
                       }
                     </span>
@@ -818,7 +816,7 @@ const UploadPage: React.FC = () => {
             {processingResults && (
               <div className="mt-6 bg-gray-50 rounded-lg p-4">
                 <h4 className="text-lg font-semibold text-gray-900 mb-3">Processing Results</h4>
-                
+
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div className="bg-blue-100 rounded-lg p-3 text-center">
                     <div className="text-2xl font-bold text-blue-600">{processingResults.total}</div>
@@ -864,11 +862,10 @@ const UploadPage: React.FC = () => {
                       {processingResults.results.map((result, index) => (
                         <div
                           key={index}
-                          className={`flex items-start space-x-3 p-3 rounded-lg ${
-                            result.status === 'success' 
-                              ? 'bg-green-50 border border-green-200' 
-                              : 'bg-red-50 border border-red-200'
-                          }`}
+                          className={`flex items-start space-x-3 p-3 rounded-lg ${result.status === 'success'
+                            ? 'bg-green-50 border border-green-200'
+                            : 'bg-red-50 border border-red-200'
+                            }`}
                         >
                           {result.status === 'success' ? (
                             <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
@@ -888,9 +885,9 @@ const UploadPage: React.FC = () => {
                               </p>
                             ) : (
                               <p className="text-sm text-red-700">
-                                ✗ {result.error === 'Profile already exists in the database' 
-                                    ? 'We already have this account!' 
-                                    : (result.error || 'Failed to scrape profile')}
+                                ✗ {result.error === 'Profile already exists in the database'
+                                  ? 'We already have this account!'
+                                  : (result.error || 'Failed to scrape profile')}
                               </p>
                             )}
                           </div>

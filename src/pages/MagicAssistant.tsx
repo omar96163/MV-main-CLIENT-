@@ -41,7 +41,7 @@ const MagicAssistantSearch = () => {
               style={{ fontSize: '16px' }}
             />
           </div>
-          
+
           {/* Action Buttons */}
           <div className="flex justify-end gap-3 mt-6">
             <button
@@ -77,7 +77,7 @@ const MagicAssistantSearch = () => {
             >
               <X className="w-5 h-5" />
             </button>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-blue-600" />

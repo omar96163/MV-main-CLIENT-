@@ -57,7 +57,7 @@ const SearchFiltersComponent: React.FC<SearchFiltersProps> = ({
       } else {
         delete newExp?.max;
       }
-      
+
       // If both min and max are undefined, remove experience filter entirely
       if (!newExp?.min && !newExp?.max) {
         const newFilters = { ...filters };
@@ -183,7 +183,7 @@ const SearchFiltersComponent: React.FC<SearchFiltersProps> = ({
           </select>
         </div>
 
-      
+
 
         {/* Has Contact Info */}
         <div>
@@ -192,10 +192,10 @@ const SearchFiltersComponent: React.FC<SearchFiltersProps> = ({
           </label>
           <select
             value={
-              filters.hasContactInfo === undefined 
-                ? '' 
-                : filters.hasContactInfo 
-                  ? 'true' 
+              filters.hasContactInfo === undefined
+                ? ''
+                : filters.hasContactInfo
+                  ? 'true'
                   : 'false'
             }
             onChange={(e) => {

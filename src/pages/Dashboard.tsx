@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDashboard } from '../contexts/DashboardContext';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  Users, 
-  Upload, 
+import {
+  Users,
+  Upload,
   Unlock,
   Search,
   ArrowRight,
@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
         // Determine if it's an upload or unlock action
         const isUpload = activity.toLowerCase().includes('uploaded');
         const isUnlock = activity.toLowerCase().includes('unlocked');
-        
+
         return {
           action: activity,
           timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
@@ -116,7 +116,7 @@ const Dashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-600">Error loading dashboard: {error}</p>
-          <button 
+          <button
             onClick={refreshDashboard}
             className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
           >
@@ -206,12 +206,11 @@ const Dashboard: React.FC = () => {
             recentActivities.slice(0, 5).map((activity, index) => {
               const isUpload = activity.action.toLowerCase().includes('uploaded');
               const isUnlock = activity.action.toLowerCase().includes('unlocked');
-              
+
               return (
                 <div key={index} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    isUpload ? 'bg-green-100' : isUnlock ? 'bg-purple-100' : 'bg-blue-100'
-                  }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isUpload ? 'bg-green-100' : isUnlock ? 'bg-purple-100' : 'bg-blue-100'
+                    }`}>
                     {isUpload ? (
                       <Upload className="w-5 h-5 text-green-600" />
                     ) : isUnlock ? (

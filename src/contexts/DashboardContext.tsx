@@ -40,7 +40,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         // If there's no dashboard yet, start from 0
         const initialPoints =
           typeof pointsUpdater === 'function' ? pointsUpdater(0) : pointsUpdater;
-        return { 
+        return {
           availablePoints: initialPoints,
           totalContacts: 0,
           unlockedProfiles: 0,
@@ -66,13 +66,13 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
       setError('No user logged in');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const updatedDashboard = await getDashboardForCurrentUser();
-      
+
       // Ensure all required fields are present with defaults
       const normalizedDashboard: DashboardData = {
         ...updatedDashboard,
@@ -82,19 +82,19 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         myUploads: updatedDashboard.myUploads || 0,
         uploadedProfileIds: updatedDashboard.uploadedProfileIds || [],
         unlockedContactIds: updatedDashboard.unlockedContactIds || [],
-        recentActivity: Array.isArray(updatedDashboard.recentActivity) 
-          ? updatedDashboard.recentActivity 
+        recentActivity: Array.isArray(updatedDashboard.recentActivity)
+          ? updatedDashboard.recentActivity
           : [],
         updatedAt: updatedDashboard.updatedAt || new Date()
       };
-      
+
       setDashboard(normalizedDashboard);
       console.log('Dashboard refreshed successfully:', normalizedDashboard);
     } catch (error) {
       console.error('Error refreshing dashboard:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to refresh dashboard';
       setError(errorMessage);
-      
+
       // Set a minimal dashboard to prevent crashes
       setDashboard({
         availablePoints: 0,

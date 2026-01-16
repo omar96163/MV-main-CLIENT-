@@ -21,12 +21,12 @@ const SearchPage: React.FC = () => {
   const handleSearch = (filters: SearchFilters) => {
     console.log('🚀 SearchPage - handleSearch called with:', filters);
     console.log('📝 SearchPage - current searchQuery:', searchQuery);
-    
+
     const searchFilters = {
       ...filters,
       query: searchQuery || filters.query,
     };
-    
+
     console.log('🔎 SearchPage - final search filters:', searchFilters);
     searchContacts(searchFilters);
     setHasSearched(true);
@@ -71,8 +71,8 @@ const SearchPage: React.FC = () => {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <h3 className="text-red-800 font-medium mb-2">Error Loading Contacts</h3>
           <p className="text-red-600">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
           >
             Retry

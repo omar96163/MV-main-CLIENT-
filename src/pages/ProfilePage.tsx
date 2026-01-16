@@ -26,22 +26,22 @@ const WorkExperienceSection = ({ workExperience }: { workExperience: string }) =
   // Function to parse work experience string into structured data
   const parseWorkExperience = (workExpString: string) => {
     if (!workExpString) return [];
-    
+
     const entries = workExpString.split('---').map(entry => entry.trim());
-    
+
     return entries.map((entry, index) => {
       // Match pattern: Title at Company (date - date) - Location
       // Also try to extract description if it's on separate lines
       const lines = entry.split('\n').map(line => line.trim()).filter(line => line);
       const mainLine = lines[0] || entry;
       const description = lines.slice(1).join('\n').trim();
-      
+
       const match = mainLine.match(/^(.+?)\s+at\s+(.+?)\s+\((.+?)\)(?:\s+-\s+(.+?))?$/);
-      
+
       if (match) {
         const [, title, company, dateRange, location] = match;
         const [startDate, endDate] = dateRange.split(' - ').map(d => d.trim());
-        
+
         return {
           id: index,
           title: title.trim(),
@@ -53,7 +53,7 @@ const WorkExperienceSection = ({ workExperience }: { workExperience: string }) =
           current: endDate?.toLowerCase().includes('present') || !endDate
         };
       }
-      
+
       // Fallback parsing for different formats
       const parts = mainLine.split(' at ');
       if (parts.length >= 2) {
@@ -68,7 +68,7 @@ const WorkExperienceSection = ({ workExperience }: { workExperience: string }) =
           current: false
         };
       }
-      
+
       return {
         id: index,
         title: entry,
@@ -94,7 +94,7 @@ const WorkExperienceSection = ({ workExperience }: { workExperience: string }) =
         <Briefcase className="w-5 h-5 text-gray-600" />
         <h2 className="text-xl font-semibold text-gray-900">Work Experience</h2>
       </div>
-      
+
       <div className="space-y-6">
         {workHistory.map((job, index) => (
           <div key={job.id} className="relative">
@@ -102,26 +102,24 @@ const WorkExperienceSection = ({ workExperience }: { workExperience: string }) =
             {index < workHistory.length - 1 && (
               <div className="absolute left-4 top-12 w-0.5 h-full bg-gray-200"></div>
             )}
-            
+
             <div className="flex items-start space-x-4">
               {/* Timeline dot */}
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
-                job.current 
-                  ? 'bg-green-100 border-2 border-green-500' 
-                  : 'bg-gray-100 border-2 border-gray-300'
-              }`}>
-                <div className={`w-3 h-3 rounded-full ${
-                  job.current ? 'bg-green-500' : 'bg-gray-400'
-                }`}></div>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${job.current
+                ? 'bg-green-100 border-2 border-green-500'
+                : 'bg-gray-100 border-2 border-gray-300'
+                }`}>
+                <div className={`w-3 h-3 rounded-full ${job.current ? 'bg-green-500' : 'bg-gray-400'
+                  }`}></div>
               </div>
-              
+
               {/* Job details */}
               <div className="flex-1 min-w-0">
                 {/* Job Title */}
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">
                   {job.title}
                 </h3>
-                
+
                 {/* Company Name - Bold and Prominent */}
                 {job.company && (
                   <div className="mb-3">
@@ -130,35 +128,35 @@ const WorkExperienceSection = ({ workExperience }: { workExperience: string }) =
                     </span>
                   </div>
                 )}
-                
+
                 {/* Metadata Section */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
                   {(job.startDate || job.endDate) && (
                     <div className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {job.startDate && job.endDate 
+                        {job.startDate && job.endDate
                           ? `${job.startDate} - ${job.endDate}`
                           : job.startDate || job.endDate
                         }
                       </span>
                     </div>
                   )}
-                  
+
                   {job.location && (
                     <div className="flex items-center space-x-1">
                       <MapPin className="w-4 h-4" />
                       <span>{job.location}</span>
                     </div>
                   )}
-                  
+
                   {job.current && (
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                       Current Role
                     </span>
                   )}
                 </div>
-                
+
                 {/* Description Section - Separate from metadata */}
                 {job.description && (
                   <div className="bg-gray-50 rounded-lg p-4 mt-3">
@@ -167,7 +165,7 @@ const WorkExperienceSection = ({ workExperience }: { workExperience: string }) =
                     </div>
                   </div>
                 )}
-                
+
                 {/* Divider between jobs */}
                 {index < workHistory.length - 1 && (
                   <hr className="mt-6 border-gray-200" />
@@ -177,7 +175,7 @@ const WorkExperienceSection = ({ workExperience }: { workExperience: string }) =
           </div>
         ))}
       </div>
-      
+
       {/* Raw data fallback (optional - remove if not needed) */}
       <details className="mt-6 text-sm">
         <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
@@ -197,7 +195,7 @@ const ProfilePage: React.FC = () => {
   const { user } = useAuth();
   const { dashboard, updatePoints } = useDashboard();
   const { unlockContact, refreshContacts } = useContacts();
-  
+
   const [contact, setContact] = useState<Contact | null>(null);
   const [loading, setLoading] = useState(true);
   const [unlocking, setUnlocking] = useState(false);
@@ -212,23 +210,23 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     const fetchContact = async () => {
       if (!id) return;
-      
+
       try {
         setLoading(true);
         setError(null);
-        
-        const url = user?.id 
+
+        const url = user?.id
           ? `https://mv-main-server.vercel.app/profiles/${id}?userId=${user.id}`
           : `https://mv-main-server.vercel.app/profiles/${id}`;
-          
+
         const response = await fetch(url);
-        
+
         if (!response.ok) {
           throw new Error('Contact not found');
         }
-        
+
         const data = await response.json();
-        
+
         const transformedContact: Contact = {
           id: data.id || data._id,
           name: data.name || '',
@@ -250,7 +248,7 @@ const ProfilePage: React.FC = () => {
           hasContactInfo: !!(data.email || data.phone),
           extraLinks: Array.isArray(data.extraLinks) ? data.extraLinks : []
         };
-        
+
         setContact(transformedContact);
       } catch (err) {
         console.error('Error fetching contact:', err);
@@ -265,10 +263,10 @@ const ProfilePage: React.FC = () => {
 
   const handleUnlock = async () => {
     if (!canUnlock || !user?.id || !contact) return;
-    
+
     try {
       setUnlocking(true);
-      
+
       // Call backend API to unlock profile and deduct points
       const response = await fetch(`https://mv-main-server.vercel.app/profiles/${contact.id}/unlock`, {
         method: 'POST',
@@ -286,19 +284,19 @@ const ProfilePage: React.FC = () => {
       }
 
       const result = await response.json();
-      
+
       // Update points and refresh data
       await Promise.all([
         updatePoints(result.remainingPoints),
         refreshContacts()
       ]);
-      
+
       // Update contact unlock status locally
       setContact(prev => prev ? { ...prev, isUnlocked: true } : null);
       unlockContact(contact.id);
-      
+
       console.log('Contact unlocked successfully:', result);
-      
+
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error unlocking contact:', error);
@@ -331,7 +329,7 @@ const ProfilePage: React.FC = () => {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <h3 className="text-red-800 font-medium mb-2">Error Loading Contact</h3>
           <p className="text-red-600">{error || 'Contact not found'}</p>
-          <button 
+          <button
             onClick={() => navigate('/search')}
             className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
           >
@@ -448,7 +446,7 @@ const ProfilePage: React.FC = () => {
               )}
             </div>
           </div>
-          
+
           {/* Extra Links */}
           {contact.extraLinks && contact.extraLinks.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -482,14 +480,14 @@ const ProfilePage: React.FC = () => {
           {/* Contact Information Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Contact Information</h2>
-            
+
             {contact.isUnlocked ? (
               <div className="space-y-4">
                 <div className="flex items-center space-x-3 text-green-700 mb-4 p-3 bg-green-50 rounded-lg">
                   <Unlock className="w-5 h-5" />
                   <span className="font-semibold">Contact Details Unlocked</span>
                 </div>
-                
+
                 {contact.email && (
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                     <Mail className="w-5 h-5 text-gray-500" />
@@ -499,7 +497,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 )}
-                
+
                 {contact.phone && (
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                     <Phone className="w-5 h-5 text-gray-500" />
@@ -509,7 +507,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 )}
-                
+
                 {!contact.email && !contact.phone && (
                   <p className="text-gray-500 italic text-center py-4">
                     No contact information available
@@ -521,11 +519,11 @@ const ProfilePage: React.FC = () => {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Lock className="w-8 h-8 text-gray-400" />
                 </div>
-                
+
                 <p className="text-gray-600 mb-4">
                   Contact details are locked. Unlock to view email and phone number.
                 </p>
-                
+
                 {/* Points Status */}
                 <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-center space-x-2 mb-2">
@@ -534,7 +532,7 @@ const ProfilePage: React.FC = () => {
                       Your Points: <span className="font-semibold text-purple-600">{availablePoints}</span>
                     </span>
                   </div>
-                  
+
                   {hasInsufficientPoints && (
                     <div className="flex items-center justify-center space-x-1 text-red-500">
                       <AlertCircle className="w-4 h-4" />
@@ -546,11 +544,10 @@ const ProfilePage: React.FC = () => {
                 <button
                   onClick={handleUnlock}
                   disabled={!canUnlock || unlocking}
-                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${
-                    canUnlock && !unlocking
-                      ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 shadow-md hover:shadow-lg transform hover:scale-105'
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  }`}
+                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${canUnlock && !unlocking
+                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 shadow-md hover:shadow-lg transform hover:scale-105'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    }`}
                 >
                   {unlocking ? (
                     <>
@@ -561,7 +558,7 @@ const ProfilePage: React.FC = () => {
                     <>
                       <Award className="w-4 h-4" />
                       <span>
-                        {hasInsufficientPoints 
+                        {hasInsufficientPoints
                           ? `Need ${20 - availablePoints} More Points`
                           : 'Need 20 Points to Unlock'
                         }

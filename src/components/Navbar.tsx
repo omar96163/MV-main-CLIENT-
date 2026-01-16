@@ -60,11 +60,10 @@ const Navbar: React.FC = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${
-                      isActive
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${isActive
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      }`}
                   >
                     <Icon className="w-4 h-4" />
                     <span>{item.name}</span>
@@ -80,13 +79,13 @@ const Navbar: React.FC = () => {
                     {availablePoints.toLocaleString()}
                   </span>
                 </div>
-                
+
                 {/* Profile Avatar/Menu */}
                 <div className="relative group">
                   <button className="flex items-center space-x-2 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
                     <User className="w-5 h-5 text-gray-600" />
                   </button>
-                  
+
                   {/* Dropdown Menu */}
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-2">
@@ -132,11 +131,10 @@ const Navbar: React.FC = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${
-                    isActive
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${isActive
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.name}</span>

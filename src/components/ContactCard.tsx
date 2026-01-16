@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useDashboard } from '../contexts/DashboardContext';
 import { useContacts, Contact } from '../contexts/ContactContext';
-import { 
-  MapPin, 
-  Building, 
-  Calendar, 
-  Unlock, 
-  Eye, 
+import {
+  MapPin,
+  Building,
+  Calendar,
+  Unlock,
+  Eye,
   Award,
   Mail,
   Phone,
@@ -34,7 +34,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
 
   const handleUnlock = async () => {
     if (!canUnlock) return;
-    
+
     try {
       // Call backend API to unlock profile and deduct points
       const response = await fetch(`https://mv-main-server.vercel.app/profiles/${contact.id}/unlock`, {
@@ -53,13 +53,13 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
       }
 
       const result = await response.json();
-      
+
       // Update local state with the response
       updatePoints(result.remainingPoints);
       unlockContact(contact.id);
-      
+
       console.log('Contact unlocked successfully:', result);
-      
+
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error unlocking contact:', error);
@@ -72,7 +72,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
   };
 
   return (
-  <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 transform hover:-translate-y-1 flex flex-col h-full">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 transform hover:-translate-y-1 flex flex-col h-full">
       {/* Profile Header */}
       <div className="p-6 pb-4">
         <div className="flex items-start space-x-4">
@@ -129,7 +129,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           <Calendar className="w-4 h-4" />
           <span className="text-sm">{contact.experience} years experience</span>
         </div>
-        
+
         {/* Work Experience Preview */}
         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
           <div className="flex items-center space-x-1 text-gray-700 mb-2">
@@ -138,7 +138,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           </div>
           {contact.workExperience ? (
             <p className="text-sm text-gray-600 line-clamp-2">
-              {contact.workExperience.length > 100 
+              {contact.workExperience.length > 100
                 ? `${contact.workExperience.substring(0, 100)}...`
                 : contact.workExperience}
             </p>
@@ -147,7 +147,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           )}
         </div>
 
-        
+
         {/* Skills */}
         <div className="mb-4">
           <div className="flex items-center gap-1 overflow-hidden whitespace-nowrap">
@@ -212,7 +212,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
               <Lock className="w-5 h-5" />
               <span className="text-sm font-medium">Contact Information Locked</span>
             </div>
-            
+
             {/* Points Status */}
             <div className="text-center mb-3">
               <div className="flex items-center justify-center space-x-2 mb-2">
@@ -221,7 +221,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
                   Your Points: <span className="font-semibold text-purple-600">{availablePoints}</span>
                 </span>
               </div>
-              
+
               {hasInsufficientPoints && (
                 <div className="flex items-center justify-center space-x-1 text-red-500 mb-2">
                   <AlertCircle className="w-4 h-4" />
@@ -238,7 +238,7 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
       </div>
 
       {/* Actions */}
-  <div className="px-6 pb-6 flex space-x-3 mt-auto">
+      <div className="px-6 pb-6 flex space-x-3 mt-auto">
         <Link
           to={`/profile/${contact.id}`}
           className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
@@ -246,25 +246,24 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           <Eye className="w-4 h-4" />
           <span>View Profile</span>
         </Link>
-        
+
         {!contact.isUnlocked && (
-        <button
-        onClick={handleUnlock}
-        disabled={!canUnlock}
-        className={`flex-1 whitespace-nowrap py-2 px-4 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${
-          canUnlock
-            ? 'w-full bg-gradient-to-r from-[#0b07f0] to-[#0b07f0] text-white py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center space-x-2 hover:brightness-110 hover:scale-105 hover:shadow-lg'
-            : 'bg-gray-200 text-gray-500 cursor-not-allowed'
-        }`}
-      >
-        <Award className="w-4 h-4" />
-        <span>
-          {hasInsufficientPoints 
-            ? 'Insufficient Points'
-            : 'Unlock (20 pts)'
-          }
-        </span>
-      </button>
+          <button
+            onClick={handleUnlock}
+            disabled={!canUnlock}
+            className={`flex-1 whitespace-nowrap py-2 px-4 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${canUnlock
+              ? 'w-full bg-gradient-to-r from-[#0b07f0] to-[#0b07f0] text-white py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center space-x-2 hover:brightness-110 hover:scale-105 hover:shadow-lg'
+              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+              }`}
+          >
+            <Award className="w-4 h-4" />
+            <span>
+              {hasInsufficientPoints
+                ? 'Insufficient Points'
+                : 'Unlock (20 pts)'
+              }
+            </span>
+          </button>
 
 
         )}

@@ -103,7 +103,7 @@ const MyContactsPage: React.FC = () => {
     };
 
     fetchMyContacts();
-  }, [user?.id]);
+  }, [user?.id, dashboard?.unlockedContactIds]);
 
   // Filter contacts based on search (now includes work experience)
   useEffect(() => {

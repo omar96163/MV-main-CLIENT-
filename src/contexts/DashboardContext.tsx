@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAuth } from './AuthContext'; // Import your auth context
-import { getDashboardForCurrentUser } from '../api/dashboardApi'; // Import your API function
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useAuth } from "./AuthContext"; // Import your auth context
+import { getDashboardForCurrentUser } from "../api/dashboardApi"; // Import your API function
 
 // You can expand this with all fields your dashboard actually has
 interface DashboardData {
@@ -26,7 +32,9 @@ interface DashboardContextType {
   error: string | null;
 }
 
-const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
+const DashboardContext = createContext<DashboardContextType | undefined>(
+  undefined
+);
 
 export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
@@ -35,11 +43,13 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth(); // Get user from auth context
 
   const updatePoints = (pointsUpdater: number | ((prev: number) => number)) => {
-    setDashboard(prev => {
+    setDashboard((prev) => {
       if (!prev) {
         // If there's no dashboard yet, start from 0
         const initialPoints =
-          typeof pointsUpdater === 'function' ? pointsUpdater(0) : pointsUpdater;
+          typeof pointsUpdater === "function"
+            ? pointsUpdater(0)
+            : pointsUpdater;
         return {
           availablePoints: initialPoints,
           totalContacts: 0,
@@ -47,23 +57,23 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
           myUploads: 0,
           uploadedProfileIds: [],
           unlockedContactIds: [],
-          recentActivity: []
+          recentActivity: [],
         };
       }
       return {
         ...prev,
         availablePoints:
-          typeof pointsUpdater === 'function'
+          typeof pointsUpdater === "function"
             ? pointsUpdater(prev.availablePoints)
             : pointsUpdater,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
     });
   };
 
   const refreshDashboard = async () => {
     if (!user) {
-      setError('No user logged in');
+      setError("No user logged in");
       return;
     }
 
@@ -85,14 +95,15 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         recentActivity: Array.isArray(updatedDashboard.recentActivity)
           ? updatedDashboard.recentActivity
           : [],
-        updatedAt: updatedDashboard.updatedAt || new Date()
+        updatedAt: updatedDashboard.updatedAt || new Date(),
       };
 
       setDashboard(normalizedDashboard);
-      console.log('Dashboard refreshed successfully:', normalizedDashboard);
+      console.log("Dashboard refreshed successfully:", normalizedDashboard);
     } catch (error) {
-      console.error('Error refreshing dashboard:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to refresh dashboard';
+      console.error("Error refreshing dashboard:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to refresh dashboard";
       setError(errorMessage);
 
       // Set a minimal dashboard to prevent crashes
@@ -104,7 +115,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         uploadedProfileIds: [],
         unlockedContactIds: [],
         recentActivity: [],
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     } finally {
       setLoading(false);
@@ -127,7 +138,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
     setDashboard,
     refreshDashboard,
     loading,
-    error
+    error,
   };
 
   return (
@@ -140,7 +151,7 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
 export const useDashboard = () => {
   const context = useContext(DashboardContext);
   if (!context) {
-    throw new Error('useDashboard must be used within a DashboardProvider');
+    throw new Error("useDashboard must be used within a DashboardProvider");
   }
   return context;
 };

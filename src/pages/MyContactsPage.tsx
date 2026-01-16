@@ -61,13 +61,10 @@ const MyContactsPage: React.FC = () => {
 
         const allProfiles = await response.json();
 
-        // Filter for only unlocked contacts
-        const unlockedContacts = allProfiles.filter(
-          (profile: any) => profile.isUnlocked === true
-        );
+        const myContacts = allProfiles;
 
         // Transform the data
-        const transformedContacts = unlockedContacts.map((profile: any) => ({
+        const transformedContacts = myContacts.map((profile: any) => ({
           id: profile.id || profile._id,
           name: profile.name || "",
           jobTitle: profile.jobTitle || "",
@@ -79,11 +76,12 @@ const MyContactsPage: React.FC = () => {
           companySize: profile.companySize || "",
           skills: Array.isArray(profile.skills) ? profile.skills : [],
           education: profile.education || "",
-          workExperience: profile.workExperience || "", // Include work experience
+          workExperience: profile.workExperience || "",
           email: profile.email,
           phone: profile.phone,
           avatar: profile.avatar || "",
-          isUnlocked: true,
+          isUnlocked: true, 
+          isOwnUpload: profile.isOwnUpload || false, 
           uploadedBy: profile.uploadedBy || "",
           uploadedAt: profile.uploadedAt
             ? new Date(profile.uploadedAt)
@@ -105,7 +103,7 @@ const MyContactsPage: React.FC = () => {
     };
 
     fetchMyContacts();
-  }, [user?.id, dashboard?.unlockedContactIds]);
+  }, [user?.id]);
 
   // Filter contacts based on search (now includes work experience)
   useEffect(() => {

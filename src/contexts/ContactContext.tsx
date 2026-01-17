@@ -30,10 +30,12 @@ export interface Contact {
   verified?: boolean;
   hasContactInfo?: boolean;
   extraLinks?: string[];
+  linkedinUrl?: string;
 }
 
 export interface SearchFilters {
   query?: string;
+  linkedinUrl?: string;
   jobTitle?: string;
   company?: string;
   location?: string;
@@ -74,7 +76,7 @@ interface ContactProviderProps {
   children: ReactNode;
 }
 
-// دالة Boolean Search مبسطة
+// Boolean Search
 const booleanSearch = (contacts: Contact[], query: string): Contact[] => {
   if (!query.trim()) return contacts;
 
@@ -204,6 +206,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
           : new Date(),
         verified: profile.verified || false,
         hasContactInfo: !!(profile.email || profile.phone),
+        linkedinUrl: profile.linkedinUrl || "",
       }));
 
       setContacts(transformedContacts);
@@ -225,9 +228,17 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
   const searchContacts = (filters: SearchFilters) => {
     let results = [...contacts];
 
-    // Boolean Search
+    // Boolean Search filter
     if (filters.query?.trim()) {
       results = booleanSearch(results, filters.query);
+    }
+
+    // LinkedIn URL
+    if (filters.linkedinUrl?.trim()) {
+      const url = filters.linkedinUrl.trim().toLowerCase();
+      results = results.filter(contact =>
+        contact.linkedinUrl?.toLowerCase().includes(url)
+      );
     }
 
     // Job title filter

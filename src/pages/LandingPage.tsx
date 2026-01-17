@@ -34,26 +34,32 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="relative z-10">
+      <header className="relative z-10 border-b-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-2">
               <img src="/logo.png" alt="Logo" className="h-10 w-auto" />
             </div>
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 text-sm">
               <button
                 onClick={() => handleAuthClick("login")}
-                className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                className="text-gray-600 hover:bg-gray-200 px-4 py-2 rounded-lg font-medium shadow-md transition-all"
               >
                 Sign In
               </button>
               <button
-                onClick={handleGoogleLogin}
-                className="flex items-center justify-center bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 shadow-md transition-all"
+                onClick={() => handleAuthClick("requestSignup")}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
               >
-                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                Get Started
+              </button>
+              <button
+                onClick={handleGoogleLogin}
+                className="flex items-center justify-center flex-row-reverse bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 shadow-md transition-all"
+              >
+                <svg className="w-5 h-5 ml-2" viewBox="0 0 24 24">
                   <path
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                     fill="#4285F4"
@@ -71,13 +77,7 @@ const LandingPage: React.FC = () => {
                     fill="#EA4335"
                   />
                 </svg>
-                Sign in with Google
-              </button>
-              <button
-                onClick={() => handleAuthClick("requestSignup")}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
-              >
-                Get Started
+                Sign with
               </button>
             </div>
           </div>
@@ -85,19 +85,19 @@ const LandingPage: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-row justify-center items-center bg-gradient-to-b via-slate-300">
         <div className="max-w-7xl mx-auto text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-5 leading-relaxed">
               Get Real Contacts for Free.
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
-                Share Your Professional Data, Unlock a World of Opportunities.
+              <span className="text-xl md:text-3xl mt-1 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
+                Unlock a World of Opportunities,<br></br> Share Your Professional Data.
               </span>
-              Instantly
+              <p className="text-3xl">Instantly</p>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 leading-relaxed">
+            <p className="text-xl md:text-xl text-gray-600 mb-12 leading-relaxed">
               Join Thousands of professionals exchanging verified contacts
-              daily. Earn points by sharing, unlock valuable leads for your
+              daily.<br></br> Earn points by sharing, unlock valuable leads for your
               business.
             </p>
           </div>
@@ -121,7 +121,7 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white/50 backdrop-blur-sm">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -137,8 +137,8 @@ const LandingPage: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-blue-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-6">
+            <div className="bg-gray-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="w-16 h-16 bg-gradient-to-br via-blue-500 rounded-full flex items-center justify-center mb-6">
                 <Star className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
@@ -150,8 +150,8 @@ const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-purple-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mb-6">
+            <div className="bg-gray-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="w-16 h-16 bg-gradient-to-br via-purple-500 rounded-full flex items-center justify-center mb-6">
                 <Unlock className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
@@ -163,8 +163,8 @@ const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-orange-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mb-6">
+            <div className="bg-gray-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="w-16 h-16 bg-gradient-to-br via-orange-500 rounded-full flex items-center justify-center mb-6">
                 <Shield className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">
@@ -176,8 +176,8 @@ const LandingPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-green-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-6">
+            <div className="bg-gray-50 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="w-16 h-16 bg-gradient-to-br via-green-500 rounded-full flex items-center justify-center mb-6">
                 <Zap className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">

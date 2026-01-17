@@ -1,3 +1,4 @@
+// src/contexts/ContactContext.tsx
 import React, {
   createContext,
   useContext,
@@ -5,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { useAuth } from "./AuthContext"; // Import to get current user
+import { useAuth } from "./AuthContext";
 
 export interface Contact {
   id: string;
@@ -19,11 +20,11 @@ export interface Contact {
   companySize?: string;
   skills: string[];
   education: string;
-  workExperience?: string; // New field for detailed work experience
+  workExperience?: string;
   email?: string;
   phone?: string;
   avatar: string;
-  isUnlocked: boolean; // This is now per-user
+  isUnlocked: boolean;
   uploadedBy: string;
   uploadedAt: Date;
   verified?: boolean;
@@ -56,7 +57,7 @@ interface ContactContextType {
   searchContacts: (filters: SearchFilters) => void;
   unlockContact: (contactId: string) => void;
   resetSearch: () => void;
-  refreshContacts: () => Promise<void>; // New function to refresh contacts
+  refreshContacts: () => Promise<void>;
 }
 
 const ContactContext = createContext<ContactContextType | undefined>(undefined);
@@ -73,24 +74,99 @@ interface ContactProviderProps {
   children: ReactNode;
 }
 
+// دالة Boolean Search مبسطة
+const booleanSearch = (contacts: Contact[], query: string): Contact[] => {
+  if (!query.trim()) return contacts;
+
+  const lowerQuery = query.toLowerCase().trim();
+
+  // معالجة العبارات بين علامات الاقتباس
+  const exactPhrases = [];
+  let processedQuery = lowerQuery;
+
+  const quoteMatches = lowerQuery.match(/"([^"]+)"/g) || [];
+  for (const match of quoteMatches) {
+    const phrase = match.slice(1, -1);
+    exactPhrases.push(phrase);
+    processedQuery = processedQuery.replace(match, '');
+  }
+
+  // تقسيم باقي الاستعلام
+  const terms = processedQuery
+    .split(/\s+/)
+    .filter(term => term && !['and', 'or', 'not'].includes(term));
+
+  // تحليل المنطق البسيط
+  let andTerms = [];
+  let orTerms = [];
+  let notTerms = [];
+
+  if (lowerQuery.includes(' and ')) {
+    andTerms = lowerQuery.split(' and ').map(t => t.trim());
+  } else if (lowerQuery.includes(' or ')) {
+    orTerms = lowerQuery.split(' or ').map(t => t.trim());
+  } else if (lowerQuery.includes(' not ')) {
+    const parts = lowerQuery.split(' not ');
+    andTerms = [parts[0].trim()];
+    notTerms = [parts[1].trim()];
+  } else {
+    // بحث عادي
+    return contacts.filter(contact => {
+      const searchText = `${contact.name} ${contact.jobTitle} ${contact.company} ${contact.skills.join(' ')}`.toLowerCase();
+      return searchText.includes(lowerQuery) ||
+        exactPhrases.some(phrase => searchText.includes(phrase));
+    });
+  }
+
+  return contacts.filter(contact => {
+    const searchText = `${contact.name} ${contact.jobTitle} ${contact.company} ${contact.skills.join(' ')}`.toLowerCase();
+
+    // التحقق من العبارات الدقيقة
+    for (const phrase of exactPhrases) {
+      if (!searchText.includes(phrase)) return false;
+    }
+
+    // التحقق من NOT
+    for (const term of notTerms) {
+      if (searchText.includes(term)) return false;
+    }
+
+    // التحقق من AND
+    if (andTerms.length > 0) {
+      return andTerms.every(term => {
+        const cleanTerm = term.replace(/"/g, '').trim();
+        return searchText.includes(cleanTerm) ||
+          exactPhrases.some(phrase => phrase.includes(cleanTerm));
+      });
+    }
+
+    // التحقق من OR
+    if (orTerms.length > 0) {
+      return orTerms.some(term => {
+        const cleanTerm = term.replace(/"/g, '').trim();
+        return searchText.includes(cleanTerm) ||
+          exactPhrases.some(phrase => phrase.includes(cleanTerm));
+      });
+    }
+
+    return true;
+  });
+};
+
 export const ContactProvider: React.FC<ContactProviderProps> = ({
   children,
 }) => {
-  const { user } = useAuth(); // Get current user
+  const { user } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [searchResults, setSearchResults] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch contacts from backend with user-specific unlock status
   const fetchContacts = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      console.log("Fetching contacts from backend...");
-
-      // Build URL with userId if available
       const url = user?.id
         ? `https://mv-main-server.vercel.app/profiles?userId=${user.id}`
         : "https://mv-main-server.vercel.app/profiles";
@@ -105,7 +181,6 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
       const data = await res.json();
 
-      // Transform the data to match our Contact interface
       const transformedContacts = data.map((profile: any) => ({
         id: profile.id || profile._id,
         name: profile.name || "",
@@ -118,11 +193,11 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
         companySize: profile.companySize || "",
         skills: Array.isArray(profile.skills) ? profile.skills : [],
         education: profile.education || "",
-        workExperience: profile.workExperience || "", // Include work experience
+        workExperience: profile.workExperience || "",
         email: profile.email,
         phone: profile.phone,
         avatar: profile.avatar || "",
-        isUnlocked: profile.isUnlocked || false, // Per-user unlock status
+        isUnlocked: profile.isUnlocked || false,
         uploadedBy: profile.uploadedBy || "",
         uploadedAt: profile.uploadedAt
           ? new Date(profile.uploadedAt)
@@ -131,10 +206,8 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
         hasContactInfo: !!(profile.email || profile.phone),
       }));
 
-      console.log("Contacts loaded successfully:", transformedContacts.length);
-      console.log("User-specific unlock status applied for user:", user?.id);
       setContacts(transformedContacts);
-      setSearchResults([]); // Reset search results when contacts are loaded
+      setSearchResults([]);
     } catch (err) {
       console.error("Error fetching contacts:", err);
       setError(err instanceof Error ? err.message : "Failed to load contacts");
@@ -143,29 +216,18 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     }
   };
 
-  // Fetch contacts when component mounts or user changes
   useEffect(() => {
-    fetchContacts();
-  }, [user?.id]); // Re-fetch when user changes
+    if (user) {
+      fetchContacts();
+    }
+  }, [user]);
 
-  // Enhanced search logic
   const searchContacts = (filters: SearchFilters) => {
     let results = [...contacts];
 
-    // Text-based search (now includes work experience)
+    // Boolean Search
     if (filters.query?.trim()) {
-      const query = filters.query.toLowerCase().trim();
-      results = results.filter(
-        (contact) =>
-          contact.name.toLowerCase().includes(query) ||
-          contact.jobTitle.toLowerCase().includes(query) ||
-          contact.company.toLowerCase().includes(query) ||
-          contact.location.toLowerCase().includes(query) ||
-          contact.industry.toLowerCase().includes(query) ||
-          (contact.workExperience &&
-            contact.workExperience.toLowerCase().includes(query)) ||
-          contact.skills.some((skill) => skill.toLowerCase().includes(query))
-      );
+      results = booleanSearch(results, filters.query);
     }
 
     // Job title filter
@@ -246,7 +308,6 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     setSearchResults(results);
   };
 
-  // Add new contact to backend + update state
   const addContact = async (
     contactData: Omit<Contact, "id" | "uploadedAt" | "isUnlocked">
   ) => {
@@ -256,7 +317,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...contactData,
-          uploadedBy: user?.id, // Add current user as uploader
+          uploadedBy: user?.id,
         }),
       });
       if (!res.ok) throw new Error("Failed to save contact");
@@ -266,7 +327,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
         ...savedContact,
         id: savedContact.id || savedContact._id,
         uploadedAt: new Date(savedContact.uploadedAt),
-        isUnlocked: false, // New contacts are locked for everyone initially
+        isUnlocked: false,
       };
 
       setContacts((prev) => [transformedContact, ...prev]);
@@ -276,7 +337,6 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     }
   };
 
-  // Unlock contact locally (after successful backend call)
   const unlockContact = (contactId: string) => {
     const updateContact = (contact: Contact) =>
       contact.id === contactId ? { ...contact, isUnlocked: true } : contact;
@@ -289,7 +349,6 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     setSearchResults([]);
   };
 
-  // New function to refresh contacts (useful after unlocking)
   const refreshContacts = async () => {
     await fetchContacts();
   };

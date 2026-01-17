@@ -1,53 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { useContacts, SearchFilters } from '../contexts/ContactContext';
-import SearchFiltersComponent from '../components/SearchFilters';
-import ContactCard from '../components/ContactCard';
-import { Search, Filter, SlidersHorizontal, Loader } from 'lucide-react';
+// src/pages/SearchPage.tsx
+import React, { useState, useEffect } from "react";
+import { useContacts, SearchFilters } from "../contexts/ContactContext";
+import SearchFiltersComponent from "../components/SearchFilters";
+import ContactCard from "../components/ContactCard";
+import { Search, Filter, SlidersHorizontal, Loader } from "lucide-react";
 
 const SearchPage: React.FC = () => {
-  const { contacts, searchResults, searchContacts, resetSearch, loading, error } = useContacts();
+  const {
+    contacts,
+    searchResults,
+    searchContacts,
+    resetSearch,
+    loading,
+    error,
+  } = useContacts();
   const [showFilters, setShowFilters] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [showBooleanHelp, setShowBooleanHelp] = useState(false); // ← أضف هذا السطر
 
   // Debug logs
   useEffect(() => {
-    console.log('🔍 SearchPage - contacts:', contacts.length);
-    console.log('📊 SearchPage - searchResults:', searchResults.length);
-    console.log('⏳ SearchPage - loading:', loading);
-    console.log('❌ SearchPage - error:', error);
+    console.log("🔍 SearchPage - contacts:", contacts.length);
+    console.log("📊 SearchPage - searchResults:", searchResults.length);
+    console.log("⏳ SearchPage - loading:", loading);
+    console.log("❌ SearchPage - error:", error);
   }, [contacts, searchResults, loading, error]);
 
   const handleSearch = (filters: SearchFilters) => {
-    console.log('🚀 SearchPage - handleSearch called with:', filters);
-    console.log('📝 SearchPage - current searchQuery:', searchQuery);
+    console.log("🚀 SearchPage - handleSearch called with:", filters);
+    console.log("📝 SearchPage - current searchQuery:", searchQuery);
 
     const searchFilters = {
       ...filters,
       query: searchQuery || filters.query,
     };
 
-    console.log('🔎 SearchPage - final search filters:', searchFilters);
+    console.log("🔎 SearchPage - final search filters:", searchFilters);
     searchContacts(searchFilters);
     setHasSearched(true);
   };
 
   const handleQuickSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('⚡ SearchPage - quick search with query:', searchQuery);
+    console.log("⚡ SearchPage - quick search with query:", searchQuery);
     handleSearch({ query: searchQuery });
   };
 
   const handleReset = () => {
-    console.log('🔄 SearchPage - reset called');
-    setSearchQuery('');
+    console.log("🔄 SearchPage - reset called");
+    setSearchQuery("");
     setHasSearched(false);
     resetSearch();
   };
 
   const displayContacts = hasSearched ? searchResults : [];
   const showAllContacts = () => {
-    console.log('👀 SearchPage - show all contacts');
+    console.log("👀 SearchPage - show all contacts");
     setHasSearched(true);
     searchContacts({});
   };
@@ -69,7 +78,9 @@ const SearchPage: React.FC = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-red-800 font-medium mb-2">Error Loading Contacts</h3>
+          <h3 className="text-red-800 font-medium mb-2">
+            Error Loading Contacts
+          </h3>
           <p className="text-red-600">{error}</p>
           <button
             onClick={() => window.location.reload()}
@@ -84,14 +95,13 @@ const SearchPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Search Professionals
         </h1>
         <p className="text-gray-600">
-          Find the right contacts with our advanced search filters ({contacts.length} contacts available)
+          Find the right contacts with our advanced search filters (
+          {contacts.length} contacts available)
         </p>
       </div>
 
@@ -99,22 +109,26 @@ const SearchPage: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
         <form onSubmit={handleQuickSearch} className="flex items-center space-x-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-4 h-5 w-5 text-gray-400" />
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => {
-                console.log('📝 Search query changed:', e.target.value);
-                setSearchQuery(e.target.value);
-              }}
-              placeholder="Search by name, job title, company, or skills..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder='Search with Boolean logic : "Frontend Developer" AND React NOT Angular'
+              className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
+            <button
+              type="button"
+              onClick={() => setShowBooleanHelp(true)}
+              className="absolute right-3 top-4 text-xs text-blue-600 hover:text-blue-700"
+            >
+              Help
+            </button>
           </div>
           <button
             type="button"
             onClick={() => {
-              console.log('🔧 Toggle filters:', !showFilters);
+              console.log("🔧 Toggle filters:", !showFilters);
               setShowFilters(!showFilters);
             }}
             className="flex items-center space-x-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -131,10 +145,34 @@ const SearchPage: React.FC = () => {
         </form>
       </div>
 
+      {/* Boolean Search Help */}
+      {showBooleanHelp && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="font-medium text-blue-800">Boolean Search Examples:</h4>
+            <button
+              onClick={() => setShowBooleanHelp(false)}
+              className="text-blue-600 hover:text-blue-800 text-sm"
+            >
+              Close
+            </button>
+          </div>
+          <ul className="text-sm text-blue-700 list-disc pl-5 space-y-1">
+            <li><code>React AND Node.js</code> - Must contain both</li>
+            <li><code>Python OR JavaScript</code> - Contains either</li>
+            <li><code>Manager NOT Sales</code> - Excludes "Sales"</li>
+            <li><code>"Senior Developer"</code> - Exact phrase</li>
+          </ul>
+        </div>
+      )}
+
       {/* Advanced Filters */}
       {showFilters && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-          <SearchFiltersComponent onSearch={handleSearch} onReset={handleReset} />
+          <SearchFiltersComponent
+            onSearch={handleSearch}
+            onReset={handleReset}
+          />
         </div>
       )}
 
@@ -143,7 +181,7 @@ const SearchPage: React.FC = () => {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">
-              {hasSearched ? 'Search Results' : 'All Contacts'}
+              {hasSearched ? "Search Results" : "All Contacts"}
             </h2>
             <div className="flex items-center space-x-4">
               {!hasSearched && (

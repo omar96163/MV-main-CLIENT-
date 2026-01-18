@@ -20,7 +20,7 @@ const GoogleSuccess = () => {
         .then((data) => {
           const user = data.user;
           setUser(user);
-          //localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("user", JSON.stringify(user));
           navigate("/dashboard");
         })
         .catch(() => {

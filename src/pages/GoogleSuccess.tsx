@@ -18,7 +18,9 @@ const GoogleSuccess = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          setUser(data);
+          const user = data.user;
+          setUser(user);
+          //localStorage.setItem("user", JSON.stringify(user));
           navigate("/dashboard");
         })
         .catch(() => {

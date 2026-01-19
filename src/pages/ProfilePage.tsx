@@ -481,7 +481,7 @@ const ProfilePage: React.FC = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Contact Information</h2>
 
-            {contact.isUnlocked ? (
+            {contact.isUnlocked || user?.id === contact?.uploadedBy ? (
               <div className="space-y-4">
                 <div className="flex items-center space-x-3 text-green-700 mb-4 p-3 bg-green-50 rounded-lg">
                   <Unlock className="w-5 h-5" />

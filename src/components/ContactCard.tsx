@@ -239,34 +239,29 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
 
       {/* Actions */}
       <div className="px-6 pb-6 flex space-x-3 mt-auto">
-        <Link
-          to={`/profile/${contact.id}`}
-          className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
-        >
-          <Eye className="w-4 h-4" />
-          <span>View Profile</span>
-        </Link>
-
-        {!contact.isUnlocked && (
+        {!contact.isUnlocked && user?.id !== contact?.uploadedBy ? (
           <button
             onClick={handleUnlock}
             disabled={!canUnlock}
-            className={`flex-1 whitespace-nowrap py-2 px-4 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${canUnlock
-              ? 'w-full bg-gradient-to-r from-[#0b07f0] to-[#0b07f0] text-white py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center space-x-2 hover:brightness-110 hover:scale-105 hover:shadow-lg'
-              : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            className={`flex-1 whitespace-nowrap py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${canUnlock
+              ? "w-full bg-gradient-to-r from-[#0b07f0] to-[#0b07f0] text-white font-medium hover:brightness-110 hover:scale-105 hover:shadow-lg"
+              : "bg-red-200 text-red-500 cursor-not-allowed"
               }`}
           >
             <Award className="w-4 h-4" />
             <span>
               {hasInsufficientPoints
-                ? 'Insufficient Points'
-                : 'Unlock (20 pts)'
-              }
+                ? "Insufficient Points"
+                : "Unlock (20 pts)"}
             </span>
           </button>
-
-
-        )}
+        ) : <Link
+          to={`/profile/${contact.id}`}
+          className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
+        >
+          <Eye className="w-4 h-4" />
+          <span>View Profile</span>
+        </Link>}
       </div>
     </div>
   );

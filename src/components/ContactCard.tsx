@@ -175,14 +175,8 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           </div>
         </div>
 
-
-
-
-
-
-
         {/* Contact Info - Locked/Unlocked */}
-        {contact.isUnlocked ? (
+        {contact.isUnlocked || user?.id === contact?.uploadedBy ? (
           <div className="space-y-2 mb-4 p-4 bg-green-50 rounded-lg border border-green-200">
             <div className="flex items-center space-x-2 text-green-700 mb-3">
               <Unlock className="w-5 h-5" />

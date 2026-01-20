@@ -40,17 +40,7 @@ const MyContactsPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Get user's unlocked contact IDs from dashboard
-        const unlockedIds = dashboard?.unlockedContactIds || [];
-
-        if (unlockedIds.length === 0) {
-          setContacts([]);
-          setFilteredContacts([]);
-          setLoading(false);
-          return;
-        }
-
-        // Fetch all profiles and filter for unlocked ones
+        // Fetch all profiles unlocked + uploaded
         const response = await fetch(
           `https://mv-main-server.vercel.app/profiles/mine?userId=${user.id}`
         );
@@ -103,7 +93,7 @@ const MyContactsPage: React.FC = () => {
     };
 
     fetchMyContacts();
-  }, [user?.id, dashboard?.unlockedContactIds]);
+  }, [user, dashboard]);
 
   // Filter contacts based on search (now includes work experience)
   useEffect(() => {

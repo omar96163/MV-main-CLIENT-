@@ -238,7 +238,7 @@ const ProfilePage: React.FC = () => {
           seniorityLevel: data.seniorityLevel || '',
           skills: Array.isArray(data.skills) ? data.skills : [],
           education: data.education || '',
-          workExperience: data.workExperience || '', // Include work experience
+          workExperience: data.workExperience || '',
           email: data.email,
           phone: data.phone,
           avatar: data.avatar || '',
@@ -246,7 +246,8 @@ const ProfilePage: React.FC = () => {
           uploadedBy: data.uploadedBy || '',
           uploadedAt: data.uploadedAt ? new Date(data.uploadedAt) : new Date(),
           hasContactInfo: !!(data.email || data.phone),
-          extraLinks: Array.isArray(data.extraLinks) ? data.extraLinks : []
+          extraLinks: Array.isArray(data.extraLinks) ? data.extraLinks : [],
+          linkedinUrl: data.linkedinUrl || ""
         };
 
         setContact(transformedContact);
@@ -487,6 +488,24 @@ const ProfilePage: React.FC = () => {
                   <Unlock className="w-5 h-5" />
                   <span className="font-semibold">Contact Details Unlocked</span>
                 </div>
+
+                {contact.linkedinUrl && (
+                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    <div>
+                      <a
+                        href={contact.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-blue-600 hover:text-blue-800 break-all"
+                      >
+                        LinkedIn Profile
+                      </a>
+                    </div>
+                  </div>
+                )}
 
                 {contact.email && (
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useContacts } from '../contexts/ContactContext';
 import { useDashboard } from '../contexts/DashboardContext';
-import { Upload, FileText, Plus, User, Linkedin, Globe, AlertCircle, CheckCircle, Loader, Download } from 'lucide-react';
+import { Plus, User, Linkedin, Globe, AlertCircle, CheckCircle, Loader, Download } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 const UploadPage: React.FC = () => {
@@ -28,7 +28,7 @@ const UploadPage: React.FC = () => {
     phone: '',
     avatar: '',
     linkedinUrl: '',
-    extraLinks: '',  // Will be split into array when submitting
+    extraLinks: '',
   });
 
   // LinkedIn scraping data
@@ -47,7 +47,7 @@ const UploadPage: React.FC = () => {
     processed: number;
     successful: number;
     failed: number;
-    results: Array<{ url: string; status: 'success' | 'failed'; data?: any; error?: string }>;
+    results: Array<{ url: string; status: 'success' | 'failed'; data?: any; error?: string; pointsEarned?: number }>;
   } | null>(null);
 
   const handleInputChange = (
@@ -155,10 +155,6 @@ const UploadPage: React.FC = () => {
         // Add https://www.
         formattedUrl = 'https://www.' + formattedUrl;
 
-        // Debug URL formatting
-        console.log('Original URL:', linkedinUrl);
-        console.log('Formatted URL:', formattedUrl);
-
         processedData = [{
           url: formattedUrl,
           phone: linkedinPhone.trim(),
@@ -197,7 +193,6 @@ const UploadPage: React.FC = () => {
         processedData = dataRows.map(row => {
           const columns = row.split(',').map(col => col.trim().replace(/"/g, ''));
 
-          // get links column for this row
           const linksRaw = extraLinksIndex !== -1 ? columns[extraLinksIndex] || '' : '';
 
           return {
@@ -207,18 +202,16 @@ const UploadPage: React.FC = () => {
             extraLinks: linksRaw
               .split(',')
               .map(s => s.trim())
-              .filter(Boolean) // removes empty entries
+              .filter(Boolean)
           };
         }).filter(item =>
           item.url && (item.url.includes('linkedin.com/in/') || item.url.includes('linkedin.com/pub/'))
         );
 
-
         if (processedData.length === 0) {
           toast.error('No valid LinkedIn URLs found in the CSV file');
           return;
         }
-
       }
 
       // Initialize processing results
@@ -230,9 +223,6 @@ const UploadPage: React.FC = () => {
         results: []
       };
       setProcessingResults(initialResults);
-
-      // Debug the URL being sent
-      console.log('Sending profiles for processing:', processedData);
 
       // Call backend API for LinkedIn scraping with phone info
       const response = await fetch('https://mv-main-server.vercel.app/api/scrape-linkedin', {
@@ -246,6 +236,14 @@ const UploadPage: React.FC = () => {
           userId: user.id
         })
       });
+
+      // ← التعديل الجديد: التعامل مع Free Limit
+      if (response.status === 429) {
+        const errorData = await response.json();
+        toast.error(errorData.message || 'Free limit exceeded.');
+        setIsProcessing(false);
+        return;
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
@@ -264,17 +262,12 @@ const UploadPage: React.FC = () => {
       ]);
 
       // Show success/failure messages
-      if (result.results.successful > 0) {
-        toast.success(`Successfully processed ${result.results.successful} profiles! +${result.pointsEarned} points`);
+      const totalPoints = result.totalPointsEarned || 0;
+      if (totalPoints > 0) {
+        toast.success(`Successfully processed ${result.results.successful} profiles ! \n+ ${totalPoints} points`);
       }
-      if (result.duplicates && result.duplicates.length > 0) {
-        // Show toast for duplicates
-        if (result.duplicates.length === 1) {
-          toast.error('We already have this account!');
-        } else {
-          toast.error(`${result.duplicates.length} profiles already exist in our database!`);
-        }
-      } else if (result.results.failed > 0) {
+
+      if (result.results.failed > 0) {
         toast.error(`Failed to process ${result.results.failed} profiles`);
       }
 
@@ -313,7 +306,6 @@ const UploadPage: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type - only CSV for structured data
       const validTypes = ['text/csv', 'application/vnd.ms-excel'];
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
@@ -325,12 +317,11 @@ const UploadPage: React.FC = () => {
       }
     }
   };
+  
   const exampleCSV = `url,phone,email,links
-    https://www.linkedin.com/in/johnsmith/,+1-555-0001,john@example.com,"https://a.com,https://b.com"
-    https://www.linkedin.com/in/janedoe/,+1-555-0002,jane@example.com,"https://c.com,https://d.com"
-    https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e.com,https://f.com"`;
-
-
+https://www.linkedin.com/in/johnsmith/,+1-555-0001,john@example.com,"https://a.com,https://b.com"
+https://www.linkedin.com/in/janedoe/,+1-555-0002,jane@example.com,"https://c.com,https://d.com"
+https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e.com,https://f.com"`;
 
   const downloadExample = () => {
     const blob = new Blob([exampleCSV], { type: 'text/csv;charset=utf-8;' });
@@ -623,7 +614,8 @@ const UploadPage: React.FC = () => {
                 <span>LinkedIn Profile Scraper</span>
               </h3>
               <p className="text-gray-600 mb-4">
-                Extract contact information from LinkedIn profiles automatically. Each successfully processed profile earns you 10 points.
+                Extract contact information from LinkedIn profiles automatically.<br></br>
+                <strong className="text-green-600"> New profiles earn 10 points, updates earn 5 points.</strong>
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-start space-x-2">
@@ -634,8 +626,9 @@ const UploadPage: React.FC = () => {
                       <li>Enter LinkedIn profile URL along with phone number</li>
                       <li>Upload a CSV file with URLs and phone numbers for bulk processing</li>
                       <li>Our backend service will scrape the profiles securely</li>
-                      <li>Your provided phone number will be used if not available on LinkedIn</li>
-                      <li>You earn 10 points for each successfully processed profile</li>
+                      <li><strong>New profiles: +10 points</strong></li>
+                      <li><strong>Existing profiles: +5 points (data updated)</strong></li>
+                      <li>You'll see exactly how many points you earned!</li>
                     </ul>
                   </div>
                 </div>
@@ -836,24 +829,6 @@ const UploadPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Progress Bar */}
-                {isProcessing && (
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm text-gray-600 mb-2">
-                      <span>Processing LinkedIn profiles...</span>
-                      <span>{processingResults.processed} / {processingResults.total}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${(processingResults.processed / processingResults.total) * 100}%`
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-
                 {/* Detailed Results */}
                 {processingResults.results.length > 0 && (
                   <div className="space-y-2">
@@ -878,15 +853,16 @@ const UploadPage: React.FC = () => {
                             </p>
                             {result.status === 'success' ? (
                               <p className="text-sm text-green-700">
-                                ✓ Successfully scraped: {result.data?.name || 'Profile data extracted'}
+                                ✓ Successfully processed ! {" "}
+                                {result.pointsEarned === 10 ? 'New profile (+10 points )' : 'Updated existing profile (+5 points )'}
+                                {result.data?.name && ` - ${result.data.name}`}
                                 {result.data?.jobTitle && ` - ${result.data.jobTitle}`}
                                 {result.data?.company && ` at ${result.data.company}`}
-                                {result.data?.phone && ` | Phone: ${result.data.phone}`}
                               </p>
                             ) : (
                               <p className="text-sm text-red-700">
-                                ✗ {result.error === 'Profile already exists in the database'
-                                  ? 'We already have this account!'
+                                ✗ {result.error === 'Free limit exceeded. Please upgrade your Apify plan.'
+                                  ? 'Free limit exceeded! Upgrade your plan to continue scraping.'
                                   : (result.error || 'Failed to scrape profile')}
                               </p>
                             )}

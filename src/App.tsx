@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ContactProvider } from "./contexts/ContactContext";
-import { DashboardProvider } from "./contexts/DashboardContext"; // <-- import DashboardProvider
+import { Toaster } from 'react-hot-toast';
+import { DashboardProvider } from "./contexts/DashboardContext";
 
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
@@ -10,7 +11,7 @@ import UploadPage from "./pages/UploadPage";
 import MagicAssistant from "./pages/MagicAssistant";
 import AdminPage from "./pages/AdminPage";
 import ProfilePage from "./pages/ProfilePage";
-import MyContactsPage from "./pages/MyContactsPage"; // <-- Add this import
+import MyContactsPage from "./pages/MyContactsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import GoogleSuccess from "./pages/GoogleSuccess";
@@ -97,9 +98,30 @@ function App() {
     <AuthProvider>
       <ContactProvider>
         <DashboardProvider>
-          {" "}
-          {/* Wrap DashboardProvider here */}
           <Router>
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                duration: 4000,
+                className:
+                  "flex items-center gap-3 bg-white text-slate-800 border border-slate-200 shadow-2xl rounded-2xl px-5 py-4",
+                success: {
+                  icon: "✅",
+                  className:
+                    "bg-emerald-600 text-white border-emerald-700",
+                },
+                error: {
+                  icon: "❌",
+                  className:
+                    "bg-red-600 text-white border-red-700",
+                },
+                loading: {
+                  icon: "⏳",
+                  className:
+                    "bg-blue-600 text-white border-blue-700",
+                },
+              }}
+            />
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
               <AppRoutes />
             </div>

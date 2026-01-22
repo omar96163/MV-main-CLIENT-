@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useContacts } from '../contexts/ContactContext';
 import { useDashboard } from '../contexts/DashboardContext';
 import { Plus, User, Linkedin, Globe, AlertCircle, CheckCircle, Loader, Download } from 'lucide-react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const UploadPage: React.FC = () => {
   const { user } = useAuth();
@@ -317,7 +317,7 @@ const UploadPage: React.FC = () => {
       }
     }
   };
-  
+
   const exampleCSV = `url,phone,email,links
 https://www.linkedin.com/in/johnsmith/,+1-555-0001,john@example.com,"https://a.com,https://b.com"
 https://www.linkedin.com/in/janedoe/,+1-555-0002,jane@example.com,"https://c.com,https://d.com"
@@ -336,7 +336,6 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <Toaster position="top-right" />
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Contacts</h1>
         <p className="text-gray-600">

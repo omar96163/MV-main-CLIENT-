@@ -6,6 +6,7 @@ import {
   Users,
   Upload,
   Unlock,
+  RefreshCw,
   Search,
   ArrowRight,
   Calendar,
@@ -27,16 +28,16 @@ const Dashboard: React.FC = () => {
     // Process recent activity from dashboard
     if (dashboard?.recentActivity && Array.isArray(dashboard.recentActivity)) {
       const processedActivities: RecentActivityItem[] = dashboard.recentActivity.map((activity, index) => {
-        // Determine if it's an upload or unlock action
-        const isUpload = activity.toLowerCase().includes('uploaded');
-        const isUnlock = activity.toLowerCase().includes('unlocked');
+        const isUpload = activity.toLowerCase().includes('uploaded linkedin profile');
+        const isUpdate = activity.toLowerCase().includes('updated linkedin profile');
+        const isUnlock = activity.toLowerCase().includes('unlocked linkedin profile');
 
         return {
           action: activity,
           timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
-          points: isUpload ? 10 : isUnlock ? -20 : 0
+          points: isUpload ? 10 : isUpdate ? 5 : isUnlock ? -20 : 0
         };
-      }).reverse(); // Show most recent first
+      }).reverse();
 
       setRecentActivities(processedActivities);
     }
@@ -204,17 +205,21 @@ const Dashboard: React.FC = () => {
         <div className="space-y-4">
           {recentActivities.length > 0 ? (
             recentActivities.slice(0, 5).map((activity, index) => {
-              const isUpload = activity.action.toLowerCase().includes('uploaded');
-              const isUnlock = activity.action.toLowerCase().includes('unlocked');
+              const isUpload = activity.action.toLowerCase().includes('uploaded linkedin profile');
+              const isUpdate = activity.action.toLowerCase().includes('updated linkedin profile');
+              const isUnlock = activity.action.toLowerCase().includes('unlocked linkedin profile');
 
               return (
-                <div key={index} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isUpload ? 'bg-green-100' : isUnlock ? 'bg-purple-100' : 'bg-blue-100'
+                <div key={index} className={`flex items-center space-x-4 p-4 bg-gray-50 rounded-lg ${isUpload ? 'bg-green-50' : isUpdate ? 'bg-purple-50' : isUnlock ? 'bg-red-50' : 'bg-blue-50'
+                  }`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isUpload ? 'bg-green-200' : isUpdate ? 'bg-purple-200' : isUnlock ? 'bg-red-200' : 'bg-blue-200'
                     }`}>
                     {isUpload ? (
                       <Upload className="w-5 h-5 text-green-600" />
+                    ) : isUpdate ? (
+                      <RefreshCw className="w-5 h-5 text-purple-600" />
                     ) : isUnlock ? (
-                      <Unlock className="w-5 h-5 text-purple-600" />
+                      <Unlock className="w-5 h-5 text-red-600" />
                     ) : (
                       <Award className="w-5 h-5 text-blue-600" />
                     )}
@@ -225,7 +230,11 @@ const Dashboard: React.FC = () => {
                     </p>
                     <p className="text-xs text-gray-500">
                       {activity.points !== undefined && activity.points !== 0 && (
-                        <span className={`font-medium ${activity.points > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <span className={`font-medium ${activity.points === 10 ? 'text-green-600' :
+                          activity.points === 5 ? 'text-purple-600' :
+                            activity.points < 0 ? 'text-red-600' :
+                              'text-gray-600'
+                          }`}>
                           {activity.points > 0 ? '+' : ''}{activity.points} points
                         </span>
                       )}

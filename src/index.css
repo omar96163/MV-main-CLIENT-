@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Base style */
+.toast-base {
+    @apply flex items-center gap-3 border shadow-2xl rounded-2xl px-5 py-4;
+  }
+  
+  /* Default toast */
+  .toast-default {
+    @apply bg-white text-slate-800 border-slate-200;
+  }
+  
+  /* Success */
+  .toast-success {
+    @apply bg-emerald-600 text-white border-emerald-700;
+  }
+  
+  /* Error */
+  .toast-error {
+    @apply bg-red-600 text-white border-red-700;
+  }
+  
+  /* Loading */
+  .toast-loading {
+    @apply bg-blue-600 text-white border-blue-700;
+  }
+  

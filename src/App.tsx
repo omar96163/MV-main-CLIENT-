@@ -102,24 +102,11 @@ function App() {
             <Toaster
               position="bottom-right"
               toastOptions={{
+                className: "toast-base toast-default",
+                success: { className: "toast-base toast-success" },
+                error: { className: "toast-base toast-error" },
+                loading: { className: "toast-base toast-loading" },
                 duration: 4000,
-                className:
-                  "flex items-center gap-3 bg-white text-slate-800 border border-slate-200 shadow-2xl rounded-2xl px-5 py-4",
-                success: {
-                  icon: "✅",
-                  className:
-                    "bg-emerald-600 text-white border-emerald-700",
-                },
-                error: {
-                  icon: "❌",
-                  className:
-                    "bg-red-600 text-white border-red-700",
-                },
-                loading: {
-                  icon: "⏳",
-                  className:
-                    "bg-blue-600 text-white border-blue-700",
-                },
               }}
             />
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">

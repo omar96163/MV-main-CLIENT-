@@ -52,8 +52,8 @@ const Dashboard: React.FC = () => {
       bgColor: 'bg-blue-50',
     },
     {
-      name: 'My Uploads',
-      value: dashboard?.myUploads ?? 0,
+      name: 'Uploaded Profiles',
+      value: dashboard?.uploadedProfiles ?? 0,
       icon: Users,
       color: 'text-green-600',
       bgColor: 'bg-green-50',

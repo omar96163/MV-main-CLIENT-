@@ -5,9 +5,9 @@ interface DashboardData {
   availablePoints: number;
   totalContacts?: number;
   unlockedProfiles?: number;
-  myUploads?: number;
+  uploadedProfiles?: number;
   uploadedProfileIds?: string[];
-  unlockedContactIds?: string[];
+  unlockedProfileIds?: string[];
   recentActivity?: string[];
   updatedAt?: Date;
 }
@@ -51,9 +51,9 @@ export const getDashboardForCurrentUser = async (): Promise<DashboardData> => {
       availablePoints: dashboardData.availablePoints || 0,
       totalContacts: dashboardData.totalContacts || 0,
       unlockedProfiles: dashboardData.unlockedProfiles || 0,
-      myUploads: dashboardData.myUploads || 0,
+      uploadedProfiles: dashboardData.uploadedProfiles || 0,
       uploadedProfileIds: dashboardData.uploadedProfileIds || [],
-      unlockedContactIds: dashboardData.unlockedContactIds || [],
+      unlockedProfileIds: dashboardData.unlockedProfileIds || [],
       recentActivity: Array.isArray(dashboardData.recentActivity) ? dashboardData.recentActivity : [],
       updatedAt: dashboardData.updatedAt ? new Date(dashboardData.updatedAt) : new Date()
     };

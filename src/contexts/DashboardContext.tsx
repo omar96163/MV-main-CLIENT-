@@ -15,9 +15,9 @@ interface DashboardData {
   availablePoints: number;
   totalContacts?: number;
   unlockedProfiles?: number;
-  myUploads?: number; // Changed to number for upload count
+  uploadedProfiles?: number; // Changed to number for upload count
   uploadedProfileIds?: string[]; // Array of profile IDs
-  unlockedContactIds?: string[]; // Array of unlocked contact IDs
+  unlockedProfileIds?: string[]; // Array of unlocked contact IDs
   recentActivity?: string[];
   updatedAt?: Date;
   // add other dashboard-related fields if needed
@@ -54,9 +54,9 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
           availablePoints: initialPoints,
           totalContacts: 0,
           unlockedProfiles: 0,
-          myUploads: 0,
+          uploadedProfiles: 0,
           uploadedProfileIds: [],
-          unlockedContactIds: [],
+          unlockedProfileIds: [],
           recentActivity: [],
         };
       }
@@ -89,9 +89,9 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         availablePoints: updatedDashboard.availablePoints || 0,
         totalContacts: updatedDashboard.totalContacts || 0,
         unlockedProfiles: updatedDashboard.unlockedProfiles || 0,
-        myUploads: updatedDashboard.myUploads || 0,
+        uploadedProfiles: updatedDashboard.uploadedProfiles || 0,
         uploadedProfileIds: updatedDashboard.uploadedProfileIds || [],
-        unlockedContactIds: updatedDashboard.unlockedContactIds || [],
+        unlockedProfileIds: updatedDashboard.unlockedProfileIds || [],
         recentActivity: Array.isArray(updatedDashboard.recentActivity)
           ? updatedDashboard.recentActivity
           : [],
@@ -111,9 +111,9 @@ export const DashboardProvider = ({ children }: { children: ReactNode }) => {
         availablePoints: 0,
         totalContacts: 0,
         unlockedProfiles: 0,
-        myUploads: 0,
+        uploadedProfiles: 0,
         uploadedProfileIds: [],
-        unlockedContactIds: [],
+        unlockedProfileIds: [],
         recentActivity: [],
         updatedAt: new Date(),
       });

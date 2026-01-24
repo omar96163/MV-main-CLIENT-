@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useDashboard } from '../contexts/DashboardContext';
-import { useContacts, Contact } from '../contexts/ContactContext';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useDashboard } from "../contexts/DashboardContext";
+import { useContacts, Contact } from "../contexts/ContactContext";
 import {
   MapPin,
   Building,
@@ -15,8 +15,8 @@ import {
   User,
   Lock,
   AlertCircle,
-  Briefcase
-} from 'lucide-react';
+  Briefcase,
+} from "lucide-react";
 
 interface ContactCardProps {
   contact: Contact;
@@ -24,7 +24,7 @@ interface ContactCardProps {
 
 const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
   const { user } = useAuth();
-  const { dashboard, updatePoints } = useDashboard();
+  const { dashboard, refreshDashboard } = useDashboard();
   const { unlockContact } = useContacts();
 
   // Get points from dashboard context instead of user
@@ -49,24 +49,23 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to unlock contact');
+        throw new Error(errorData.error || "Failed to unlock contact");
       }
 
       const result = await response.json();
 
       // Update local state with the response
-      updatePoints(result.remainingPoints);
+      await refreshDashboard();
       unlockContact(contact.id);
 
-      console.log('Contact unlocked successfully:', result);
-
+      console.log("Contact unlocked successfully:", result);
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Error unlocking contact:', error);
+        console.error("Error unlocking contact:", error);
         alert(`Failed to unlock contact: ${error.message}`);
       } else {
-        console.error('Unknown error unlocking contact:', error);
-        alert('Failed to unlock contact: Unknown error');
+        console.error("Unknown error unlocking contact:", error);
+        alert("Failed to unlock contact: Unknown error");
       }
     }
   };
@@ -116,7 +115,9 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
               {contact.location ? (
                 <span className="text-sm">{contact.location}</span>
               ) : (
-                <span className="text-sm italic text-gray-400">No location</span>
+                <span className="text-sm italic text-gray-400">
+                  No location
+                </span>
               )}
             </div>
           </div>
@@ -146,7 +147,6 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
             <p className="text-sm italic text-gray-400">No work experience</p>
           )}
         </div>
-
 
         {/* Skills */}
         <div className="mb-4">
@@ -180,7 +180,9 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           <div className="space-y-2 mb-4 p-4 bg-green-50 rounded-lg border border-green-200">
             <div className="flex items-center space-x-2 text-green-700 mb-3">
               <Unlock className="w-5 h-5" />
-              <span className="text-sm font-semibold">Contact Details Unlocked</span>
+              <span className="text-sm font-semibold">
+                Contact Details Unlocked
+              </span>
             </div>
             {contact.email && (
               <div className="flex items-center space-x-2 text-gray-700">
@@ -204,7 +206,9 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 mb-4">
             <div className="flex items-center justify-center space-x-2 text-gray-500 mb-3">
               <Lock className="w-5 h-5" />
-              <span className="text-sm font-medium">Contact Information Locked</span>
+              <span className="text-sm font-medium">
+                Contact Information Locked
+              </span>
             </div>
 
             {/* Points Status */}
@@ -212,7 +216,10 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
               <div className="flex items-center justify-center space-x-2 mb-2">
                 <Award className="w-4 h-4 text-purple-600" />
                 <span className="text-sm text-gray-600">
-                  Your Points: <span className="font-semibold text-purple-600">{availablePoints}</span>
+                  Your Points:{" "}
+                  <span className="font-semibold text-purple-600">
+                    {availablePoints}
+                  </span>
                 </span>
               </div>
 

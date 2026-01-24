@@ -193,7 +193,7 @@ const ProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { dashboard, updatePoints } = useDashboard();
+  const { dashboard, refreshDashboard } = useDashboard();
   const { unlockContact, refreshContacts } = useContacts();
 
   const [contact, setContact] = useState<Contact | null>(null);
@@ -288,7 +288,7 @@ const ProfilePage: React.FC = () => {
 
       // Update points and refresh data
       await Promise.all([
-        updatePoints(result.remainingPoints),
+        refreshDashboard(),
         refreshContacts()
       ]);
 

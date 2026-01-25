@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.tsx
 import React, {
   createContext,
   useContext,
@@ -75,7 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       email: data.user.email,
       name: data.user.name,
       points: 0,
-      isAdmin: false,
+      isAdmin: data.user.isAdmin,
       avatar: "",
     };
 
@@ -126,7 +125,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       email: data.user.email,
       name: data.user.name,
       points: 0,
-      isAdmin: false,
+      isAdmin: data.user.isAdmin,
       avatar: "",
     };
 

@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useDashboard } from '../contexts/DashboardContext';
 import {
-  Users,
   Search,
   Upload,
   BarChart3,
@@ -61,8 +60,8 @@ const Navbar: React.FC = () => {
                     key={item.name}
                     to={item.href}
                     className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${isActive
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                       }`}
                   >
                     <Icon className="w-4 h-4" />
@@ -132,8 +131,8 @@ const Navbar: React.FC = () => {
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${isActive
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                 >
                   <Icon className="w-4 h-4" />

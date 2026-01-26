@@ -27,16 +27,55 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     // Process recent activity from dashboard
     if (dashboard?.recentActivity && Array.isArray(dashboard.recentActivity)) {
-      const processedActivities: RecentActivityItem[] = dashboard.recentActivity.map((activity, index) => {
-        const isUpload = activity.toLowerCase().includes('uploaded linkedin profile');
-        const isUpdate = activity.toLowerCase().includes('updated linkedin profile');
-        const isUnlock = activity.toLowerCase().includes('unlocked linkedin profile');
-
-        return {
-          action: activity,
-          timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
-          points: isUpload ? 10 : isUpdate ? 5 : isUnlock ? -20 : 0
-        };
+      const processedActivities: RecentActivityItem[] = dashboard.recentActivity.map((activity) => {
+        // Upload messages
+        if (activity.toLowerCase().includes('uploaded linkedin profile')) {
+          return {
+            action: activity,
+            timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
+            points: 10
+          };
+        }
+        // Update messages  
+        else if (activity.toLowerCase().includes('updated linkedin profile')) {
+          return {
+            action: activity,
+            timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
+            points: 5
+          };
+        }
+        // Unlock messages
+        else if (activity.toLowerCase().includes('unlocked linkedin profile')) {
+          return {
+            action: activity,
+            timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
+            points: -20
+          };
+        }
+        // Refund messages (when admin deletes contact)
+        else if (activity.toLowerCase().includes('refunded 20 points')) {
+          return {
+            action: activity,
+            timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
+            points: 20
+          };
+        }
+        // Deduct messages (when admin deletes your uploaded contact)
+        else if (activity.toLowerCase().includes('deducted 10 points')) {
+          return {
+            action: activity,
+            timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
+            points: -10
+          };
+        }
+        // Default
+        else {
+          return {
+            action: activity,
+            timestamp: dashboard.updatedAt ? new Date(dashboard.updatedAt).toLocaleDateString() : 'Recent',
+            points: 0
+          };
+        }
       }).reverse();
 
       setRecentActivities(processedActivities);
@@ -205,24 +244,47 @@ const Dashboard: React.FC = () => {
         <div className="space-y-4">
           {recentActivities.length > 0 ? (
             recentActivities.slice(0, 5).map((activity, index) => {
-              const isUpload = activity.action.toLowerCase().includes('uploaded linkedin profile');
-              const isUpdate = activity.action.toLowerCase().includes('updated linkedin profile');
-              const isUnlock = activity.action.toLowerCase().includes('unlocked linkedin profile');
+              // Determine activity type and colors
+              let bgColor = 'bg-blue-50';
+              let iconBgColor = 'bg-blue-200';
+              let IconComponent = Award;
+              let iconColor = 'text-blue-600';
+
+              if (activity.action.toLowerCase().includes('uploaded linkedin profile')) {
+                bgColor = 'bg-green-50';
+                iconBgColor = 'bg-green-200';
+                IconComponent = Upload;
+                iconColor = 'text-green-600';
+              }
+              else if (activity.action.toLowerCase().includes('updated linkedin profile')) {
+                bgColor = 'bg-purple-50';
+                iconBgColor = 'bg-purple-200';
+                IconComponent = RefreshCw;
+                iconColor = 'text-purple-600';
+              }
+              else if (activity.action.toLowerCase().includes('unlocked linkedin profile')) {
+                bgColor = 'bg-red-50';
+                iconBgColor = 'bg-red-200';
+                IconComponent = Unlock;
+                iconColor = 'text-red-600';
+              }
+              else if (activity.action.toLowerCase().includes('refunded 20 points')) {
+                bgColor = 'bg-green-50';
+                iconBgColor = 'bg-green-200';
+                IconComponent = Award;
+                iconColor = 'text-green-600';
+              }
+              else if (activity.action.toLowerCase().includes('deducted 10 points')) {
+                bgColor = 'bg-red-50';
+                iconBgColor = 'bg-red-200';
+                IconComponent = Award;
+                iconColor = 'text-red-600';
+              }
 
               return (
-                <div key={index} className={`flex items-center space-x-4 p-4 bg-gray-50 rounded-lg ${isUpload ? 'bg-green-50' : isUpdate ? 'bg-purple-50' : isUnlock ? 'bg-red-50' : 'bg-blue-50'
-                  }`}>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isUpload ? 'bg-green-200' : isUpdate ? 'bg-purple-200' : isUnlock ? 'bg-red-200' : 'bg-blue-200'
-                    }`}>
-                    {isUpload ? (
-                      <Upload className="w-5 h-5 text-green-600" />
-                    ) : isUpdate ? (
-                      <RefreshCw className="w-5 h-5 text-purple-600" />
-                    ) : isUnlock ? (
-                      <Unlock className="w-5 h-5 text-red-600" />
-                    ) : (
-                      <Award className="w-5 h-5 text-blue-600" />
-                    )}
+                <div key={index} className={`flex items-center space-x-4 p-4 rounded-lg ${bgColor}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${iconBgColor}`}>
+                    <IconComponent className={`w-5 h-5 ${iconColor}`} />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-900">
@@ -230,10 +292,7 @@ const Dashboard: React.FC = () => {
                     </p>
                     <p className="text-xs text-gray-500">
                       {activity.points !== undefined && activity.points !== 0 && (
-                        <span className={`font-medium ${activity.points === 10 ? 'text-green-600' :
-                          activity.points === 5 ? 'text-purple-600' :
-                            activity.points < 0 ? 'text-red-600' :
-                              'text-gray-600'
+                        <span className={`font-medium ${activity.points > 0 ? 'text-green-600' : 'text-red-600'
                           }`}>
                           {activity.points > 0 ? '+' : ''}{activity.points} points
                         </span>

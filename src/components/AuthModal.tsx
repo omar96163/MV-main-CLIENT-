@@ -54,7 +54,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
     try {
       await verifySignup(email, verificationCode);
       toast.success("Account created successfully! Welcome aboard.");
-      // لا حاجة لـ onClose() — الـ redirect هيحصل في الـ context
     } catch (error: any) {
       console.error("Signup verification error:", error);
       toast.error(error?.message || "Invalid or expired verification code");

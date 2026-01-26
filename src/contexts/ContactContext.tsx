@@ -235,10 +235,13 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
     // LinkedIn URL
     if (filters.linkedinUrl?.trim()) {
-      const url = filters.linkedinUrl.trim().toLowerCase();
-      results = results.filter(contact =>
-        contact.linkedinUrl?.toLowerCase().includes(url)
-      );
+      const searchUrl = filters.linkedinUrl.trim().toLowerCase().replace(/\/+$/, '');
+
+      results = results.filter(contact => {
+        if (!contact.linkedinUrl) return false;
+        const contactUrl = contact.linkedinUrl.toLowerCase().replace(/\/+$/, '');
+        return contactUrl === searchUrl;
+      });
     }
 
     // Job title filter

@@ -91,14 +91,15 @@ const LandingPage: React.FC = () => {
             <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-5 leading-relaxed">
               Get Real Contacts for Free.
               <span className="text-xl md:text-3xl mt-1 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
-                Unlock a World of Opportunities,<br></br> Share Your Professional Data.
+                Unlock a World of Opportunities,<br></br> Share Your
+                Professional Data.
               </span>
               <p className="text-3xl">Instantly</p>
             </h1>
             <p className="text-xl md:text-xl text-gray-600 mb-12 leading-relaxed">
               Join Thousands of professionals exchanging verified contacts
-              daily.<br></br> Earn points by sharing, unlock valuable leads for your
-              business.
+              daily.<br></br> Earn points by sharing, unlock valuable leads for
+              your business.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">

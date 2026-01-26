@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useContacts } from '../contexts/ContactContext';
+import React, { useState, useEffect } from "react";
+import { useContacts } from "../contexts/ContactContext";
 import { useDashboard } from "../contexts/DashboardContext";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import {
   Users,
   Download,
@@ -15,8 +15,8 @@ import {
   Trash2,
   Building,
   MapPin,
-  Calendar
-} from 'lucide-react';
+  Calendar,
+} from "lucide-react";
 
 // User interface
 interface AdminUser {
@@ -57,16 +57,20 @@ interface AdminContact {
 const AdminPage: React.FC = () => {
   const { contacts: userContacts, refreshContacts } = useContacts();
   const { refreshDashboard } = useDashboard();
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'contacts'>('overview');
+  const [activeTab, setActiveTab] = useState<"overview" | "users" | "contacts">(
+    "overview",
+  );
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [adminContacts, setAdminContacts] = useState<AdminContact[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Modal state
-  const [selectedContact, setSelectedContact] = useState<AdminContact | null>(null);
+  const [selectedContact, setSelectedContact] = useState<AdminContact | null>(
+    null,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch users data
@@ -74,34 +78,39 @@ const AdminPage: React.FC = () => {
     try {
       setLoadingUsers(true);
       setError(null);
-      const token = localStorage.getItem('token');
-      const response = await fetch('https://mv-main-server.vercel.app/api/admin/users', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "https://mv-main-server.vercel.app/api/admin/users",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch users');
+        throw new Error(errorData.error || "Failed to fetch users");
       }
 
       const userData = await response.json();
-      setUsers(userData.map((user: any) => ({
-        id: user.id || user._id,
-        name: user.name || user.email,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        points: user.points || 0,
-        uploads: user.uploads || 0,
-        unlocks: user.unlocks || 0,
-        joinedAt: new Date(user.joinedAt || user.createdAt),
-      })));
+      setUsers(
+        userData.map((user: any) => ({
+          id: user.id || user._id,
+          name: user.name || user.email,
+          email: user.email,
+          isAdmin: user.isAdmin,
+          points: user.points || 0,
+          uploads: user.uploads || 0,
+          unlocks: user.unlocks || 0,
+          joinedAt: new Date(user.joinedAt || user.createdAt),
+        })),
+      );
     } catch (err) {
-      console.error('Error fetching users:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load user data');
-      toast.error(err instanceof Error ? err.message : 'Failed to load users');
+      console.error("Error fetching users:", err);
+      setError(err instanceof Error ? err.message : "Failed to load user data");
+      toast.error(err instanceof Error ? err.message : "Failed to load users");
     } finally {
       setLoadingUsers(false);
     }
@@ -112,46 +121,59 @@ const AdminPage: React.FC = () => {
     try {
       setLoadingContacts(true);
       setError(null);
-      const token = localStorage.getItem('token');
-      const response = await fetch('https://mv-main-server.vercel.app/api/admin/contacts', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "https://mv-main-server.vercel.app/api/admin/contacts",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch contacts');
+        throw new Error(errorData.error || "Failed to fetch contacts");
       }
 
       const contactsData = await response.json();
-      setAdminContacts(contactsData.map((contact: any) => ({
-        id: contact.id || contact._id,
-        name: contact.name || '',
-        jobTitle: contact.jobTitle || '',
-        company: contact.company || '',
-        location: contact.location || '',
-        industry: contact.industry || '',
-        experience: contact.experience || 0,
-        seniorityLevel: contact.seniorityLevel || '',
-        skills: Array.isArray(contact.skills) ? contact.skills : [],
-        education: contact.education || '',
-        workExperience: contact.workExperience || '',
-        email: contact.email || '',
-        phone: contact.phone || '',
-        avatar: contact.avatar || 'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-        linkedinUrl: contact.linkedinUrl || '',
-        linkedinId: contact.linkedinId || '',
-        extraLinks: Array.isArray(contact.extraLinks) ? contact.extraLinks : [],
-        uploadedBy: contact.uploadedBy || '',
-        uploadedAt: new Date(contact.uploadedAt),
-        uploaderName: contact.uploaderName || 'Unknown',
-      })));
+      setAdminContacts(
+        contactsData.map((contact: any) => ({
+          id: contact.id || contact._id,
+          name: contact.name || "",
+          jobTitle: contact.jobTitle || "",
+          company: contact.company || "",
+          location: contact.location || "",
+          industry: contact.industry || "",
+          experience: contact.experience || 0,
+          seniorityLevel: contact.seniorityLevel || "",
+          skills: Array.isArray(contact.skills) ? contact.skills : [],
+          education: contact.education || "",
+          workExperience: contact.workExperience || "",
+          email: contact.email || "",
+          phone: contact.phone || "",
+          avatar:
+            contact.avatar ||
+            "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+          linkedinUrl: contact.linkedinUrl || "",
+          linkedinId: contact.linkedinId || "",
+          extraLinks: Array.isArray(contact.extraLinks)
+            ? contact.extraLinks
+            : [],
+          uploadedBy: contact.uploadedBy || "",
+          uploadedAt: new Date(contact.uploadedAt),
+          uploaderName: contact.uploaderName || "Unknown",
+        })),
+      );
     } catch (err) {
-      console.error('Error fetching contacts:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load contact data');
-      toast.error(err instanceof Error ? err.message : 'Failed to load contacts');
+      console.error("Error fetching contacts:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to load contact data",
+      );
+      toast.error(
+        err instanceof Error ? err.message : "Failed to load contacts",
+      );
     } finally {
       setLoadingContacts(false);
     }
@@ -177,72 +199,78 @@ const AdminPage: React.FC = () => {
   // Stats calculation
   const stats = [
     {
-      name: 'Total Users',
+      name: "Total Users",
       value: users.length,
       icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
     },
     {
-      name: 'Total Contacts',
+      name: "Total Contacts",
       value: adminContacts.length,
       icon: Database,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      color: "text-green-600",
+      bgColor: "bg-green-50",
     },
     {
-      name: 'Total Points Distributed',
+      name: "Total Points Distributed",
       value: users.reduce((sum, user) => sum + user.points, 0),
       icon: Award,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
     },
     {
-      name: 'Active This Month',
-      value: users.filter(user =>
-        new Date().getMonth() === user.joinedAt.getMonth() &&
-        new Date().getFullYear() === user.joinedAt.getFullYear()
+      name: "Active This Month",
+      value: users.filter(
+        (user) =>
+          new Date().getMonth() === user.joinedAt.getMonth() &&
+          new Date().getFullYear() === user.joinedAt.getFullYear(),
       ).length,
       icon: TrendingUp,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
     },
   ];
 
   // Export all data as JSON
   const handleExportAllData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('https://mv-main-server.vercel.app/api/admin/export', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "https://mv-main-server.vercel.app/api/admin/export",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to export data');
+        throw new Error(errorData.error || "Failed to export data");
       }
 
       const exportData = await response.json();
       const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-        type: 'application/json;charset=utf-8;'
+        type: "application/json;charset=utf-8;",
       });
 
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `platform_export_${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `platform_export_${
+        new Date().toISOString().split("T")[0]
+      }.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success('Data exported successfully');
+      toast.success("Data exported successfully");
     } catch (err) {
-      console.error('Export error:', err);
-      toast.error(err instanceof Error ? err.message : 'Failed to export data');
+      console.error("Export error:", err);
+      toast.error(err instanceof Error ? err.message : "Failed to export data");
     }
   };
 
@@ -250,88 +278,120 @@ const AdminPage: React.FC = () => {
   const handleExportContactsCSV = () => {
     try {
       if (adminContacts.length === 0) {
-        toast.error('No contacts to export');
+        toast.error("No contacts to export");
         return;
       }
 
       const headers = [
-        'Name', 'Job Title', 'Company', 'Industry', 'Experience',
-        'Uploaded By', 'Uploader Name', 'Uploaded At'
+        "Name",
+        "Job Title",
+        "Company",
+        "Industry",
+        "Experience",
+        "Uploaded By",
+        "Uploader Name",
+        "Uploaded At",
       ];
 
       const csvContent = [
-        headers.join(','),
-        ...adminContacts.map(contact =>
-          `"${contact.name.replace(/"/g, '""')}","${contact.jobTitle.replace(/"/g, '""')}","${contact.company.replace(/"/g, '""')}","${contact.industry.replace(/"/g, '""')}",${contact.experience},"${contact.uploadedBy.replace(/"/g, '""')}","${contact.uploaderName.replace(/"/g, '""')}","${contact.uploadedAt.toISOString()}"`
-        )
-      ].join('\n');
+        headers.join(","),
+        ...adminContacts.map(
+          (contact) =>
+            `"${contact.name.replace(/"/g, '""')}","${contact.jobTitle.replace(
+              /"/g,
+              '""',
+            )}","${contact.company.replace(
+              /"/g,
+              '""',
+            )}","${contact.industry.replace(/"/g, '""')}",${
+              contact.experience
+            },"${contact.uploadedBy.replace(
+              /"/g,
+              '""',
+            )}","${contact.uploaderName.replace(
+              /"/g,
+              '""',
+            )}","${contact.uploadedAt.toISOString()}"`,
+        ),
+      ].join("\n");
 
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `contacts_export_${new Date().toISOString().split('T')[0]}.csv`;
+      link.download = `contacts_export_${
+        new Date().toISOString().split("T")[0]
+      }.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success('Contacts exported successfully');
+      toast.success("Contacts exported successfully");
     } catch (err) {
-      console.error('Export error:', err);
-      toast.error('Failed to export contacts');
+      console.error("Export error:", err);
+      toast.error("Failed to export contacts");
     }
   };
 
   // Handle contact delete
   const handleDeleteContact = async (contactId: string) => {
-    if (!confirm('Are you sure you want to delete this contact?')) return;
+    if (!confirm("Are you sure you want to delete this contact?")) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://mv-main-server.vercel.app/api/admin/contacts/${contactId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `https://mv-main-server.vercel.app/api/admin/contacts/${contactId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to delete contact');
+        throw new Error(result.error || "Failed to delete contact");
       }
 
       // Update local state immediately
-      setAdminContacts(prev => prev.filter(contact => contact.id !== contactId));
+      setAdminContacts((prev) =>
+        prev.filter((contact) => contact.id !== contactId),
+      );
       refreshContacts();
 
-      toast.success('Contact deleted successfully');
+      toast.success("Contact deleted successfully");
       await refreshDashboard();
       await fetchUsers();
     } catch (err) {
-      console.error('Error deleting contact:', err);
-      toast.error(err instanceof Error ? err.message : 'Failed to delete contact');
+      console.error("Error deleting contact:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete contact",
+      );
     }
   };
 
   // Filter users based on search
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Filter contacts based on search
-  const filteredContacts = adminContacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.uploaderName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredContacts = adminContacts.filter(
+    (contact) =>
+      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.uploaderName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Render loading state for each tab
   const renderLoadingState = () => {
-    if (activeTab === 'users' && loadingUsers) {
+    if (activeTab === "users" && loadingUsers) {
       return (
         <div className="flex items-center justify-center py-20">
           <Loader className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
@@ -339,7 +399,7 @@ const AdminPage: React.FC = () => {
       );
     }
 
-    if (activeTab === 'contacts' && loadingContacts) {
+    if (activeTab === "contacts" && loadingContacts) {
       return (
         <div className="flex items-center justify-center py-20">
           <Loader className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
@@ -352,18 +412,22 @@ const AdminPage: React.FC = () => {
 
   // Render empty state for each tab
   const renderEmptyState = () => {
-    if (activeTab === 'users' && !loadingUsers && filteredUsers.length === 0) {
+    if (activeTab === "users" && !loadingUsers && filteredUsers.length === 0) {
       return (
         <div className="text-center py-8 text-gray-500">
-          {searchTerm ? 'No users match your search' : 'No users found'}
+          {searchTerm ? "No users match your search" : "No users found"}
         </div>
       );
     }
 
-    if (activeTab === 'contacts' && !loadingContacts && filteredContacts.length === 0) {
+    if (
+      activeTab === "contacts" &&
+      !loadingContacts &&
+      filteredContacts.length === 0
+    ) {
       return (
         <div className="text-center py-8 text-gray-500">
-          {searchTerm ? 'No contacts match your search' : 'No contacts found'}
+          {searchTerm ? "No contacts match your search" : "No contacts found"}
         </div>
       );
     }
@@ -373,62 +437,76 @@ const AdminPage: React.FC = () => {
 
   // Handle delete user
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://mv-main-server.vercel.app/api/admin/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `https://mv-main-server.vercel.app/api/admin/users/${userId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to delete user');
+        throw new Error(result.error || "Failed to delete user");
       }
 
-      setUsers(prev => prev.filter(user => user.id !== userId));
-      toast.success('User deleted successfully');
+      setUsers((prev) => prev.filter((user) => user.id !== userId));
+      toast.success("User deleted successfully");
       await refreshDashboard();
       await fetchAdminContacts();
     } catch (err) {
-      console.error('Error deleting user:', err);
-      toast.error(err instanceof Error ? err.message : 'Failed to delete user');
+      console.error("Error deleting user:", err);
+      toast.error(err instanceof Error ? err.message : "Failed to delete user");
     }
   };
 
   // Handle toggle admin status
   const handleToggleAdmin = async (userId: string, makeAdmin: boolean) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://mv-main-server.vercel.app/api/admin/users/${userId}/toggle-admin`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `https://mv-main-server.vercel.app/api/admin/users/${userId}/toggle-admin`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || `Failed to ${makeAdmin ? 'promote' : 'demote'} user`);
+        throw new Error(
+          result.error || `Failed to ${makeAdmin ? "promote" : "demote"} user`,
+        );
       }
 
-      setUsers(prev => prev.map(user =>
-        user.id === userId
-          ? { ...user, isAdmin: makeAdmin }
-          : user
-      ));
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === userId ? { ...user, isAdmin: makeAdmin } : user,
+        ),
+      );
 
-      toast.success(`User ${makeAdmin ? 'promoted to' : 'removed from'} admin successfully`);
+      toast.success(
+        `User ${makeAdmin ? "promoted to" : "removed from"} admin successfully`,
+      );
     } catch (err) {
-      console.error('Error toggling admin status:', err);
-      toast.error(err instanceof Error ? err.message : `Failed to ${makeAdmin ? 'promote' : 'demote'} user`);
+      console.error("Error toggling admin status:", err);
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : `Failed to ${makeAdmin ? "promote" : "demote"} user`,
+      );
     }
   };
 
@@ -439,13 +517,26 @@ const AdminPage: React.FC = () => {
         <div className="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900">Contact Details</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Contact Details
+            </h2>
             <button
               onClick={closeModal}
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -487,109 +578,143 @@ const AdminPage: React.FC = () => {
             <div className="space-y-6">
               {/* Personal Information */}
               <div className="bg-gray-50 rounded-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4 text-lg">Personal Information</h4>
+                <h4 className="font-semibold text-gray-900 mb-4 text-lg">
+                  Personal Information
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <span className="text-sm text-gray-500">Full Name :</span>
-                    <p className="text-gray-900 font-medium">{selectedContact.name || 'N/A'}</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedContact.name || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">Job Title :</span>
-                    <p className="text-gray-900 font-medium">{selectedContact.jobTitle || 'N/A'}</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedContact.jobTitle || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">Company :</span>
-                    <p className="text-gray-900 font-medium">{selectedContact.company || 'N/A'}</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedContact.company || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">Industry :</span>
-                    <p className="text-gray-900 font-medium">{selectedContact.industry || 'N/A'}</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedContact.industry || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">Experience :</span>
-                    <p className="text-gray-900 font-medium">{selectedContact.experience || 0} years</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedContact.experience || 0} years
+                    </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Seniority Level :</span>
-                    <p className="text-gray-900 font-medium">{selectedContact.seniorityLevel || 'N/A'}</p>
+                    <span className="text-sm text-gray-500">
+                      Seniority Level :
+                    </span>
+                    <p className="text-gray-900 font-medium">
+                      {selectedContact.seniorityLevel || "N/A"}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Contact Information */}
               <div className="bg-blue-50 rounded-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4 text-lg">Contact Information</h4>
+                <h4 className="font-semibold text-gray-900 mb-4 text-lg">
+                  Contact Information
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <span className="text-sm text-gray-500">Email :</span>
-                    <p className="text-blue-700 font-medium break-all">{selectedContact.email || 'N/A'}</p>
+                    <p className="text-blue-700 font-medium break-all">
+                      {selectedContact.email || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">Phone :</span>
-                    <p className="text-blue-700 font-medium">{selectedContact.phone || 'N/A'}</p>
+                    <p className="text-blue-700 font-medium">
+                      {selectedContact.phone || "N/A"}
+                    </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">LinkedIn URL : </span>
+                    <span className="text-sm text-gray-500">
+                      LinkedIn URL :{" "}
+                    </span>
                     <a
                       href={selectedContact.linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:text-blue-800 break-all"
                     >
-                      {selectedContact.linkedinUrl || 'N/A'}
+                      {selectedContact.linkedinUrl || "N/A"}
                     </a>
                   </div>
-                  {selectedContact.extraLinks && selectedContact.extraLinks.length > 0 && (
-                    <div>
-                      <span className="text-sm text-gray-500">Extra Links :</span>
-                      <div className="space-y-1">
-                        {selectedContact.extraLinks.map((link, index) => (
-                          <a
-                            key={index}
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 text-sm break-all block"
-                          >
-                            {link}
-                          </a>
-                        ))}
+                  {selectedContact.extraLinks &&
+                    selectedContact.extraLinks.length > 0 && (
+                      <div>
+                        <span className="text-sm text-gray-500">
+                          Extra Links :
+                        </span>
+                        <div className="space-y-1">
+                          {selectedContact.extraLinks.map((link, index) => (
+                            <a
+                              key={index}
+                              href={link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 text-sm break-all block"
+                            >
+                              {link}
+                            </a>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
 
               {/* Professional Details */}
               <div className="bg-purple-50 rounded-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4 text-lg">Professional Details</h4>
+                <h4 className="font-semibold text-gray-900 mb-4 text-lg">
+                  Professional Details
+                </h4>
                 <div className="space-y-4">
                   {selectedContact.education && (
                     <div>
                       <span className="text-sm text-gray-500">Education :</span>
-                      <p className="text-gray-900">{selectedContact.education}</p>
+                      <p className="text-gray-900">
+                        {selectedContact.education}
+                      </p>
                     </div>
                   )}
 
-                  {selectedContact.skills && selectedContact.skills.length > 0 && (
-                    <div>
-                      <span className="text-sm text-gray-500">Skills :</span>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {selectedContact.skills.map((skill, index) => (
-                          <span
-                            key={index}
-                            className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm"
-                          >
-                            {skill}
-                          </span>
-                        ))}
+                  {selectedContact.skills &&
+                    selectedContact.skills.length > 0 && (
+                      <div>
+                        <span className="text-sm text-gray-500">Skills :</span>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {selectedContact.skills.map((skill, index) => (
+                            <span
+                              key={index}
+                              className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {selectedContact.workExperience && (
                     <div>
-                      <span className="text-sm text-gray-500">Work Experience :</span>
+                      <span className="text-sm text-gray-500">
+                        Work Experience :
+                      </span>
                       <div className="bg-white rounded p-3 mt-1 whitespace-pre-wrap text-sm">
                         {selectedContact.workExperience}
                       </div>
@@ -600,19 +725,27 @@ const AdminPage: React.FC = () => {
 
               {/* Upload Information */}
               <div className="bg-green-50 rounded-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4 text-lg">Upload Information</h4>
+                <h4 className="font-semibold text-gray-900 mb-4 text-lg">
+                  Upload Information
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <span className="text-sm text-gray-500">Uploaded By :</span>
-                    <p className="text-gray-900 font-medium">{selectedContact.uploaderName}</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedContact.uploaderName}
+                    </p>
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">Upload Date :</span>
-                    <p className="text-gray-900 font-medium">{selectedContact.uploadedAt.toLocaleDateString()}</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedContact.uploadedAt.toLocaleDateString()}
+                    </p>
                   </div>
                   <div>
                     <span className="text-sm text-gray-500">Contact ID :</span>
-                    <p className="text-green-700 font-mono text-sm break-all">{selectedContact.id}</p>
+                    <p className="text-green-700 font-mono text-sm break-all">
+                      {selectedContact.id}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -647,7 +780,9 @@ const AdminPage: React.FC = () => {
           </div>
           <div className="flex items-center space-x-2">
             <Shield className="w-6 h-6 text-green-600" />
-            <span className="text-sm font-medium text-green-700">Admin Access</span>
+            <span className="text-sm font-medium text-green-700">
+              Admin Access
+            </span>
           </div>
         </div>
       </div>
@@ -666,8 +801,12 @@ const AdminPage: React.FC = () => {
                   <Icon className={`w-6 h-6 ${stat.color}`} />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value.toLocaleString()}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    {stat.name}
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stat.value.toLocaleString()}
+                  </p>
                 </div>
               </div>
             </div>
@@ -679,29 +818,32 @@ const AdminPage: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="flex border-b border-gray-200">
           <button
-            onClick={() => setActiveTab('overview')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${activeTab === 'overview'
-              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
+            onClick={() => setActiveTab("overview")}
+            className={`flex-1 py-4 px-6 font-medium transition-colors ${
+              activeTab === "overview"
+                ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
           >
             Overview
           </button>
           <button
-            onClick={() => setActiveTab('users')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${activeTab === 'users'
-              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
+            onClick={() => setActiveTab("users")}
+            className={`flex-1 py-4 px-6 font-medium transition-colors ${
+              activeTab === "users"
+                ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
           >
             Users ({users.length})
           </button>
           <button
-            onClick={() => setActiveTab('contacts')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${activeTab === 'contacts'
-              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
+            onClick={() => setActiveTab("contacts")}
+            className={`flex-1 py-4 px-6 font-medium transition-colors ${
+              activeTab === "contacts"
+                ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
           >
             Contacts ({adminContacts.length})
           </button>
@@ -709,10 +851,12 @@ const AdminPage: React.FC = () => {
 
         {/* Tab Content */}
         <div className="p-6">
-          {activeTab === 'overview' && (
+          {activeTab === "overview" && (
             <div className="space-y-6">
               <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-gray-900">Platform Overview</h2>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Platform Overview
+                </h2>
                 <div className="flex space-x-3">
                   <button
                     onClick={handleExportContactsCSV}
@@ -734,14 +878,18 @@ const AdminPage: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Recent Activity
+                  </h3>
                   <div className="space-y-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                         <Users className="w-4 h-4 text-green-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">New user registered</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          New user registered
+                        </p>
                         <p className="text-xs text-gray-500">2 hours ago</p>
                       </div>
                     </div>
@@ -750,7 +898,9 @@ const AdminPage: React.FC = () => {
                         <Database className="w-4 h-4 text-blue-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">5 contacts uploaded</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          5 contacts uploaded
+                        </p>
                         <p className="text-xs text-gray-500">4 hours ago</p>
                       </div>
                     </div>
@@ -758,19 +908,30 @@ const AdminPage: React.FC = () => {
                 </div>
 
                 <div className="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Contributors</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Top Contributors
+                  </h3>
                   <div className="space-y-3">
                     {users
                       .sort((a, b) => b.uploads - a.uploads)
                       .slice(0, 3)
                       .map((user, index) => (
-                        <div key={user.id} className="flex items-center space-x-3">
+                        <div
+                          key={user.id}
+                          className="flex items-center space-x-3"
+                        >
                           <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-bold text-gray-700">{index + 1}</span>
+                            <span className="text-sm font-bold text-gray-700">
+                              {index + 1}
+                            </span>
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                            <p className="text-xs text-gray-500">{user.uploads} uploads</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {user.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {user.uploads} uploads
+                            </p>
                           </div>
                           <div className="text-sm font-medium text-gray-700">
                             {user.points} pts
@@ -783,9 +944,9 @@ const AdminPage: React.FC = () => {
             </div>
           )}
 
-          {activeTab === 'users' && (
+          {activeTab === "users" && (
             <div>
-              {error && activeTab === 'users' && (
+              {error && activeTab === "users" && (
                 <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-center space-x-2">
                     <AlertCircle className="w-5 h-5 text-red-600" />
@@ -795,7 +956,9 @@ const AdminPage: React.FC = () => {
               )}
 
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">User Management</h2>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  User Management
+                </h2>
                 <div className="flex space-x-3">
                   <div className="relative">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
@@ -821,14 +984,20 @@ const AdminPage: React.FC = () => {
                         {/* User Avatar */}
                         <div className="p-6 pb-4">
                           <div className="flex items-center justify-center">
-                            <div className={`w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center ${user.isAdmin
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-green-100 text-green-800'
-                              }`}>
-                              <Users className={`w-8 h-8 text-gray-400 ${user.isAdmin
-                                ? 'text-red-800'
-                                : 'text-green-800'
-                                }`} />
+                            <div
+                              className={`w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center ${
+                                user.isAdmin
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-green-100 text-green-800"
+                              }`}
+                            >
+                              <Users
+                                className={`w-8 h-8 text-gray-400 ${
+                                  user.isAdmin
+                                    ? "text-red-800"
+                                    : "text-green-800"
+                                }`}
+                              />
                             </div>
                           </div>
                         </div>
@@ -843,11 +1012,14 @@ const AdminPage: React.FC = () => {
                               {user.email}
                             </p>
                             <div className="flex items-center justify-center space-x-2 mb-3">
-                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.isAdmin
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-green-100 text-green-800'
-                                }`}>
-                                {user.isAdmin ? 'Admin' : 'User'}
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                  user.isAdmin
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-green-100 text-green-800"
+                                }`}
+                              >
+                                {user.isAdmin ? "Admin" : "User"}
                               </span>
                             </div>
                           </div>
@@ -857,15 +1029,21 @@ const AdminPage: React.FC = () => {
                             <div className="grid grid-cols-3 gap-2 text-center">
                               <div>
                                 <p className="text-sm text-gray-600">Points</p>
-                                <p className="font-semibold text-gray-900">{user.points}</p>
+                                <p className="font-semibold text-gray-900">
+                                  {user.points}
+                                </p>
                               </div>
                               <div>
                                 <p className="text-sm text-gray-600">Uploads</p>
-                                <p className="font-semibold text-gray-900">{user.uploads}</p>
+                                <p className="font-semibold text-gray-900">
+                                  {user.uploads}
+                                </p>
                               </div>
                               <div>
                                 <p className="text-sm text-gray-600">Unlocks</p>
-                                <p className="font-semibold text-gray-900">{user.unlocks}</p>
+                                <p className="font-semibold text-gray-900">
+                                  {user.unlocks}
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -873,7 +1051,9 @@ const AdminPage: React.FC = () => {
                           {/* Joined Date */}
                           <div className="text-center mb-4">
                             <p className="text-sm text-gray-600">Joined</p>
-                            <p className="font-medium text-gray-900">{user.joinedAt.toLocaleDateString()}</p>
+                            <p className="font-medium text-gray-900">
+                              {user.joinedAt.toLocaleDateString()}
+                            </p>
                           </div>
 
                           {/* Action Buttons */}
@@ -887,14 +1067,17 @@ const AdminPage: React.FC = () => {
                               </button>
                             )}
 
-                            {user.isAdmin && user.id !== localStorage.getItem('userId') && (
-                              <button
-                                onClick={() => handleToggleAdmin(user.id, false)}
-                                className="w-full bg-yellow-50 text-yellow-600 py-2 rounded-lg font-medium hover:bg-yellow-100 transition-colors"
-                              >
-                                Remove Admin
-                              </button>
-                            )}
+                            {user.isAdmin &&
+                              user.id !== localStorage.getItem("userId") && (
+                                <button
+                                  onClick={() =>
+                                    handleToggleAdmin(user.id, false)
+                                  }
+                                  className="w-full bg-yellow-50 text-yellow-600 py-2 rounded-lg font-medium hover:bg-yellow-100 transition-colors"
+                                >
+                                  Remove Admin
+                                </button>
+                              )}
 
                             <button
                               onClick={() => handleDeleteUser(user.id)}
@@ -915,10 +1098,12 @@ const AdminPage: React.FC = () => {
             </div>
           )}
 
-          {activeTab === 'contacts' && (
+          {activeTab === "contacts" && (
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">Contact Database</h2>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  Contact Database
+                </h2>
                 <div className="flex space-x-3">
                   <div className="relative">
                     <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
@@ -976,19 +1161,29 @@ const AdminPage: React.FC = () => {
                             </div>
                             <div className="flex items-center justify-center space-x-1 text-gray-600">
                               <MapPin className="w-4 h-4" />
-                              <span className="text-xs">{contact.location}</span>
+                              <span className="text-xs">
+                                {contact.location}
+                              </span>
                             </div>
                           </div>
 
                           {/* Upload Info */}
                           <div className="bg-gray-50 rounded-lg p-3 mb-4">
                             <div className="flex items-center justify-between text-sm">
-                              <span className="text-gray-600">Uploaded by :</span>
-                              <span className="font-medium text-gray-900">{contact.uploaderName}</span>
+                              <span className="text-gray-600">
+                                Uploaded by :
+                              </span>
+                              <span className="font-medium text-gray-900">
+                                {contact.uploaderName}
+                              </span>
                             </div>
                             <div className="flex items-center justify-between text-sm mt-1">
-                              <span className="text-gray-600">Upload Date :</span>
-                              <span className="font-medium text-gray-900">{contact.uploadedAt.toLocaleDateString()}</span>
+                              <span className="text-gray-600">
+                                Upload Date :
+                              </span>
+                              <span className="font-medium text-gray-900">
+                                {contact.uploadedAt.toLocaleDateString()}
+                              </span>
                             </div>
                           </div>
 

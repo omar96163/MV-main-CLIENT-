@@ -42,7 +42,7 @@ const MyContactsPage: React.FC = () => {
 
         // Fetch all profiles unlocked + uploaded
         const response = await fetch(
-          `https://mv-main-server.vercel.app/profiles/mine?userId=${user.id}`
+          `https://mv-main-server.vercel.app/profiles/mine?userId=${user.id}`,
         );
 
         if (!response.ok) {
@@ -85,7 +85,7 @@ const MyContactsPage: React.FC = () => {
       } catch (err) {
         console.error("Error fetching my contacts:", err);
         setError(
-          err instanceof Error ? err.message : "Failed to load contacts"
+          err instanceof Error ? err.message : "Failed to load contacts",
         );
       } finally {
         setLoading(false);
@@ -110,7 +110,7 @@ const MyContactsPage: React.FC = () => {
           contact.location.toLowerCase().includes(query) ||
           (contact.workExperience &&
             contact.workExperience.toLowerCase().includes(query)) ||
-          contact.skills.some((skill) => skill.toLowerCase().includes(query))
+          contact.skills.some((skill) => skill.toLowerCase().includes(query)),
       );
     }
 
@@ -149,7 +149,7 @@ const MyContactsPage: React.FC = () => {
           contact.skills.join("; "),
         ]
           .map((field) => `"${field}"`)
-          .join(",")
+          .join(","),
       ),
     ].join("\n");
 

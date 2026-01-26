@@ -1,57 +1,74 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useContacts } from '../contexts/ContactContext';
-import { useDashboard } from '../contexts/DashboardContext';
-import { Plus, User, Linkedin, Globe, AlertCircle, CheckCircle, Loader, Download } from 'lucide-react';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { useContacts } from "../contexts/ContactContext";
+import { useDashboard } from "../contexts/DashboardContext";
+import {
+  Plus,
+  User,
+  Linkedin,
+  Globe,
+  AlertCircle,
+  CheckCircle,
+  Loader,
+  Download,
+} from "lucide-react";
+import toast from "react-hot-toast";
 
 const UploadPage: React.FC = () => {
   const { user } = useAuth();
   const { addContact, refreshContacts } = useContacts();
   const { dashboard, refreshDashboard } = useDashboard();
 
-  const [activeTab, setActiveTab] = useState<'single' | 'linkedin'>('linkedin');
+  const [activeTab, setActiveTab] = useState<"single" | "linkedin">("linkedin");
 
   // Single upload form data
   const [formData, setFormData] = useState({
-    name: '',
-    jobTitle: '',
-    company: '',
-    location: '',
-    industry: '',
+    name: "",
+    jobTitle: "",
+    company: "",
+    location: "",
+    industry: "",
     experience: 0,
-    seniorityLevel: '',
-    skills: '',
-    education: '',
-    workExperience: '',
-    email: '',
-    phone: '',
-    avatar: '',
-    linkedinUrl: '',
-    extraLinks: '',
+    seniorityLevel: "",
+    skills: "",
+    education: "",
+    workExperience: "",
+    email: "",
+    phone: "",
+    avatar: "",
+    linkedinUrl: "",
+    extraLinks: "",
   });
 
   // LinkedIn scraping data
-  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [linkedinFile, setLinkedinFile] = useState<File | null>(null);
-  const [scrapingMode, setScrapingMode] = useState<'single' | 'bulk'>('single');
+  const [scrapingMode, setScrapingMode] = useState<"single" | "bulk">("single");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Contact info for LinkedIn scraping
-  const [linkedinExtraLinks, setLinkedinExtraLinks] = useState('');
-  const [linkedinPhone, setLinkedinPhone] = useState('');
-  const [linkedinEmail, setLinkedinEmail] = useState('');
+  const [linkedinExtraLinks, setLinkedinExtraLinks] = useState("");
+  const [linkedinPhone, setLinkedinPhone] = useState("");
+  const [linkedinEmail, setLinkedinEmail] = useState("");
 
   const [processingResults, setProcessingResults] = useState<{
     total: number;
     processed: number;
     successful: number;
     failed: number;
-    results: Array<{ url: string; status: 'success' | 'failed'; data?: any; error?: string; pointsEarned?: number }>;
+    results: Array<{
+      url: string;
+      status: "success" | "failed";
+      data?: any;
+      error?: string;
+      pointsEarned?: number;
+    }>;
   } | null>(null);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -68,63 +85,60 @@ const UploadPage: React.FC = () => {
       ...formData,
       experience: Number(formData.experience) || 0,
       skills: formData.skills
-        .split(',')
+        .split(",")
         .map((s) => s.trim())
         .filter((s) => s),
       extraLinks: formData.extraLinks
-        .split(',')
+        .split(",")
         .map((s) => s.trim())
         .filter((s) => s),
       uploadedBy: user.id,
       avatar:
         formData.avatar ||
-        'https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-      companySize: '',
+        "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
+      companySize: "",
     };
 
     try {
-      const res = await fetch('https://mv-main-server.vercel.app/profiles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(contact)
+      const res = await fetch("https://mv-main-server.vercel.app/profiles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contact),
       });
 
       if (!res.ok) {
         const errorData = await res.json();
         if (res.status === 409) {
-          throw new Error('We already have this account!');
+          throw new Error("We already have this account!");
         }
-        throw new Error(errorData.message || 'Failed to save contact');
+        throw new Error(errorData.message || "Failed to save contact");
       }
       const savedContact = await res.json();
 
-      await Promise.all([
-        refreshDashboard(),
-        refreshContacts()
-      ]);
+      await Promise.all([refreshDashboard(), refreshContacts()]);
 
-      toast.success('Contact uploaded successfully! +10 points');
+      toast.success("Contact uploaded successfully! +10 points");
 
       setFormData({
-        name: '',
-        jobTitle: '',
-        company: '',
-        location: '',
-        industry: '',
+        name: "",
+        jobTitle: "",
+        company: "",
+        location: "",
+        industry: "",
         experience: 0,
-        seniorityLevel: '',
-        skills: '',
-        education: '',
-        workExperience: '',
-        email: '',
-        phone: '',
-        avatar: '',
-        linkedinUrl: '',
-        extraLinks: '',
+        seniorityLevel: "",
+        skills: "",
+        education: "",
+        workExperience: "",
+        email: "",
+        phone: "",
+        avatar: "",
+        linkedinUrl: "",
+        extraLinks: "",
       });
     } catch (error) {
-      console.error('Error uploading contact:', error);
-      toast.error('Failed to upload contact');
+      console.error("Error uploading contact:", error);
+      toast.error("Failed to upload contact");
     }
   };
 
@@ -135,53 +149,71 @@ const UploadPage: React.FC = () => {
     setIsProcessing(true);
     setProcessingResults(null);
 
-    let processedData: Array<{ url: string; phone?: string; email: string; extraLinks?: string[] }> = [];
+    let processedData: Array<{
+      url: string;
+      phone?: string;
+      email: string;
+      extraLinks?: string[];
+    }> = [];
 
     try {
-      if (scrapingMode === 'single') {
+      if (scrapingMode === "single") {
         if (!linkedinUrl.trim()) {
-          toast.error('Please enter a LinkedIn URL');
+          toast.error("Please enter a LinkedIn URL");
           return;
         }
         // Ensure URL has https:// prefix and www.
         let formattedUrl = linkedinUrl.trim();
 
         // Remove any existing protocol
-        formattedUrl = formattedUrl.replace(/^https?:\/\//, '');
+        formattedUrl = formattedUrl.replace(/^https?:\/\//, "");
 
         // Remove any existing www.
-        formattedUrl = formattedUrl.replace(/^www\./, '');
+        formattedUrl = formattedUrl.replace(/^www\./, "");
 
         // Add https://www.
-        formattedUrl = 'https://www.' + formattedUrl;
+        formattedUrl = "https://www." + formattedUrl;
 
-        processedData = [{
-          url: formattedUrl,
-          phone: linkedinPhone.trim(),
-          email: linkedinEmail.trim(),
-          extraLinks: linkedinExtraLinks ? linkedinExtraLinks.split(',').map(s => s.trim()).filter(Boolean) : []
-        }];
+        processedData = [
+          {
+            url: formattedUrl,
+            phone: linkedinPhone.trim(),
+            email: linkedinEmail.trim(),
+            extraLinks: linkedinExtraLinks
+              ? linkedinExtraLinks
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter(Boolean)
+              : [],
+          },
+        ];
       } else {
         // Handle CSV file upload
         if (!linkedinFile) {
-          toast.error('Please select a CSV file');
+          toast.error("Please select a CSV file");
           return;
         }
 
         const fileContent = await linkedinFile.text();
-        const lines = fileContent.split('\n').map(line => line.trim()).filter(line => line);
+        const lines = fileContent
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line);
 
         if (lines.length === 0) {
-          toast.error('CSV file is empty');
+          toast.error("CSV file is empty");
           return;
         }
 
         // Parse CSV headers
-        const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
-        const urlIndex = headers.findIndex(h => h.includes('url'));
-        const phoneIndex = headers.findIndex(h => h.includes('phone'));
-        const emailIndex = headers.findIndex(h => h.includes('email'));
-        const extraLinksIndex = headers.findIndex(h => h.includes('links'));
+        const headers = lines[0]
+          .toLowerCase()
+          .split(",")
+          .map((h) => h.trim());
+        const urlIndex = headers.findIndex((h) => h.includes("url"));
+        const phoneIndex = headers.findIndex((h) => h.includes("phone"));
+        const emailIndex = headers.findIndex((h) => h.includes("email"));
+        const extraLinksIndex = headers.findIndex((h) => h.includes("links"));
 
         if (urlIndex === -1) {
           toast.error('CSV file must have a "url" column');
@@ -190,26 +222,34 @@ const UploadPage: React.FC = () => {
 
         // Parse CSV data
         const dataRows = lines.slice(1); // Skip header row
-        processedData = dataRows.map(row => {
-          const columns = row.split(',').map(col => col.trim().replace(/"/g, ''));
+        processedData = dataRows
+          .map((row) => {
+            const columns = row
+              .split(",")
+              .map((col) => col.trim().replace(/"/g, ""));
 
-          const linksRaw = extraLinksIndex !== -1 ? columns[extraLinksIndex] || '' : '';
+            const linksRaw =
+              extraLinksIndex !== -1 ? columns[extraLinksIndex] || "" : "";
 
-          return {
-            url: columns[urlIndex] || '',
-            phone: phoneIndex !== -1 ? columns[phoneIndex] || '' : '',
-            email: emailIndex !== -1 ? columns[emailIndex] || '' : '',
-            extraLinks: linksRaw
-              .split(',')
-              .map(s => s.trim())
-              .filter(Boolean)
-          };
-        }).filter(item =>
-          item.url && (item.url.includes('linkedin.com/in/') || item.url.includes('linkedin.com/pub/'))
-        );
+            return {
+              url: columns[urlIndex] || "",
+              phone: phoneIndex !== -1 ? columns[phoneIndex] || "" : "",
+              email: emailIndex !== -1 ? columns[emailIndex] || "" : "",
+              extraLinks: linksRaw
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+            };
+          })
+          .filter(
+            (item) =>
+              item.url &&
+              (item.url.includes("linkedin.com/in/") ||
+                item.url.includes("linkedin.com/pub/")),
+          );
 
         if (processedData.length === 0) {
-          toast.error('No valid LinkedIn URLs found in the CSV file');
+          toast.error("No valid LinkedIn URLs found in the CSV file");
           return;
         }
       }
@@ -220,33 +260,38 @@ const UploadPage: React.FC = () => {
         processed: 0,
         successful: 0,
         failed: 0,
-        results: []
+        results: [],
       };
       setProcessingResults(initialResults);
 
       // Call backend API for LinkedIn scraping with phone info
-      const response = await fetch('https://mv-main-server.vercel.app/api/scrape-linkedin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      const response = await fetch(
+        "https://mv-main-server.vercel.app/api/scrape-linkedin",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            profilesData: processedData,
+            userId: user.id,
+          }),
         },
-        body: JSON.stringify({
-          profilesData: processedData,
-          userId: user.id
-        })
-      });
+      );
 
       // ← التعديل الجديد: التعامل مع Free Limit
       if (response.status === 429) {
         const errorData = await response.json();
-        toast.error(errorData.message || 'Free limit exceeded.');
+        toast.error(errorData.message || "Free limit exceeded.");
         setIsProcessing(false);
         return;
       }
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Failed to parse error response' }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ error: "Failed to parse error response" }));
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
@@ -256,15 +301,14 @@ const UploadPage: React.FC = () => {
       setProcessingResults(result.results);
 
       // Refresh dashboard and contacts
-      await Promise.all([
-        refreshDashboard(),
-        refreshContacts()
-      ]);
+      await Promise.all([refreshDashboard(), refreshContacts()]);
 
       // Show success/failure messages
       const totalPoints = result.totalPointsEarned || 0;
       if (totalPoints > 0) {
-        toast.success(`Successfully processed ${result.results.successful} profiles ! \n+ ${totalPoints} points`);
+        toast.success(
+          `Successfully processed ${result.results.successful} profiles ! \n+ ${totalPoints} points`,
+        );
       }
 
       if (result.results.failed > 0) {
@@ -272,14 +316,13 @@ const UploadPage: React.FC = () => {
       }
 
       // Reset form
-      setLinkedinUrl('');
-      setLinkedinPhone('');
-      setLinkedinEmail('');
-      setLinkedinExtraLinks('');
+      setLinkedinUrl("");
+      setLinkedinPhone("");
+      setLinkedinEmail("");
+      setLinkedinExtraLinks("");
       setLinkedinFile(null);
-
     } catch (error) {
-      console.error('LinkedIn scraping error:', error);
+      console.error("LinkedIn scraping error:", error);
 
       // Update results to show all failed
       if (processedData.length > 0) {
@@ -288,16 +331,20 @@ const UploadPage: React.FC = () => {
           processed: processedData.length,
           successful: 0,
           failed: processedData.length,
-          results: processedData.map(item => ({
+          results: processedData.map((item) => ({
             url: item.url,
-            status: 'failed' as const,
-            error: error instanceof Error ? error.message : 'Unknown error'
-          }))
+            status: "failed" as const,
+            error: error instanceof Error ? error.message : "Unknown error",
+          })),
         };
         setProcessingResults(failedResults);
       }
 
-      toast.error(error instanceof Error ? error.message : 'Failed to process LinkedIn profiles');
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to process LinkedIn profiles",
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -306,14 +353,18 @@ const UploadPage: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const validTypes = ['text/csv', 'application/vnd.ms-excel'];
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      const validTypes = ["text/csv", "application/vnd.ms-excel"];
+      const fileExtension = file.name.split(".").pop()?.toLowerCase();
 
-      if (fileExtension === 'csv' || file.type === 'text/csv' || file.type === 'application/vnd.ms-excel') {
+      if (
+        fileExtension === "csv" ||
+        file.type === "text/csv" ||
+        file.type === "application/vnd.ms-excel"
+      ) {
         setLinkedinFile(file);
       } else {
-        toast.error('Please select a CSV file');
-        e.target.value = '';
+        toast.error("Please select a CSV file");
+        e.target.value = "";
       }
     }
   };
@@ -324,7 +375,7 @@ https://www.linkedin.com/in/janedoe/,+1-555-0002,jane@example.com,"https://c.com
 https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e.com,https://f.com"`;
 
   const downloadExample = () => {
-    const blob = new Blob([exampleCSV], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([exampleCSV], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -337,9 +388,12 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Contacts</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Upload Contacts
+        </h1>
         <p className="text-gray-600">
-          Add new contacts manually or scrape LinkedIn profiles to earn points and grow the community database
+          Add new contacts manually or scrape LinkedIn profiles to earn points
+          and grow the community database
         </p>
         {dashboard && (
           <div className="mt-4 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
@@ -351,28 +405,30 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="flex border-b border-gray-200">
           <button
-            onClick={() => setActiveTab('linkedin')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors flex items-center justify-center space-x-2 ${activeTab === 'linkedin'
-              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
+            onClick={() => setActiveTab("linkedin")}
+            className={`flex-1 py-4 px-6 font-medium transition-colors flex items-center justify-center space-x-2 ${
+              activeTab === "linkedin"
+                ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
           >
             <Linkedin className="w-5 h-5" />
             <span>LinkedIn Scraper</span>
           </button>
           <button
-            onClick={() => setActiveTab('single')}
-            className={`flex-1 py-4 px-6 font-medium transition-colors flex items-center justify-center space-x-2 ${activeTab === 'single'
-              ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
+            onClick={() => setActiveTab("single")}
+            className={`flex-1 py-4 px-6 font-medium transition-colors flex items-center justify-center space-x-2 ${
+              activeTab === "single"
+                ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            }`}
           >
             <User className="w-5 h-5" />
             <span>Manual Upload</span>
           </button>
         </div>
 
-        {activeTab === 'single' && (
+        {activeTab === "single" && (
           <form onSubmit={handleSingleUpload} className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -560,7 +616,8 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                 placeholder="Describe work experience, key achievements, projects, responsibilities, etc. (optional)"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Optional: Provide detailed work history, achievements, and key projects
+                Optional: Provide detailed work history, achievements, and key
+                projects
               </p>
             </div>
 
@@ -605,7 +662,7 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
           </form>
         )}
 
-        {activeTab === 'linkedin' && (
+        {activeTab === "linkedin" && (
           <div className="p-6">
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center space-x-2">
@@ -613,8 +670,12 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                 <span>LinkedIn Profile Scraper</span>
               </h3>
               <p className="text-gray-600 mb-4">
-                Extract contact information from LinkedIn profiles automatically.<br></br>
-                <strong className="text-green-600"> New profiles earn 10 points, updates earn 5 points.</strong>
+                Extract contact information from LinkedIn profiles
+                automatically.<br></br>
+                <strong className="text-green-600">
+                  {" "}
+                  New profiles earn 10 points, updates earn 5 points.
+                </strong>
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-start space-x-2">
@@ -622,11 +683,24 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                   <div className="text-sm text-blue-800">
                     <p className="font-medium mb-1">How it works:</p>
                     <ul className="list-disc list-inside space-y-1 text-blue-700">
-                      <li>Enter LinkedIn profile URL along with phone number</li>
-                      <li>Upload a CSV file with URLs and phone numbers for bulk processing</li>
-                      <li>Our backend service will scrape the profiles securely</li>
-                      <li><strong>New profiles: +10 points</strong></li>
-                      <li><strong>Existing profiles: +5 points (data updated)</strong></li>
+                      <li>
+                        Enter LinkedIn profile URL along with phone number
+                      </li>
+                      <li>
+                        Upload a CSV file with URLs and phone numbers for bulk
+                        processing
+                      </li>
+                      <li>
+                        Our backend service will scrape the profiles securely
+                      </li>
+                      <li>
+                        <strong>New profiles: +10 points</strong>
+                      </li>
+                      <li>
+                        <strong>
+                          Existing profiles: +5 points (data updated)
+                        </strong>
+                      </li>
                       <li>You'll see exactly how many points you earned!</li>
                     </ul>
                   </div>
@@ -642,28 +716,36 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                     type="radio"
                     name="scrapingMode"
                     value="single"
-                    checked={scrapingMode === 'single'}
-                    onChange={(e) => setScrapingMode(e.target.value as 'single' | 'bulk')}
+                    checked={scrapingMode === "single"}
+                    onChange={(e) =>
+                      setScrapingMode(e.target.value as "single" | "bulk")
+                    }
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm font-medium text-gray-700">Single URL with Phone</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Single URL with Phone
+                  </span>
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
                     name="scrapingMode"
                     value="bulk"
-                    checked={scrapingMode === 'bulk'}
-                    onChange={(e) => setScrapingMode(e.target.value as 'single' | 'bulk')}
+                    checked={scrapingMode === "bulk"}
+                    onChange={(e) =>
+                      setScrapingMode(e.target.value as "single" | "bulk")
+                    }
                     className="text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm font-medium text-gray-700">Bulk Upload (CSV File)</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Bulk Upload (CSV File)
+                  </span>
                 </label>
               </div>
             </div>
 
             <form onSubmit={handleLinkedInScraping} className="space-y-6">
-              {scrapingMode === 'single' ? (
+              {scrapingMode === "single" ? (
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -677,8 +759,12 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                         onChange={(e) => {
                           let value = e.target.value.trim();
                           // Auto-add https:// if missing
-                          if (value && !value.startsWith('http://') && !value.startsWith('https://')) {
-                            value = 'https://' + value;
+                          if (
+                            value &&
+                            !value.startsWith("http://") &&
+                            !value.startsWith("https://")
+                          ) {
+                            value = "https://" + value;
                           }
                           setLinkedinUrl(value);
                         }}
@@ -688,7 +774,8 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                       />
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
-                      You can enter with or without https:// - we'll add it automatically
+                      You can enter with or without https:// - we'll add it
+                      automatically
                     </p>
                   </div>
 
@@ -750,14 +837,21 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    Upload a CSV file with the following format (headers required):
+                    Upload a CSV file with the following format (headers
+                    required):
                   </p>
                   <div className="mt-2 p-3 bg-gray-50 rounded text-xs text-gray-600 font-mono">
                     <div className="font-semibold mb-1">CSV Format:</div>
                     <div>url,phone,links</div>
-                    <div>https://www.linkedin.com/in/johnsmith/,+1-555-0001,https://a.com,https://b.com</div>
-                    <div>https://www.linkedin.com/in/janedoe/,+1-555-0002,https://c.com,https://d.com</div>
-                    <div>https://www.linkedin.com/in/mikejohnson/,+1-555-0003,https://e.com,https://f.com</div>
+                    <div>
+                      https://www.linkedin.com/in/johnsmith/,+1-555-0001,https://a.com,https://b.com
+                    </div>
+                    <div>
+                      https://www.linkedin.com/in/janedoe/,+1-555-0002,https://c.com,https://d.com
+                    </div>
+                    <div>
+                      https://www.linkedin.com/in/mikejohnson/,+1-555-0003,https://e.com,https://f.com
+                    </div>
                   </div>
 
                   <div className="mb-6">
@@ -777,7 +871,6 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                     </p>
                   </div> */}
                 </div>
-
               )}
 
               <button
@@ -794,10 +887,9 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                   <>
                     <Linkedin className="w-5 h-5" />
                     <span>
-                      {scrapingMode === 'single'
-                        ? 'Scrape Profile (+10 points)'
-                        : 'Scrape Profiles (+10 points each)'
-                      }
+                      {scrapingMode === "single"
+                        ? "Scrape Profile (+10 points)"
+                        : "Scrape Profiles (+10 points each)"}
                     </span>
                   </>
                 )}
@@ -807,23 +899,33 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
             {/* Processing Results */}
             {processingResults && (
               <div className="mt-6 bg-gray-50 rounded-lg p-4">
-                <h4 className="text-lg font-semibold text-gray-900 mb-3">Processing Results</h4>
+                <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                  Processing Results
+                </h4>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div className="bg-blue-100 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-blue-600">{processingResults.total}</div>
+                    <div className="text-2xl font-bold text-blue-600">
+                      {processingResults.total}
+                    </div>
                     <div className="text-sm text-blue-600">Total</div>
                   </div>
                   <div className="bg-yellow-100 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-yellow-600">{processingResults.processed}</div>
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {processingResults.processed}
+                    </div>
                     <div className="text-sm text-yellow-600">Processed</div>
                   </div>
                   <div className="bg-green-100 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-green-600">{processingResults.successful}</div>
+                    <div className="text-2xl font-bold text-green-600">
+                      {processingResults.successful}
+                    </div>
                     <div className="text-sm text-green-600">Successful</div>
                   </div>
                   <div className="bg-red-100 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-red-600">{processingResults.failed}</div>
+                    <div className="text-2xl font-bold text-red-600">
+                      {processingResults.failed}
+                    </div>
                     <div className="text-sm text-red-600">Failed</div>
                   </div>
                 </div>
@@ -831,17 +933,20 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                 {/* Detailed Results */}
                 {processingResults.results.length > 0 && (
                   <div className="space-y-2">
-                    <h5 className="font-medium text-gray-900">Detailed Results:</h5>
+                    <h5 className="font-medium text-gray-900">
+                      Detailed Results:
+                    </h5>
                     <div className="max-h-60 overflow-y-auto space-y-2">
                       {processingResults.results.map((result, index) => (
                         <div
                           key={index}
-                          className={`flex items-start space-x-3 p-3 rounded-lg ${result.status === 'success'
-                            ? 'bg-green-50 border border-green-200'
-                            : 'bg-red-50 border border-red-200'
-                            }`}
+                          className={`flex items-start space-x-3 p-3 rounded-lg ${
+                            result.status === "success"
+                              ? "bg-green-50 border border-green-200"
+                              : "bg-red-50 border border-red-200"
+                          }`}
                         >
-                          {result.status === 'success' ? (
+                          {result.status === "success" ? (
                             <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                           ) : (
                             <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
@@ -850,19 +955,25 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                             <p className="text-sm font-medium text-gray-900 truncate">
                               {result.url}
                             </p>
-                            {result.status === 'success' ? (
+                            {result.status === "success" ? (
                               <p className="text-sm text-green-700">
-                                ✓ Successfully processed ! {" "}
-                                {result.pointsEarned === 10 ? 'New profile (+10 points )' : 'Updated existing profile (+5 points )'}
+                                ✓ Successfully processed !{" "}
+                                {result.pointsEarned === 10
+                                  ? "New profile (+10 points )"
+                                  : "Updated existing profile (+5 points )"}
                                 {result.data?.name && ` - ${result.data.name}`}
-                                {result.data?.jobTitle && ` - ${result.data.jobTitle}`}
-                                {result.data?.company && ` at ${result.data.company}`}
+                                {result.data?.jobTitle &&
+                                  ` - ${result.data.jobTitle}`}
+                                {result.data?.company &&
+                                  ` at ${result.data.company}`}
                               </p>
                             ) : (
                               <p className="text-sm text-red-700">
-                                ✗ {result.error === 'Free limit exceeded. Please upgrade your Apify plan.'
-                                  ? 'Free limit exceeded! Upgrade your plan to continue scraping.'
-                                  : (result.error || 'Failed to scrape profile')}
+                                ✗{" "}
+                                {result.error ===
+                                "Free limit exceeded. Please upgrade your Apify plan."
+                                  ? "Free limit exceeded! Upgrade your plan to continue scraping."
+                                  : result.error || "Failed to scrape profile"}
                               </p>
                             )}
                           </div>

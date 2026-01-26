@@ -26,7 +26,8 @@ const MagicAssistantSearch = () => {
             Magic Assistant
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Describe your ideal prospect in plain English, and let our AI do the heavy lifting.
+            Describe your ideal prospect in plain English, and let our AI do the
+            heavy lifting.
           </p>
         </div>
 
@@ -38,7 +39,7 @@ const MagicAssistantSearch = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="e.g., 'CTOs in SaaS companies in Berlin with over 100 employees and using AWS'"
               className="w-full min-h-[120px] p-6 text-gray-700 placeholder-gray-400 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base leading-relaxed"
-              style={{ fontSize: '16px' }}
+              style={{ fontSize: "16px" }}
             />
           </div>
 
@@ -86,7 +87,8 @@ const MagicAssistantSearch = () => {
                 Coming Soon!
               </h3>
               <p className="text-gray-600 text-sm">
-                We're working hard to bring you this amazing feature. Stay tuned!
+                We're working hard to bring you this amazing feature. Stay
+                tuned!
               </p>
             </div>
           </div>

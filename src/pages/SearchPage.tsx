@@ -17,7 +17,7 @@ const SearchPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
-  const [showBooleanHelp, setShowBooleanHelp] = useState(false); // ← أضف هذا السطر
+  const [showBooleanHelp, setShowBooleanHelp] = useState(false);
 
   // Debug logs
   useEffect(() => {
@@ -107,7 +107,10 @@ const SearchPage: React.FC = () => {
 
       {/* Search Bar */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <form onSubmit={handleQuickSearch} className="flex items-center space-x-4">
+        <form
+          onSubmit={handleQuickSearch}
+          className="flex items-center space-x-4"
+        >
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-4 h-5 w-5 text-gray-400" />
             <input
@@ -149,7 +152,9 @@ const SearchPage: React.FC = () => {
       {showBooleanHelp && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="font-medium text-blue-800">Boolean Search Examples:</h4>
+            <h4 className="font-medium text-blue-800">
+              Boolean Search Examples:
+            </h4>
             <button
               onClick={() => setShowBooleanHelp(false)}
               className="text-blue-600 hover:text-blue-800 text-sm"
@@ -158,10 +163,18 @@ const SearchPage: React.FC = () => {
             </button>
           </div>
           <ul className="text-sm text-blue-700 list-disc pl-5 space-y-1">
-            <li><code>React AND Node.js</code> - Must contain both</li>
-            <li><code>Python OR JavaScript</code> - Contains either</li>
-            <li><code>Manager NOT Sales</code> - Excludes "Sales"</li>
-            <li><code>"Senior Developer"</code> - Exact phrase</li>
+            <li>
+              <code>React AND Node.js</code> - Must contain both
+            </li>
+            <li>
+              <code>Python OR JavaScript</code> - Contains either
+            </li>
+            <li>
+              <code>Manager NOT Sales</code> - Excludes "Sales"
+            </li>
+            <li>
+              <code>"Senior Developer"</code> - Exact phrase
+            </li>
           </ul>
         </div>
       )}

@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ContactProvider } from "./contexts/ContactContext";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import { DashboardProvider } from "./contexts/DashboardContext";
 
 import LandingPage from "./pages/LandingPage";

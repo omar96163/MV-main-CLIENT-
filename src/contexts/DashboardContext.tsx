@@ -5,8 +5,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { useAuth } from "./AuthContext"; // Import your auth context
-import { getDashboardForCurrentUser } from "../api/dashboardApi"; // Import your API function
+import { useAuth } from "./AuthContext";
+import { getDashboardForCurrentUser } from "../api/dashboardApi";
 
 // You can expand this with all fields your dashboard actually has
 interface DashboardData {
@@ -15,12 +15,11 @@ interface DashboardData {
   availablePoints: number;
   totalContacts?: number;
   unlockedProfiles?: number;
-  uploadedProfiles?: number; // Changed to number for upload count
-  uploadedProfileIds?: string[]; // Array of profile IDs
-  unlockedProfileIds?: string[]; // Array of unlocked contact IDs
+  uploadedProfiles?: number;
+  uploadedProfileIds?: string[];
+  unlockedProfileIds?: string[];
   recentActivity?: string[];
   updatedAt?: Date;
-  // add other dashboard-related fields if needed
 }
 
 interface DashboardContextType {
@@ -33,7 +32,7 @@ interface DashboardContextType {
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const DashboardProvider = ({ children }: { children: ReactNode }) => {

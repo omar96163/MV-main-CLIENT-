@@ -54,7 +54,7 @@ interface ContactContextType {
   loading: boolean;
   error: string | null;
   addContact: (
-    contact: Omit<Contact, "id" | "uploadedAt" | "isUnlocked">
+    contact: Omit<Contact, "id" | "uploadedAt" | "isUnlocked">,
   ) => Promise<void>;
   searchContacts: (filters: SearchFilters) => void;
   unlockContact: (contactId: string) => void;
@@ -90,38 +90,44 @@ const booleanSearch = (contacts: Contact[], query: string): Contact[] => {
   for (const match of quoteMatches) {
     const phrase = match.slice(1, -1);
     exactPhrases.push(phrase);
-    processedQuery = processedQuery.replace(match, '');
+    processedQuery = processedQuery.replace(match, "");
   }
 
   // تقسيم باقي الاستعلام
   const terms = processedQuery
     .split(/\s+/)
-    .filter(term => term && !['and', 'or', 'not'].includes(term));
+    .filter((term) => term && !["and", "or", "not"].includes(term));
 
   // تحليل المنطق البسيط
   let andTerms = [];
   let orTerms = [];
   let notTerms = [];
 
-  if (lowerQuery.includes(' and ')) {
-    andTerms = lowerQuery.split(' and ').map(t => t.trim());
-  } else if (lowerQuery.includes(' or ')) {
-    orTerms = lowerQuery.split(' or ').map(t => t.trim());
-  } else if (lowerQuery.includes(' not ')) {
-    const parts = lowerQuery.split(' not ');
+  if (lowerQuery.includes(" and ")) {
+    andTerms = lowerQuery.split(" and ").map((t) => t.trim());
+  } else if (lowerQuery.includes(" or ")) {
+    orTerms = lowerQuery.split(" or ").map((t) => t.trim());
+  } else if (lowerQuery.includes(" not ")) {
+    const parts = lowerQuery.split(" not ");
     andTerms = [parts[0].trim()];
     notTerms = [parts[1].trim()];
   } else {
     // بحث عادي
-    return contacts.filter(contact => {
-      const searchText = `${contact.name} ${contact.jobTitle} ${contact.company} ${contact.skills.join(' ')}`.toLowerCase();
-      return searchText.includes(lowerQuery) ||
-        exactPhrases.some(phrase => searchText.includes(phrase));
+    return contacts.filter((contact) => {
+      const searchText = `${contact.name} ${contact.jobTitle} ${
+        contact.company
+      } ${contact.skills.join(" ")}`.toLowerCase();
+      return (
+        searchText.includes(lowerQuery) ||
+        exactPhrases.some((phrase) => searchText.includes(phrase))
+      );
     });
   }
 
-  return contacts.filter(contact => {
-    const searchText = `${contact.name} ${contact.jobTitle} ${contact.company} ${contact.skills.join(' ')}`.toLowerCase();
+  return contacts.filter((contact) => {
+    const searchText = `${contact.name} ${contact.jobTitle} ${
+      contact.company
+    } ${contact.skills.join(" ")}`.toLowerCase();
 
     // التحقق من العبارات الدقيقة
     for (const phrase of exactPhrases) {
@@ -135,19 +141,23 @@ const booleanSearch = (contacts: Contact[], query: string): Contact[] => {
 
     // التحقق من AND
     if (andTerms.length > 0) {
-      return andTerms.every(term => {
-        const cleanTerm = term.replace(/"/g, '').trim();
-        return searchText.includes(cleanTerm) ||
-          exactPhrases.some(phrase => phrase.includes(cleanTerm));
+      return andTerms.every((term) => {
+        const cleanTerm = term.replace(/"/g, "").trim();
+        return (
+          searchText.includes(cleanTerm) ||
+          exactPhrases.some((phrase) => phrase.includes(cleanTerm))
+        );
       });
     }
 
     // التحقق من OR
     if (orTerms.length > 0) {
-      return orTerms.some(term => {
-        const cleanTerm = term.replace(/"/g, '').trim();
-        return searchText.includes(cleanTerm) ||
-          exactPhrases.some(phrase => phrase.includes(cleanTerm));
+      return orTerms.some((term) => {
+        const cleanTerm = term.replace(/"/g, "").trim();
+        return (
+          searchText.includes(cleanTerm) ||
+          exactPhrases.some((phrase) => phrase.includes(cleanTerm))
+        );
       });
     }
 
@@ -177,7 +187,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
       if (!res.ok) {
         throw new Error(
-          `Failed to fetch contacts: ${res.status} ${res.statusText}`
+          `Failed to fetch contacts: ${res.status} ${res.statusText}`,
         );
       }
 
@@ -235,11 +245,16 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
     // LinkedIn URL
     if (filters.linkedinUrl?.trim()) {
-      const searchUrl = filters.linkedinUrl.trim().toLowerCase().replace(/\/+$/, '');
+      const searchUrl = filters.linkedinUrl
+        .trim()
+        .toLowerCase()
+        .replace(/\/+$/, "");
 
-      results = results.filter(contact => {
+      results = results.filter((contact) => {
         if (!contact.linkedinUrl) return false;
-        const contactUrl = contact.linkedinUrl.toLowerCase().replace(/\/+$/, '');
+        const contactUrl = contact.linkedinUrl
+          .toLowerCase()
+          .replace(/\/+$/, "");
         return contactUrl === searchUrl;
       });
     }
@@ -249,7 +264,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
       results = results.filter((contact) =>
         contact.jobTitle
           .toLowerCase()
-          .includes(filters.jobTitle!.toLowerCase().trim())
+          .includes(filters.jobTitle!.toLowerCase().trim()),
       );
     }
 
@@ -258,7 +273,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
       results = results.filter((contact) =>
         contact.company
           .toLowerCase()
-          .includes(filters.company!.toLowerCase().trim())
+          .includes(filters.company!.toLowerCase().trim()),
       );
     }
 
@@ -267,7 +282,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
       results = results.filter((contact) =>
         contact.location
           .toLowerCase()
-          .includes(filters.location!.toLowerCase().trim())
+          .includes(filters.location!.toLowerCase().trim()),
       );
     }
 
@@ -275,14 +290,14 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     if (filters.industry) {
       results = results.filter(
         (contact) =>
-          contact.industry.toLowerCase() === filters.industry!.toLowerCase()
+          contact.industry.toLowerCase() === filters.industry!.toLowerCase(),
       );
     }
 
     // Seniority level filter
     if (filters.seniorityLevel) {
       results = results.filter(
-        (contact) => contact.seniorityLevel === filters.seniorityLevel
+        (contact) => contact.seniorityLevel === filters.seniorityLevel,
       );
     }
 
@@ -290,7 +305,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     if (filters.experience) {
       const { min = 0, max = 50 } = filters.experience;
       results = results.filter(
-        (contact) => contact.experience >= min && contact.experience <= max
+        (contact) => contact.experience >= min && contact.experience <= max,
       );
     }
 
@@ -299,23 +314,24 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
       results = results.filter((contact) =>
         filters.skills!.some((skill) =>
           contact.skills.some((contactSkill) =>
-            contactSkill.toLowerCase().includes(skill.toLowerCase().trim())
-          )
-        )
+            contactSkill.toLowerCase().includes(skill.toLowerCase().trim()),
+          ),
+        ),
       );
     }
 
     // Verified filter
     if (filters.verified !== undefined) {
       results = results.filter(
-        (contact) => contact.verified === filters.verified
+        (contact) => contact.verified === filters.verified,
       );
     }
 
     // Has contact info filter
     if (filters.hasContactInfo !== undefined) {
       results = results.filter(
-        (contact) => (contact.email || contact.phone) === filters.hasContactInfo
+        (contact) =>
+          (contact.email || contact.phone) === filters.hasContactInfo,
       );
     }
 
@@ -323,7 +339,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
   };
 
   const addContact = async (
-    contactData: Omit<Contact, "id" | "uploadedAt" | "isUnlocked">
+    contactData: Omit<Contact, "id" | "uploadedAt" | "isUnlocked">,
   ) => {
     try {
       const res = await fetch("https://mv-main-server.vercel.app/profiles", {

@@ -22,7 +22,7 @@ interface AuthContextType {
   requestSignup: (
     name: string,
     email: string,
-    password: string
+    password: string,
   ) => Promise<void>;
   verifySignup: (email: string, verificationCode: string) => Promise<void>;
   logout: () => void;
@@ -86,7 +86,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const requestSignup = async (
     name: string,
     email: string,
-    password: string
+    password: string,
   ) => {
     const res = await fetch(
       "https://mv-main-server.vercel.app/auth/request-signup",
@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
-      }
+      },
     );
 
     const data = await res.json();
@@ -111,7 +111,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, verificationCode }),
-      }
+      },
     );
 
     const data = await res.json();

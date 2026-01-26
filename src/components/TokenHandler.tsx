@@ -17,10 +17,10 @@ const TokenHandler: React.FC<TokenHandlerProps> = ({ setUser }) => {
       localStorage.setItem("token", token);
 
       fetch("https://mv-main-server.vercel.app/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       })
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.user) {
             setUser(data.user);
             navigate("/dashboard", { replace: true });

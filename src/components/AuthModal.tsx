@@ -67,11 +67,14 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setLoading(true);
 
     try {
-      const res = await fetch("https://mv-main-server.vercel.app/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      const res = await fetch(
+        "https://mv-main-server.vercel.app/auth/forgot-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        },
+      );
 
       const data = await res.json();
 
@@ -98,11 +101,14 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
     setLoading(true);
     try {
-      const res = await fetch("https://mv-main-server.vercel.app/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resetCode, newPassword }),
-      });
+      const res = await fetch(
+        "https://mv-main-server.vercel.app/auth/reset-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ resetCode, newPassword }),
+        },
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);

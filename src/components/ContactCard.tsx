@@ -37,15 +37,18 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
 
     try {
       // Call backend API to unlock profile and deduct points
-      const response = await fetch(`https://mv-main-server.vercel.app/profiles/${contact.id}/unlock`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `https://mv-main-server.vercel.app/profiles/${contact.id}/unlock`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user?.id || dashboard?.userId, // Send user ID
+          }),
         },
-        body: JSON.stringify({
-          userId: user?.id || dashboard?.userId, // Send user ID
-        }),
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -244,10 +247,11 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
           <button
             onClick={handleUnlock}
             disabled={!canUnlock}
-            className={`flex-1 whitespace-nowrap py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${canUnlock
-              ? "w-full bg-gradient-to-r from-[#0b07f0] to-[#0b07f0] text-white font-medium hover:brightness-110 hover:scale-105 hover:shadow-lg"
-              : "bg-red-200 text-red-500 cursor-not-allowed"
-              }`}
+            className={`flex-1 whitespace-nowrap py-3 px-4 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2 ${
+              canUnlock
+                ? "w-full bg-gradient-to-r from-[#0b07f0] to-[#0b07f0] text-white font-medium hover:brightness-110 hover:scale-105 hover:shadow-lg"
+                : "bg-red-200 text-red-500 cursor-not-allowed"
+            }`}
           >
             <Award className="w-4 h-4" />
             <span>
@@ -256,13 +260,15 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
                 : "Unlock (20 pts)"}
             </span>
           </button>
-        ) : <Link
-          to={`/profile/${contact.id}`}
-          className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
-        >
-          <Eye className="w-4 h-4" />
-          <span>View Profile</span>
-        </Link>}
+        ) : (
+          <Link
+            to={`/profile/${contact.id}`}
+            className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
+          >
+            <Eye className="w-4 h-4" />
+            <span>View Profile</span>
+          </Link>
+        )}
       </div>
     </div>
   );

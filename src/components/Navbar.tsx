@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { useDashboard } from '../contexts/DashboardContext';
+import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useDashboard } from "../contexts/DashboardContext";
 import {
   Search,
   Upload,
@@ -14,7 +14,7 @@ import {
   Menu,
   X,
   User,
-} from 'lucide-react';
+} from "lucide-react";
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -24,17 +24,19 @@ const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-    { name: 'Search', href: '/search', icon: Search },
-    { name: 'My Contacts', href: '/my-contacts', icon: Heart },
-    { name: 'Upload', href: '/upload', icon: Upload },
-    { name: 'Magic Assistant', href: '/magic-assistant', icon: Bot },
-    ...(user?.isAdmin ? [{ name: 'Admin', href: '/admin', icon: Settings }] : []),
+    { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
+    { name: "Search", href: "/search", icon: Search },
+    { name: "My Contacts", href: "/my-contacts", icon: Heart },
+    { name: "Upload", href: "/upload", icon: Upload },
+    { name: "Magic Assistant", href: "/magic-assistant", icon: Bot },
+    ...(user?.isAdmin
+      ? [{ name: "Admin", href: "/admin", icon: Settings }]
+      : []),
   ];
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   const availablePoints = dashboard?.availablePoints || 0;
@@ -59,10 +61,11 @@ const Navbar: React.FC = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${isActive
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                      }`}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${
+                      isActive
+                        ? "bg-blue-50 text-blue-700"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
                   >
                     <Icon className="w-4 h-4" />
                     <span>{item.name}</span>
@@ -89,7 +92,9 @@ const Navbar: React.FC = () => {
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-2">
                       <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">{user?.name || 'No name'}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {user?.name || "No name"}
+                        </p>
                         <p className="text-xs text-gray-500">{user?.email}</p>
                       </div>
                       <button
@@ -111,7 +116,11 @@ const Navbar: React.FC = () => {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
@@ -130,10 +139,11 @@ const Navbar: React.FC = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${isActive
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium transition-all ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.name}</span>
@@ -145,7 +155,7 @@ const Navbar: React.FC = () => {
             <div className="border-t border-gray-200 mt-3 pt-3 space-y-2">
               <div className="flex items-center space-x-2 text-gray-700">
                 <User className="w-4 h-4" />
-                <span className="text-sm">{user?.name || 'No name'}</span>
+                <span className="text-sm">{user?.name || "No name"}</span>
               </div>
               <div className="flex items-center space-x-2 bg-blue-50 px-3 py-1 rounded-full w-fit">
                 <Coins className="w-4 h-4 text-blue-600" />

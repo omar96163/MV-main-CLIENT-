@@ -12,30 +12,30 @@ interface DashboardData {
   updatedAt?: Date;
 }
 
-const API_BASE_URL = 'https://mv-main-server.vercel.app';
+const API_BASE_URL = "https://mv-main-server.vercel.app";
 
 export const getDashboardForCurrentUser = async (): Promise<DashboardData> => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error('No authentication token found');
+      throw new Error("No authentication token found");
     }
 
     // Now we can directly get dashboard data with authentication
     // The server gets userId from the JWT token, no need to call /auth/me first
     const dashboardResponse = await fetch(`${API_BASE_URL}/api/dashboard`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
 
     if (dashboardResponse.status === 401) {
       // Token expired or invalid - clear and redirect to login
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-      throw new Error('Authentication expired');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      throw new Error("Authentication expired");
     }
 
     if (!dashboardResponse.ok) {
@@ -54,37 +54,43 @@ export const getDashboardForCurrentUser = async (): Promise<DashboardData> => {
       uploadedProfiles: dashboardData.uploadedProfiles || 0,
       uploadedProfileIds: dashboardData.uploadedProfileIds || [],
       unlockedProfileIds: dashboardData.unlockedProfileIds || [],
-      recentActivity: Array.isArray(dashboardData.recentActivity) ? dashboardData.recentActivity : [],
-      updatedAt: dashboardData.updatedAt ? new Date(dashboardData.updatedAt) : new Date()
+      recentActivity: Array.isArray(dashboardData.recentActivity)
+        ? dashboardData.recentActivity
+        : [],
+      updatedAt: dashboardData.updatedAt
+        ? new Date(dashboardData.updatedAt)
+        : new Date(),
     };
   } catch (error) {
-    console.error('Error fetching dashboard:', error);
+    console.error("Error fetching dashboard:", error);
     throw error;
   }
 };
 
-export const updateDashboard = async (updateData: Partial<DashboardData>): Promise<DashboardData> => {
+export const updateDashboard = async (
+  updateData: Partial<DashboardData>,
+): Promise<DashboardData> => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error('No authentication token found');
+      throw new Error("No authentication token found");
     }
 
     // No need to pass userId - server gets it from token
     const response = await fetch(`${API_BASE_URL}/api/dashboard`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(updateData)
+      body: JSON.stringify(updateData),
     });
 
     if (response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-      throw new Error('Authentication expired');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      throw new Error("Authentication expired");
     }
 
     if (!response.ok) {
@@ -94,7 +100,7 @@ export const updateDashboard = async (updateData: Partial<DashboardData>): Promi
 
     return await response.json();
   } catch (error) {
-    console.error('Error updating dashboard:', error);
+    console.error("Error updating dashboard:", error);
     throw error;
   }
 };
@@ -102,32 +108,32 @@ export const updateDashboard = async (updateData: Partial<DashboardData>): Promi
 // Get user's unlocked contacts
 export const getUserUnlockedContacts = async (): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error('No authentication token found');
+      throw new Error("No authentication token found");
     }
 
     const response = await fetch(`${API_BASE_URL}/api/dashboard/unlocked`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
 
     if (response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-      throw new Error('Authentication expired');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      throw new Error("Authentication expired");
     }
 
     if (!response.ok) {
-      throw new Error('Failed to fetch unlocked contacts');
+      throw new Error("Failed to fetch unlocked contacts");
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching unlocked contacts:', error);
+    console.error("Error fetching unlocked contacts:", error);
     throw error;
   }
 };
@@ -135,32 +141,32 @@ export const getUserUnlockedContacts = async (): Promise<any> => {
 // Get user's activity
 export const getUserActivity = async (): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error('No authentication token found');
+      throw new Error("No authentication token found");
     }
 
     const response = await fetch(`${API_BASE_URL}/api/dashboard/activity`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
 
     if (response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-      throw new Error('Authentication expired');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      throw new Error("Authentication expired");
     }
 
     if (!response.ok) {
-      throw new Error('Failed to fetch user activity');
+      throw new Error("Failed to fetch user activity");
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching user activity:', error);
+    console.error("Error fetching user activity:", error);
     throw error;
   }
 };
@@ -168,34 +174,34 @@ export const getUserActivity = async (): Promise<any> => {
 // Add activity
 export const addUserActivity = async (activity: string): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      throw new Error('No authentication token found');
+      throw new Error("No authentication token found");
     }
 
     const response = await fetch(`${API_BASE_URL}/api/dashboard/activity`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ activity })
+      body: JSON.stringify({ activity }),
     });
 
     if (response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-      throw new Error('Authentication expired');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+      throw new Error("Authentication expired");
     }
 
     if (!response.ok) {
-      throw new Error('Failed to add activity');
+      throw new Error("Failed to add activity");
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error adding activity:', error);
+    console.error("Error adding activity:", error);
     throw error;
   }
 };

@@ -192,14 +192,14 @@ const SearchFiltersComponent: React.FC<SearchFiltersProps> = ({
               filters.hasContactInfo === undefined
                 ? ""
                 : filters.hasContactInfo
-                  ? "true"
-                  : "false"
+                ? "true"
+                : "false"
             }
             onChange={(e) => {
               const val = e.target.value;
               handleFilterChange(
                 "hasContactInfo",
-                val === "" ? undefined : val === "true"
+                val === "" ? undefined : val === "true",
               );
             }}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

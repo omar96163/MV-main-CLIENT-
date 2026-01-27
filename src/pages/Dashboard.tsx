@@ -348,9 +348,11 @@ const Dashboard: React.FC = () => {
                         activity.points !== 0 && (
                           <span
                             className={`font-medium ${
-                              activity.points > 0
+                              activity.points < 0
+                                ? "text-red-600"
+                                : activity.points > 5
                                 ? "text-green-600"
-                                : "text-red-600"
+                                : "text-purple-600"
                             }`}
                           >
                             {activity.points > 0 ? "+" : ""}

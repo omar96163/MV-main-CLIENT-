@@ -674,7 +674,8 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                 automatically.<br></br>
                 <strong className="text-green-600">
                   {" "}
-                  New profiles earn 10 points, updates earn 5 points.
+                  New profiles earn 10 points, Update your profiles earn 5
+                  points.
                 </strong>
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">

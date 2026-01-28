@@ -3,22 +3,31 @@
 @tailwind utilities;
 
 .toast-base {
-    @apply flex items-center gap-3 border shadow-2xl rounded-2xl px-5 py-4;
+    @apply flex items-center gap-3 shadow-md rounded-2xl px-5 py-2;
   }
   
   .toast-success {
-    @apply bg-emerald-600 text-white border-emerald-700;
+    @apply bg-gradient-to-br from-gray-100 via-green-400 to-green-100 text-black shadow-green-400;
   }
   
   .toast-error {
-    @apply bg-red-600 text-white border-red-700;
+    @apply bg-gradient-to-br from-red-100 via-red-400 to-red-100 text-black shadow-red-400;
   }
   
   .toast-loading {
-    @apply bg-blue-600 text-white border-blue-700;
+    @apply bg-gradient-to-br from-blue-100 via-blue-400 to-blue-100 text-black shadow-blue-400;
   }
   
   .toast-default {
-    @apply bg-white text-slate-800 border-slate-200;
+    @apply bg-gradient-to-br from-slate-100 via-slate-400 to-slate-100 text-black shadow-slate-400;
   }
-  
+
+
+@media (max-width: 768px) {
+  .sidebar-sticky {
+    position: static;
+    width: 100%;
+    max-height: none;
+    overflow-y: visible;
+  }
+}

@@ -106,7 +106,7 @@ function App() {
                 success: { className: "toast-base toast-success" },
                 error: { className: "toast-base toast-error" },
                 loading: { className: "toast-base toast-loading" },
-                duration: 4000,
+                duration: 3000,
               }}
             />
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">

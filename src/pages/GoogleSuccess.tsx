@@ -25,6 +25,7 @@ const GoogleSuccess = () => {
               name: data.user.name,
               points: 0,
               isAdmin: data.user.isAdmin,
+              isSuperAdmin: data.user.isSuperAdmin,
               avatar: data.user.avatar || "",
             };
             setUser(user);

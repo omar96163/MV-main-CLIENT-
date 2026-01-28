@@ -12,6 +12,7 @@ interface User {
   name: string;
   points: number;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   avatar?: string;
 }
 
@@ -22,7 +23,7 @@ interface AuthContextType {
   requestSignup: (
     name: string,
     email: string,
-    password: string,
+    password: string
   ) => Promise<void>;
   verifySignup: (email: string, verificationCode: string) => Promise<void>;
   logout: () => void;
@@ -75,6 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       name: data.user.name,
       points: 0,
       isAdmin: data.user.isAdmin,
+      isSuperAdmin: data.user.isSuperAdmin,
       avatar: "",
     };
 
@@ -86,7 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const requestSignup = async (
     name: string,
     email: string,
-    password: string,
+    password: string
   ) => {
     const res = await fetch(
       "https://mv-main-server.vercel.app/auth/request-signup",
@@ -126,6 +128,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       name: data.user.name,
       points: 0,
       isAdmin: data.user.isAdmin,
+      isSuperAdmin: data.user.isSuperAdmin,
       avatar: "",
     };
 

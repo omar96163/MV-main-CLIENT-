@@ -28,6 +28,7 @@ interface AdminUser {
   points: number;
   uploads: number;
   unlocks: number;
+  isSuperAdmin?: boolean;
 }
 
 // Contact interface for admin
@@ -105,6 +106,7 @@ const AdminPage: React.FC = () => {
           uploads: user.uploads || 0,
           unlocks: user.unlocks || 0,
           joinedAt: new Date(user.joinedAt || user.createdAt),
+          isSuperAdmin: user.isSuperAdmin,
         })),
       );
     } catch (err) {
@@ -768,7 +770,7 @@ const AdminPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
+      <div className="mb-10">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -787,41 +789,13 @@ const AdminPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <div
-              key={stat.name}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
-            >
-              <div className="flex items-center">
-                <div className={`${stat.bgColor} p-3 rounded-lg`}>
-                  <Icon className={`w-6 h-6 ${stat.color}`} />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">
-                    {stat.name}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.value.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="flex border-b border-gray-200">
+      <div className="flex justify-between">
+        <div className="flex flex-col items-start w-[10%] gap-5 sticky top-28 self-start max-h-[calc(100vh-6rem)] overflow-y-auto">
           <button
             onClick={() => setActiveTab("overview")}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${
+            className={`font-medium transition-colors ${
               activeTab === "overview"
-                ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
+                ? "text-blue-700 border-b-2 border-blue-500"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
@@ -829,387 +803,465 @@ const AdminPage: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${
+            className={`font-medium transition-colors ${
               activeTab === "users"
-                ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
+                ? "text-blue-700 border-b-2 border-blue-500"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
-            Users ({users.length})
+            Users ( {users.length} )
           </button>
           <button
             onClick={() => setActiveTab("contacts")}
-            className={`flex-1 py-4 px-6 font-medium transition-colors ${
+            className={`font-medium transition-colors ${
               activeTab === "contacts"
-                ? "bg-blue-50 text-blue-700 border-b-2 border-blue-500"
+                ? "text-blue-700 border-b-2 border-blue-500"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
-            Contacts ({adminContacts.length})
+            Contacts ( {adminContacts.length} )
           </button>
         </div>
 
-        {/* Tab Content */}
-        <div className="p-6">
-          {activeTab === "overview" && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Platform Overview
-                </h2>
-                <div className="flex space-x-3">
-                  <button
-                    onClick={handleExportContactsCSV}
-                    disabled={adminContacts.length === 0}
-                    className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Export Contacts CSV</span>
-                  </button>
-                  <button
-                    onClick={handleExportAllData}
-                    className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Export All Data</span>
-                  </button>
+        {/* Content */}
+        <div className="w-[85%] min-h-screen">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-9">
+            {stats.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.name}
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 py-6 px-3 hover:shadow-lg"
+                >
+                  <div className="flex items-center">
+                    <div className={`${stat.bgColor} p-3 rounded-lg`}>
+                      <Icon className={`w-6 h-6 ${stat.color}`} />
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">
+                        {stat.name}
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {stat.value.toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              );
+            })}
+          </div>
+          <div>
+            {activeTab === "overview" && (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Platform Overview
+                  </h2>
+                  <div className="flex space-x-3">
+                    <button
+                      onClick={handleExportContactsCSV}
+                      disabled={adminContacts.length === 0}
+                      className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Export Contacts CSV</span>
+                    </button>
+                    <button
+                      onClick={handleExportAllData}
+                      className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Export All Data</span>
+                    </button>
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Recent Activity
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <Users className="w-4 h-4 text-green-600" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      Recent Activity
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          <Users className="w-4 h-4 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            New user registered
+                          </p>
+                          <p className="text-xs text-gray-500">2 hours ago</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          New user registered
-                        </p>
-                        <p className="text-xs text-gray-500">2 hours ago</p>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          <Database className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            5 contacts uploaded
+                          </p>
+                          <p className="text-xs text-gray-500">4 hours ago</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Database className="w-4 h-4 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          5 contacts uploaded
-                        </p>
-                        <p className="text-xs text-gray-500">4 hours ago</p>
-                      </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-xl">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      Top Contributors
+                    </h3>
+                    <div className="space-y-3">
+                      {users
+                        .sort((a, b) => b.uploads - a.uploads)
+                        .slice(0, 3)
+                        .map((user, index) => (
+                          <div
+                            key={user.id}
+                            className="flex items-center space-x-3"
+                          >
+                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                              <span className="text-sm font-bold text-gray-700">
+                                {index + 1}
+                              </span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900">
+                                {user.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {user.uploads} uploads
+                              </p>
+                            </div>
+                            <div className="text-sm font-medium text-gray-700">
+                              {user.points} pts
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "users" && (
+              <div>
+                {error && activeTab === "users" && (
+                  <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <AlertCircle className="w-5 h-5 text-red-600" />
+                      <p className="text-red-700">{error}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    User Management
+                  </h2>
+                  <div className="flex space-x-3">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search users..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Top Contributors
-                  </h3>
-                  <div className="space-y-3">
-                    {users
-                      .sort((a, b) => b.uploads - a.uploads)
-                      .slice(0, 3)
-                      .map((user, index) => (
+                {renderLoadingState() || (
+                  <div className="overflow-x-auto pt-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {filteredUsers.map((user) => (
                         <div
                           key={user.id}
-                          className="flex items-center space-x-3"
+                          className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 transform hover:-translate-y-1"
                         >
-                          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-bold text-gray-700">
-                              {index + 1}
-                            </span>
+                          {/* User Avatar */}
+                          <div className="p-6 pb-4">
+                            <div className="flex items-center justify-center">
+                              <div
+                                className={`w-20 h-20 rounded-full flex items-center justify-center ${
+                                  user.isSuperAdmin
+                                    ? "bg-purple-100 text-purple-800 shadow-md shadow-purple-300"
+                                    : user.isAdmin
+                                    ? "bg-red-100 text-red-800 shadow-md shadow-red-300"
+                                    : "bg-green-100 text-green-800 shadow-md shadow-green-300"
+                                }`}
+                              >
+                                <Users
+                                  className={`w-8 h-8 ${
+                                    user.isSuperAdmin
+                                      ? "text-purple-800"
+                                      : user.isAdmin
+                                      ? "text-red-800"
+                                      : "text-green-800"
+                                  }`}
+                                />
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                              {user.name}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {user.uploads} uploads
-                            </p>
-                          </div>
-                          <div className="text-sm font-medium text-gray-700">
-                            {user.points} pts
+
+                          {/* User Info */}
+                          <div className="px-6 pb-6">
+                            <div className="text-center mb-4">
+                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                {user.name}
+                              </h3>
+                              <p className="text-blue-600 text-sm mb-2">
+                                {user.email}
+                              </p>
+                              <div className="flex items-center justify-center space-x-2 mb-3">
+                                {user.isSuperAdmin ? (
+                                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border-x-2 border-purple-300">
+                                    Super Admin
+                                  </span>
+                                ) : user.isAdmin ? (
+                                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border-x-2 border-red-300">
+                                    Admin
+                                  </span>
+                                ) : (
+                                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border-x-2 border-green-300">
+                                    User
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Stats */}
+                            <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div>
+                                  <p className="text-sm text-gray-600">
+                                    Points
+                                  </p>
+                                  <p className="font-semibold text-gray-900">
+                                    {user.points}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-gray-600">
+                                    Uploads
+                                  </p>
+                                  <p className="font-semibold text-gray-900">
+                                    {user.uploads}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-gray-600">
+                                    Unlocks
+                                  </p>
+                                  <p className="font-semibold text-gray-900">
+                                    {user.unlocks}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Joined Date */}
+                            <div className="text-center mb-4">
+                              <p className="text-sm text-gray-600">Joined</p>
+                              <p className="font-medium text-gray-900">
+                                {user.joinedAt.toLocaleDateString()}
+                              </p>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="space-y-2">
+                              {(() => {
+                                // Get current user from localStorage
+                                const currentUserStr =
+                                  localStorage.getItem("user");
+                                const currentUser = currentUserStr
+                                  ? JSON.parse(currentUserStr)
+                                  : null;
+                                const isCurrentUserSuperAdmin =
+                                  currentUser?.isSuperAdmin === true;
+                                const isCurrentUser =
+                                  user.id === currentUser?.id;
+
+                                // Only super admins can see action buttons
+                                if (!isCurrentUserSuperAdmin) {
+                                  return null;
+                                }
+
+                                // Super admin's own card - no buttons
+                                if (isCurrentUser && user.isSuperAdmin) {
+                                  return null;
+                                }
+
+                                return (
+                                  <>
+                                    {/* Make Admin button - for regular users only */}
+                                    {!user.isAdmin && !user.isSuperAdmin && (
+                                      <button
+                                        onClick={() =>
+                                          handleToggleAdmin(user.id, true)
+                                        }
+                                        className="w-full bg-purple-100 text-purple-600 py-2 rounded-lg font-medium hover:bg-purple-200 transition-colors"
+                                      >
+                                        Make Admin
+                                      </button>
+                                    )}
+
+                                    {/* Remove Admin button - for admin users only (not super admins) */}
+                                    {user.isAdmin && !user.isSuperAdmin && (
+                                      <button
+                                        onClick={() =>
+                                          handleToggleAdmin(user.id, false)
+                                        }
+                                        className="w-full bg-yellow-100 text-yellow-600 py-2 rounded-lg font-medium hover:bg-yellow-200 transition-colors"
+                                      >
+                                        Remove Admin
+                                      </button>
+                                    )}
+
+                                    {/* Delete button - for non-super-admin users only */}
+                                    {!user.isSuperAdmin && (
+                                      <button
+                                        onClick={() =>
+                                          handleDeleteUser(user.id)
+                                        }
+                                        className="w-full bg-red-100 text-red-600 py-2 rounded-lg font-medium hover:bg-red-200 transition-colors flex items-center justify-center space-x-2"
+                                      >
+                                        <Trash2 className="w-4 h-4" />
+                                        <span>Delete</span>
+                                      </button>
+                                    )}
+                                  </>
+                                );
+                              })()}
+                            </div>
                           </div>
                         </div>
                       ))}
+                    </div>
+
+                    {renderEmptyState()}
                   </div>
-                </div>
+                )}
               </div>
-            </div>
-          )}
+            )}
 
-          {activeTab === "users" && (
-            <div>
-              {error && activeTab === "users" && (
-                <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
-                  <div className="flex items-center space-x-2">
-                    <AlertCircle className="w-5 h-5 text-red-600" />
-                    <p className="text-red-700">{error}</p>
+            {activeTab === "contacts" && (
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Contact Database
+                  </h2>
+                  <div className="flex space-x-3">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Search contacts..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                    <button
+                      onClick={handleExportContactsCSV}
+                      disabled={adminContacts.length === 0}
+                      className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Export CSV</span>
+                    </button>
                   </div>
                 </div>
-              )}
 
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  User Management
-                </h2>
-                <div className="flex space-x-3">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search users..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {renderLoadingState() || (
-                <div className="overflow-x-auto pt-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {filteredUsers.map((user) => (
-                      <div
-                        key={user.id}
-                        className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 transform hover:-translate-y-1"
-                      >
-                        {/* User Avatar */}
-                        <div className="p-6 pb-4">
-                          <div className="flex items-center justify-center">
-                            <div
-                              className={`w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center ${
-                                user.isAdmin
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-green-100 text-green-800"
-                              }`}
-                            >
-                              <Users
-                                className={`w-8 h-8 text-gray-400 ${
-                                  user.isAdmin
-                                    ? "text-red-800"
-                                    : "text-green-800"
-                                }`}
+                {renderLoadingState() || (
+                  <div className="overflow-x-auto pt-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {filteredContacts.map((contact) => (
+                        <div
+                          key={contact.id}
+                          className="bg-white rounded-xl shadow-sm border-2 border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 transform hover:-translate-y-1 cursor-pointer"
+                          onClick={() => handleViewContact(contact)}
+                        >
+                          {/* Profile Image */}
+                          <div className="p-6 pb-4">
+                            <div className="flex items-center justify-center">
+                              <img
+                                src={contact.avatar}
+                                alt={contact.name}
+                                className="w-20 h-20 rounded-full object-cover"
                               />
                             </div>
                           </div>
-                        </div>
 
-                        {/* User Info */}
-                        <div className="px-6 pb-6">
-                          <div className="text-center mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                              {user.name}
-                            </h3>
-                            <p className="text-blue-600 text-sm mb-2">
-                              {user.email}
-                            </p>
-                            <div className="flex items-center justify-center space-x-2 mb-3">
-                              <span
-                                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                  user.isAdmin
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-green-100 text-green-800"
-                                }`}
-                              >
-                                {user.isAdmin ? "Admin" : "User"}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Stats */}
-                          <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                            <div className="grid grid-cols-3 gap-2 text-center">
-                              <div>
-                                <p className="text-sm text-gray-600">Points</p>
-                                <p className="font-semibold text-gray-900">
-                                  {user.points}
-                                </p>
+                          {/* Contact Info */}
+                          <div className="px-6 pb-6">
+                            <div className="text-center mb-4">
+                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                {contact.name}
+                              </h3>
+                              <p className="text-blue-600 font-medium mb-2">
+                                {contact.jobTitle}
+                              </p>
+                              <div className="flex items-center justify-center space-x-1 text-gray-600 mb-2">
+                                <Building className="w-4 h-4" />
+                                <span className="text-sm">
+                                  {contact.company}
+                                </span>
                               </div>
-                              <div>
-                                <p className="text-sm text-gray-600">Uploads</p>
-                                <p className="font-semibold text-gray-900">
-                                  {user.uploads}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-gray-600">Unlocks</p>
-                                <p className="font-semibold text-gray-900">
-                                  {user.unlocks}
-                                </p>
+                              <div className="flex items-center justify-center space-x-1 text-gray-600">
+                                <MapPin className="w-4 h-4" />
+                                <span className="text-xs">
+                                  {contact.location}
+                                </span>
                               </div>
                             </div>
-                          </div>
 
-                          {/* Joined Date */}
-                          <div className="text-center mb-4">
-                            <p className="text-sm text-gray-600">Joined</p>
-                            <p className="font-medium text-gray-900">
-                              {user.joinedAt.toLocaleDateString()}
-                            </p>
-                          </div>
+                            {/* Upload Info */}
+                            <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                              <div className="flex items-center justify-between text-sm">
+                                <span className="text-gray-600">
+                                  Uploaded by :
+                                </span>
+                                <span className="font-medium text-gray-900">
+                                  {contact.uploaderName}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between text-sm mt-1">
+                                <span className="text-gray-600">
+                                  Upload Date :
+                                </span>
+                                <span className="font-medium text-gray-900">
+                                  {contact.uploadedAt.toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
 
-                          {/* Action Buttons */}
-                          <div className="space-y-2">
-                            {!user.isAdmin && (
+                            {/* Action Button */}
+                            <div className="flex justify-center">
                               <button
-                                onClick={() => handleToggleAdmin(user.id, true)}
-                                className="w-full bg-purple-50 text-purple-600 py-2 rounded-lg font-medium hover:bg-purple-100 transition-colors"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteContact(contact.id);
+                                }}
+                                className="w-full bg-red-50 text-red-600 py-2 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center justify-center space-x-2"
                               >
-                                Make Admin
+                                <Trash2 className="w-4 h-4" />
+                                <span>Delete</span>
                               </button>
-                            )}
-
-                            {user.isAdmin &&
-                              user.id !== localStorage.getItem("userId") && (
-                                <button
-                                  onClick={() =>
-                                    handleToggleAdmin(user.id, false)
-                                  }
-                                  className="w-full bg-yellow-50 text-yellow-600 py-2 rounded-lg font-medium hover:bg-yellow-100 transition-colors"
-                                >
-                                  Remove Admin
-                                </button>
-                              )}
-
-                            <button
-                              onClick={() => handleDeleteUser(user.id)}
-                              className="w-full bg-red-50 text-red-600 py-2 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center justify-center space-x-2"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              <span>Delete</span>
-                            </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
 
-                  {renderEmptyState()}
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === "contacts" && (
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Contact Database
-                </h2>
-                <div className="flex space-x-3">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search contacts..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                    {renderEmptyState()}
                   </div>
-                  <button
-                    onClick={handleExportContactsCSV}
-                    disabled={adminContacts.length === 0}
-                    className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Export CSV</span>
-                  </button>
-                </div>
+                )}
               </div>
-
-              {renderLoadingState() || (
-                <div className="overflow-x-auto pt-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {filteredContacts.map((contact) => (
-                      <div
-                        key={contact.id}
-                        className="bg-white rounded-xl shadow-sm border-2 border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 transform hover:-translate-y-1 cursor-pointer"
-                        onClick={() => handleViewContact(contact)}
-                      >
-                        {/* Profile Image */}
-                        <div className="p-6 pb-4">
-                          <div className="flex items-center justify-center">
-                            <img
-                              src={contact.avatar}
-                              alt={contact.name}
-                              className="w-20 h-20 rounded-full object-cover"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Contact Info */}
-                        <div className="px-6 pb-6">
-                          <div className="text-center mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                              {contact.name}
-                            </h3>
-                            <p className="text-blue-600 font-medium mb-2">
-                              {contact.jobTitle}
-                            </p>
-                            <div className="flex items-center justify-center space-x-1 text-gray-600 mb-2">
-                              <Building className="w-4 h-4" />
-                              <span className="text-sm">{contact.company}</span>
-                            </div>
-                            <div className="flex items-center justify-center space-x-1 text-gray-600">
-                              <MapPin className="w-4 h-4" />
-                              <span className="text-xs">
-                                {contact.location}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Upload Info */}
-                          <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-gray-600">
-                                Uploaded by :
-                              </span>
-                              <span className="font-medium text-gray-900">
-                                {contact.uploaderName}
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-between text-sm mt-1">
-                              <span className="text-gray-600">
-                                Upload Date :
-                              </span>
-                              <span className="font-medium text-gray-900">
-                                {contact.uploadedAt.toLocaleDateString()}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Action Button */}
-                          <div className="flex justify-center">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteContact(contact.id);
-                              }}
-                              className="w-full bg-red-50 text-red-600 py-2 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center justify-center space-x-2"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              <span>Delete</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {renderEmptyState()}
-                </div>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

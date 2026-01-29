@@ -74,6 +74,24 @@ const AdminPage: React.FC = () => {
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Filter states
+  const [locationFilter, setLocationFilter] = useState("");
+  const [companyFilter, setCompanyFilter] = useState("");
+  const [industryFilter, setIndustryFilter] = useState("");
+
+  // Get unique values for filters
+  const uniqueLocations = Array.from(
+    new Set(adminContacts.map((contact) => contact.location).filter(Boolean)),
+  ).sort();
+
+  const uniqueCompanies = Array.from(
+    new Set(adminContacts.map((contact) => contact.company).filter(Boolean)),
+  ).sort();
+
+  const uniqueIndustries = Array.from(
+    new Set(adminContacts.map((contact) => contact.industry).filter(Boolean)),
+  ).sort();
+
   // Fetch users data
   const fetchUsers = async () => {
     try {
@@ -215,7 +233,7 @@ const AdminPage: React.FC = () => {
       bgColor: "bg-green-50",
     },
     {
-      name: "Total Points Distributed",
+      name: "Total Points",
       value: users.reduce((sum, user) => sum + user.points, 0),
       icon: Award,
       color: "text-purple-600",
@@ -386,9 +404,23 @@ const AdminPage: React.FC = () => {
   // Filter contacts based on search
   const filteredContacts = adminContacts.filter(
     (contact) =>
-      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.uploaderName.toLowerCase().includes(searchTerm.toLowerCase()),
+      // Search term filter
+      (contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        contact.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        contact.uploaderName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())) &&
+      // Location filter
+      (!locationFilter ||
+        contact.location
+          ?.toLowerCase()
+          .includes(locationFilter.toLowerCase())) &&
+      // Company filter
+      (!companyFilter ||
+        contact.company?.toLowerCase().includes(companyFilter.toLowerCase())) &&
+      // Industry filter
+      (!industryFilter ||
+        contact.industry?.toLowerCase().includes(industryFilter.toLowerCase())),
   );
 
   // Render loading state for each tab
@@ -499,9 +531,7 @@ const AdminPage: React.FC = () => {
         ),
       );
 
-      toast.success(
-        `User ${makeAdmin ? "promoted to" : "removed from"} admin`,
-      );
+      toast.success(`User ${makeAdmin ? "promoted to" : "removed from"} admin`);
     } catch (err) {
       console.error("Error toggling admin status:", err);
       toast.error(
@@ -790,10 +820,7 @@ const AdminPage: React.FC = () => {
       </div>
 
       <div className="flex justify-between">
-        <div
-          className="flex flex-col items-center w-[12%] gap-5 sticky top-20 py-7 self-start max-h-[calc(100vh-6rem)]
-          overflow-y-auto border-t border-r border-l rounded-t-2xl bg-gradient-to-b from-white/80 via-slate-200"
-        >
+        <div className="flex flex-col items-start w-[15%] gap-5 sticky top-20 py-7 px-4 self-start border-t border-l rounded-tl-2xl">
           <button
             onClick={() => setActiveTab("overview")}
             className={`font-medium transition-colors ${
@@ -812,22 +839,93 @@ const AdminPage: React.FC = () => {
                 : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
             }`}
           >
-            Users ( {users.length} )
+            Users ({users.length})
           </button>
           <button
+            className="flex flex-col items-start"
             onClick={() => setActiveTab("contacts")}
-            className={`font-medium transition-colors ${
-              activeTab === "contacts"
-                ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
-                : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
-            }`}
           >
-            Contacts ( {adminContacts.length} )
+            <div
+              className={`font-medium transition-colors ${
+                activeTab === "contacts"
+                  ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
+                  : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
+              }`}
+            >
+              Contacts ({adminContacts.length})
+            </div>
+
+            {/* Filters - only show when contacts tab is active */}
+            {activeTab === "contacts" && (
+              <div className={`flex flex-col items-start gap-1 mt-1 ml-2`}>
+                {/* Company Filter */}
+                <div>
+                  <select
+                    value={companyFilter}
+                    onChange={(e) => setCompanyFilter(e.target.value)}
+                    className="text-[13px] bg-inherit hover:translate-x-1 transition-transform duration-500 cursor-pointer appearance-none outline-none"
+                  >
+                    <option value="">Companies</option>
+                    {uniqueCompanies.map((company) => (
+                      <option key={company} value={company}>
+                        {company}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Location Filter */}
+                <div>
+                  <select
+                    value={locationFilter}
+                    onChange={(e) => setLocationFilter(e.target.value)}
+                    className="text-[13px] bg-inherit hover:translate-x-1 transition-transform duration-500 cursor-pointer appearance-none outline-none"
+                  >
+                    <option value="">Locations</option>
+                    {uniqueLocations.map((location) => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Industry Filter */}
+                <div>
+                  <select
+                    value={industryFilter}
+                    onChange={(e) => setIndustryFilter(e.target.value)}
+                    className="text-[13px] bg-inherit hover:translate-x-1 transition-transform duration-500 cursor-pointer appearance-none outline-none"
+                  >
+                    <option value="">Industries</option>
+                    {uniqueIndustries.map((industry) => (
+                      <option key={industry} value={industry}>
+                        {industry}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Clear Filters Button */}
+                {(locationFilter || companyFilter || industryFilter) && (
+                  <button
+                    onClick={() => {
+                      setLocationFilter("");
+                      setCompanyFilter("");
+                      setIndustryFilter("");
+                    }}
+                    className="text-[13px] bg-inherit hover:translate-x-1 -translate-x-1 transition-transform duration-500 cursor-pointer mt-2 text-blue-500"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            )}
           </button>
         </div>
 
         {/* Content */}
-        <div className="w-[85%] min-h-screen">
+        <div className="w-[80%] min-h-screen">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-9">
             {stats.map((stat) => {
               const Icon = stat.icon;
@@ -981,11 +1079,11 @@ const AdminPage: React.FC = () => {
 
                 {renderLoadingState() || (
                   <div className="overflow-x-auto px-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
                       {filteredUsers.map((user) => (
                         <div
                           key={user.id}
-                          className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 transform hover:-translate-y-1"
+                          className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-200 transform"
                         >
                           {/* User Avatar */}
                           <div className="p-6 pb-4">
@@ -1185,12 +1283,12 @@ const AdminPage: React.FC = () => {
                 </div>
 
                 {renderLoadingState() || (
-                  <div className="overflow-x-auto pt-5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  <div className="overflow-x-auto px-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
                       {filteredContacts.map((contact) => (
                         <div
                           key={contact.id}
-                          className="bg-white rounded-xl shadow-sm border-2 border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200 transform hover:-translate-y-1 cursor-pointer"
+                          className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-200 transform cursor-pointer"
                           onClick={() => handleViewContact(contact)}
                         >
                           {/* Profile Image */}

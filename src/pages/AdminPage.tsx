@@ -500,7 +500,7 @@ const AdminPage: React.FC = () => {
       );
 
       toast.success(
-        `User ${makeAdmin ? "promoted to" : "removed from"} admin successfully`,
+        `User ${makeAdmin ? "promoted to" : "removed from"} admin`,
       );
     } catch (err) {
       console.error("Error toggling admin status:", err);
@@ -790,13 +790,16 @@ const AdminPage: React.FC = () => {
       </div>
 
       <div className="flex justify-between">
-        <div className="flex flex-col items-start w-[10%] gap-5 sticky top-28 self-start max-h-[calc(100vh-6rem)] overflow-y-auto">
+        <div
+          className="flex flex-col items-center w-[12%] gap-5 sticky top-20 py-7 self-start max-h-[calc(100vh-6rem)]
+          overflow-y-auto border-t border-r border-l rounded-t-2xl bg-gradient-to-b from-white/80 via-slate-200"
+        >
           <button
             onClick={() => setActiveTab("overview")}
             className={`font-medium transition-colors ${
               activeTab === "overview"
-                ? "text-blue-700 border-b-2 border-blue-500"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
+                : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
             }`}
           >
             Overview
@@ -805,8 +808,8 @@ const AdminPage: React.FC = () => {
             onClick={() => setActiveTab("users")}
             className={`font-medium transition-colors ${
               activeTab === "users"
-                ? "text-blue-700 border-b-2 border-blue-500"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
+                : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
             }`}
           >
             Users ( {users.length} )
@@ -815,8 +818,8 @@ const AdminPage: React.FC = () => {
             onClick={() => setActiveTab("contacts")}
             className={`font-medium transition-colors ${
               activeTab === "contacts"
-                ? "text-blue-700 border-b-2 border-blue-500"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
+                : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
             }`}
           >
             Contacts ( {adminContacts.length} )
@@ -850,7 +853,7 @@ const AdminPage: React.FC = () => {
               );
             })}
           </div>
-          <div>
+          <div className="px-2">
             {activeTab === "overview" && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
@@ -955,7 +958,10 @@ const AdminPage: React.FC = () => {
                   </div>
                 )}
 
-                <div className="flex justify-between items-center mb-6">
+                <div
+                  className="flex justify-between items-center mb-6 p-5 z-50 rounded-2xl sticky top-20
+                  border bg-gradient-to-b from-white/80 via-slate-200 to-white/80 backdrop-blur-sm border-b border-gray-200"
+                >
                   <h2 className="text-xl font-semibold text-gray-900">
                     User Management
                   </h2>
@@ -974,7 +980,7 @@ const AdminPage: React.FC = () => {
                 </div>
 
                 {renderLoadingState() || (
-                  <div className="overflow-x-auto pt-5">
+                  <div className="overflow-x-auto px-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                       {filteredUsers.map((user) => (
                         <div
@@ -1149,7 +1155,10 @@ const AdminPage: React.FC = () => {
 
             {activeTab === "contacts" && (
               <div>
-                <div className="flex justify-between items-center mb-6">
+                <div
+                  className="flex justify-between items-center mb-6 p-5 z-50 rounded-2xl sticky top-20
+                  border bg-gradient-to-b from-white/80 via-slate-200 to-white/80 backdrop-blur-sm border-b border-gray-200"
+                >
                   <h2 className="text-xl font-semibold text-gray-900">
                     Contact Database
                   </h2>

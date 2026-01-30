@@ -16,6 +16,8 @@ import {
   Building,
   MapPin,
   Calendar,
+  Menu,
+  X,
 } from "lucide-react";
 
 // User interface
@@ -78,6 +80,11 @@ const AdminPage: React.FC = () => {
   const [locationFilter, setLocationFilter] = useState("");
   const [companyFilter, setCompanyFilter] = useState("");
   const [industryFilter, setIndustryFilter] = useState("");
+  const [jobTitleFilter, setJobTitleFilter] = useState("");
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+  // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Get unique values for filters
   const uniqueLocations = Array.from(
@@ -90,6 +97,10 @@ const AdminPage: React.FC = () => {
 
   const uniqueIndustries = Array.from(
     new Set(adminContacts.map((contact) => contact.industry).filter(Boolean)),
+  ).sort();
+
+  const uniqueJobTitles = Array.from(
+    new Set(adminContacts.map((contact) => contact.jobTitle).filter(Boolean)),
   ).sort();
 
   // Fetch users data
@@ -233,7 +244,7 @@ const AdminPage: React.FC = () => {
       bgColor: "bg-green-50",
     },
     {
-      name: "Total Points",
+      name: "Total Points distributed",
       value: users.reduce((sum, user) => sum + user.points, 0),
       icon: Award,
       color: "text-purple-600",
@@ -420,7 +431,12 @@ const AdminPage: React.FC = () => {
         contact.company?.toLowerCase().includes(companyFilter.toLowerCase())) &&
       // Industry filter
       (!industryFilter ||
-        contact.industry?.toLowerCase().includes(industryFilter.toLowerCase())),
+        contact.industry
+          ?.toLowerCase()
+          .includes(industryFilter.toLowerCase())) &&
+      // Job Title filter
+      (!jobTitleFilter ||
+        contact.jobTitle?.toLowerCase().includes(jobTitleFilter.toLowerCase())),
   );
 
   // Render loading state for each tab
@@ -545,11 +561,11 @@ const AdminPage: React.FC = () => {
   // Render modal if open
   if (isModalOpen && selectedContact) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
               Contact Details
             </h2>
             <button
@@ -574,81 +590,97 @@ const AdminPage: React.FC = () => {
           </div>
 
           {/* Content */}
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Profile Header */}
-            <div className="flex items-start space-x-6 mb-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 mb-8">
               <img
                 src={selectedContact.avatar}
                 alt={selectedContact.name}
-                className="w-24 h-24 rounded-full object-cover"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover"
               />
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                   {selectedContact.name}
                 </h3>
-                <p className="text-xl text-blue-600 font-medium mb-4">
+                <p className="text-lg sm:text-xl text-blue-600 font-medium mb-4">
                   {selectedContact.jobTitle}
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <Building className="w-5 h-5" />
-                    <span>{selectedContact.company}</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="flex items-center justify-center sm:justify-start space-x-2 text-gray-600">
+                    <Building className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="text-sm sm:text-base">
+                      {selectedContact.company}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <MapPin className="w-5 h-5" />
-                    <span>{selectedContact.location}</span>
+                  <div className="flex items-center justify-center sm:justify-start space-x-2 text-gray-600">
+                    <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="text-sm sm:text-base">
+                      {selectedContact.location}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <Calendar className="w-5 h-5" />
-                    <span>{selectedContact.experience} years experience</span>
+                  <div className="flex items-center justify-center sm:justify-start space-x-2 text-gray-600">
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="text-sm sm:text-base">
+                      {selectedContact.experience} years experience
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Full Contact Details */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Personal Information */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4 text-lg">
+              <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
+                <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-base sm:text-lg">
                   Personal Information
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <span className="text-sm text-gray-500">Full Name :</span>
-                    <p className="text-gray-900 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Full Name :
+                    </span>
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
                       {selectedContact.name || "N/A"}
                     </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Job Title :</span>
-                    <p className="text-gray-900 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Job Title :
+                    </span>
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
                       {selectedContact.jobTitle || "N/A"}
                     </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Company :</span>
-                    <p className="text-gray-900 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Company :
+                    </span>
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
                       {selectedContact.company || "N/A"}
                     </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Industry :</span>
-                    <p className="text-gray-900 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Industry :
+                    </span>
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
                       {selectedContact.industry || "N/A"}
                     </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Experience :</span>
-                    <p className="text-gray-900 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Experience :
+                    </span>
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
                       {selectedContact.experience || 0} years
                     </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-xs sm:text-sm text-gray-500">
                       Seniority Level :
                     </span>
-                    <p className="text-gray-900 font-medium">
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
                       {selectedContact.seniorityLevel || "N/A"}
                     </p>
                   </div>
@@ -656,40 +688,44 @@ const AdminPage: React.FC = () => {
               </div>
 
               {/* Contact Information */}
-              <div className="bg-blue-50 rounded-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4 text-lg">
+              <div className="bg-blue-50 rounded-lg p-4 sm:p-6">
+                <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-base sm:text-lg">
                   Contact Information
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <span className="text-sm text-gray-500">Email :</span>
-                    <p className="text-blue-700 font-medium break-all">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Email :
+                    </span>
+                    <p className="text-sm sm:text-base text-blue-700 font-medium break-all">
                       {selectedContact.email || "N/A"}
                     </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Phone :</span>
-                    <p className="text-blue-700 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Phone :
+                    </span>
+                    <p className="text-sm sm:text-base text-blue-700 font-medium">
                       {selectedContact.phone || "N/A"}
                     </p>
                   </div>
-                  <div>
-                    <span className="text-sm text-gray-500">
+                  <div className="sm:col-span-2">
+                    <span className="text-xs sm:text-sm text-gray-500">
                       LinkedIn URL :{" "}
                     </span>
                     <a
                       href={selectedContact.linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 break-all"
+                      className="text-sm sm:text-base text-blue-600 hover:text-blue-800 break-all"
                     >
                       {selectedContact.linkedinUrl || "N/A"}
                     </a>
                   </div>
                   {selectedContact.extraLinks &&
                     selectedContact.extraLinks.length > 0 && (
-                      <div>
-                        <span className="text-sm text-gray-500">
+                      <div className="sm:col-span-2">
+                        <span className="text-xs sm:text-sm text-gray-500">
                           Extra Links :
                         </span>
                         <div className="space-y-1">
@@ -699,7 +735,7 @@ const AdminPage: React.FC = () => {
                               href={link}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 text-sm break-all block"
+                              className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm break-all block"
                             >
                               {link}
                             </a>
@@ -711,15 +747,17 @@ const AdminPage: React.FC = () => {
               </div>
 
               {/* Professional Details */}
-              <div className="bg-purple-50 rounded-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4 text-lg">
+              <div className="bg-purple-50 rounded-lg p-4 sm:p-6">
+                <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-base sm:text-lg">
                   Professional Details
                 </h4>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {selectedContact.education && (
                     <div>
-                      <span className="text-sm text-gray-500">Education :</span>
-                      <p className="text-gray-900">
+                      <span className="text-xs sm:text-sm text-gray-500">
+                        Education :
+                      </span>
+                      <p className="text-sm sm:text-base text-gray-900">
                         {selectedContact.education}
                       </p>
                     </div>
@@ -728,12 +766,14 @@ const AdminPage: React.FC = () => {
                   {selectedContact.skills &&
                     selectedContact.skills.length > 0 && (
                       <div>
-                        <span className="text-sm text-gray-500">Skills :</span>
+                        <span className="text-xs sm:text-sm text-gray-500">
+                          Skills :
+                        </span>
                         <div className="flex flex-wrap gap-2 mt-1">
                           {selectedContact.skills.map((skill, index) => (
                             <span
                               key={index}
-                              className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm"
+                              className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs sm:text-sm"
                             >
                               {skill}
                             </span>
@@ -744,10 +784,10 @@ const AdminPage: React.FC = () => {
 
                   {selectedContact.workExperience && (
                     <div>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-xs sm:text-sm text-gray-500">
                         Work Experience :
                       </span>
-                      <div className="bg-white rounded p-3 mt-1 whitespace-pre-wrap text-sm">
+                      <div className="bg-white rounded p-3 mt-1 whitespace-pre-wrap text-xs sm:text-sm">
                         {selectedContact.workExperience}
                       </div>
                     </div>
@@ -756,26 +796,32 @@ const AdminPage: React.FC = () => {
               </div>
 
               {/* Upload Information */}
-              <div className="bg-green-50 rounded-lg p-6">
-                <h4 className="font-semibold text-gray-900 mb-4 text-lg">
+              <div className="bg-green-50 rounded-lg p-4 sm:p-6">
+                <h4 className="font-semibold text-gray-900 mb-3 sm:mb-4 text-base sm:text-lg">
                   Upload Information
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   <div>
-                    <span className="text-sm text-gray-500">Uploaded By :</span>
-                    <p className="text-gray-900 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Uploaded By :
+                    </span>
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
                       {selectedContact.uploaderName}
                     </p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Upload Date :</span>
-                    <p className="text-gray-900 font-medium">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Upload Date :
+                    </span>
+                    <p className="text-sm sm:text-base text-gray-900 font-medium">
                       {selectedContact.uploadedAt.toLocaleDateString()}
                     </p>
                   </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Contact ID :</span>
-                    <p className="text-green-700 font-mono text-sm break-all">
+                  <div className="sm:col-span-2 lg:col-span-1">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Contact ID :
+                    </span>
+                    <p className="text-green-700 font-mono text-xs sm:text-sm break-all">
                       {selectedContact.id}
                     </p>
                   </div>
@@ -785,10 +831,10 @@ const AdminPage: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end p-6 border-t border-gray-200">
+          <div className="flex justify-end p-4 sm:p-6 border-t border-gray-200">
             <button
               onClick={closeModal}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm sm:text-base"
             >
               Close
             </button>
@@ -799,150 +845,284 @@ const AdminPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-10">
-        <div className="flex items-center justify-between">
+    <div className="w-full mx-auto px-2 sm:px-4 md:px-6 lg:px-16 py-4 sm:py-6 lg:py-8">
+      <div className="mb-6 sm:mb-8 lg:mb-10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               Admin Dashboard
             </h1>
-            <p className="text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600">
               Manage users, contacts, and platform analytics
             </p>
           </div>
           <div className="flex items-center space-x-2">
-            <Shield className="w-6 h-6 text-green-600" />
-            <span className="text-sm font-medium text-green-700">
+            <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
+            <span className="text-xs sm:text-sm font-medium text-green-700">
               Admin Access
             </span>
           </div>
         </div>
       </div>
 
-      <div className="flex justify-between">
-        <div className="flex flex-col items-start w-[15%] gap-5 sticky top-20 py-7 px-4 self-start border-t border-l rounded-tl-2xl">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 lg:justify-between">
+        {/* Mobile Menu Button */}
+        <div className="lg:hidden">
           <button
-            onClick={() => setActiveTab("overview")}
-            className={`font-medium transition-colors ${
-              activeTab === "overview"
-                ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
-                : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
-            }`}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-lg font-medium hover:bg-blue-200 transition-colors"
           >
-            Overview
+            {isSidebarOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+            <span>Menu</span>
           </button>
-          <button
-            onClick={() => setActiveTab("users")}
-            className={`font-medium transition-colors ${
-              activeTab === "users"
-                ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
-                : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
-            }`}
-          >
-            Users ({users.length})
-          </button>
-          <button
-            className="flex flex-col items-start"
-            onClick={() => setActiveTab("contacts")}
-          >
-            <div
-              className={`font-medium transition-colors ${
-                activeTab === "contacts"
+        </div>
+
+        {/* Sidebar */}
+        <div
+          className={`${
+            isSidebarOpen ? "block" : "hidden"
+          } lg:block lg:w-[16%] w-full`}
+        >
+          <div className="flex flex-col items-start gap-3 lg:sticky lg:top-20 py-4 sm:py-7 px-4 border-l-2 border-t-2 border-blue-200 rounded-tr-3xl bg-white lg:bg-transparent">
+            <button
+              onClick={() => {
+                setActiveTab("overview");
+                setIsSidebarOpen(false);
+              }}
+              className={`font-medium transition-colors text-sm sm:text-base ${
+                activeTab === "overview"
                   ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
                   : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
               }`}
             >
-              Contacts ({adminContacts.length})
-            </div>
-
-            {/* Filters - only show when contacts tab is active */}
-            {activeTab === "contacts" && (
-              <div className={`flex flex-col items-start gap-1 mt-1 ml-2`}>
-                {/* Company Filter */}
-                <div>
-                  <select
-                    value={companyFilter}
-                    onChange={(e) => setCompanyFilter(e.target.value)}
-                    className="text-[13px] bg-inherit hover:translate-x-1 transition-transform duration-500 cursor-pointer appearance-none outline-none"
-                  >
-                    <option value="">Companies</option>
-                    {uniqueCompanies.map((company) => (
-                      <option key={company} value={company}>
-                        {company}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Location Filter */}
-                <div>
-                  <select
-                    value={locationFilter}
-                    onChange={(e) => setLocationFilter(e.target.value)}
-                    className="text-[13px] bg-inherit hover:translate-x-1 transition-transform duration-500 cursor-pointer appearance-none outline-none"
-                  >
-                    <option value="">Locations</option>
-                    {uniqueLocations.map((location) => (
-                      <option key={location} value={location}>
-                        {location}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Industry Filter */}
-                <div>
-                  <select
-                    value={industryFilter}
-                    onChange={(e) => setIndustryFilter(e.target.value)}
-                    className="text-[13px] bg-inherit hover:translate-x-1 transition-transform duration-500 cursor-pointer appearance-none outline-none"
-                  >
-                    <option value="">Industries</option>
-                    {uniqueIndustries.map((industry) => (
-                      <option key={industry} value={industry}>
-                        {industry}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Clear Filters Button */}
-                {(locationFilter || companyFilter || industryFilter) && (
-                  <button
-                    onClick={() => {
-                      setLocationFilter("");
-                      setCompanyFilter("");
-                      setIndustryFilter("");
-                    }}
-                    className="text-[13px] bg-inherit hover:translate-x-1 -translate-x-1 transition-transform duration-500 cursor-pointer mt-2 text-blue-500"
-                  >
-                    Clear
-                  </button>
-                )}
+              Overview
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("users");
+                setIsSidebarOpen(false);
+              }}
+              className={`font-medium transition-colors text-sm sm:text-base ${
+                activeTab === "users"
+                  ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
+                  : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
+              }`}
+            >
+              Users ({users.length})
+            </button>
+            <button
+              className="flex flex-col items-start w-full"
+              onClick={() => {
+                setActiveTab("contacts");
+                setIsSidebarOpen(false);
+              }}
+            >
+              <div
+                className={`font-medium transition-colors text-sm sm:text-base ${
+                  activeTab === "contacts"
+                    ? "text-blue-700 border-b-2 border-blue-500 hover:translate-x-0 transition-transform duration-500"
+                    : "text-gray-600 hover:text-gray-900 hover:translate-x-2 transition-transform duration-500"
+                }`}
+              >
+                Contacts ({adminContacts.length})
               </div>
-            )}
-          </button>
+
+              {/* Filters - only show when contacts tab is active */}
+              {activeTab === "contacts" && (
+                <div className="w-full mt-3">
+                  {/* Filter Toggle Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsFiltersOpen(!isFiltersOpen);
+                    }}
+                    className="flex items-center justify-between w-full text-xs sm:text-[13px] text-gray-600 hover:text-blue-600 transition-all 
+                    duration-300 py-1 px-2 mb-3 hover:bg-blue-50 bg-blue-100 rounded-lg"
+                  >
+                    <span className="font-medium">Filters</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-300 ${
+                        isFiltersOpen ? "rotate-180" : "rotate-0"
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* Filters Dropdown with Animation */}
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      isFiltersOpen
+                        ? "max-h-[400px] opacity-100 mt-2"
+                        : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="flex flex-col items-start gap-2 ml-2 bg-gradient-to-b from-blue-50/50 to-transparent rounded-tr-3xl p-3 border-l-2 border-t-2 border-blue-200">
+                      {/* Company Filter */}
+                      <div className="w-full group">
+                        <label className="text-[10px] sm:text-[11px] text-gray-500 uppercase tracking-wide font-semibold mb-1 block">
+                          Company
+                        </label>
+                        <select
+                          value={companyFilter}
+                          onChange={(e) => setCompanyFilter(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-full text-xs sm:text-[13px] bg-white border border-gray-200 rounded-md px-2 py-1.5 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 cursor-pointer outline-none appearance-none"
+                          style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "right 0.5rem center",
+                            backgroundSize: "1.2rem",
+                            paddingRight: "2rem",
+                          }}
+                        >
+                          <option value="">Companies</option>
+                          {uniqueCompanies.map((company) => (
+                            <option key={company} value={company}>
+                              {company}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Location Filter */}
+                      <div className="w-full group">
+                        <label className="text-[10px] sm:text-[11px] text-gray-500 uppercase tracking-wide font-semibold mb-1 block">
+                          Location
+                        </label>
+                        <select
+                          value={locationFilter}
+                          onChange={(e) => setLocationFilter(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-full text-xs sm:text-[13px] bg-white border border-gray-200 rounded-md px-2 py-1.5 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 cursor-pointer outline-none appearance-none"
+                          style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "right 0.5rem center",
+                            backgroundSize: "1.2rem",
+                            paddingRight: "2rem",
+                          }}
+                        >
+                          <option value="">Locations</option>
+                          {uniqueLocations.map((location) => (
+                            <option key={location} value={location}>
+                              {location}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Industry Filter */}
+                      <div className="w-full group">
+                        <label className="text-[10px] sm:text-[11px] text-gray-500 uppercase tracking-wide font-semibold mb-1 block">
+                          Industry
+                        </label>
+                        <select
+                          value={industryFilter}
+                          onChange={(e) => setIndustryFilter(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-full text-xs sm:text-[13px] bg-white border border-gray-200 rounded-md px-2 py-1.5 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 cursor-pointer outline-none appearance-none"
+                          style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "right 0.5rem center",
+                            backgroundSize: "1.2rem",
+                            paddingRight: "2rem",
+                          }}
+                        >
+                          <option value="">Industries</option>
+                          {uniqueIndustries.map((industry) => (
+                            <option key={industry} value={industry}>
+                              {industry}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Job Title Filter */}
+                      <div className="w-full group">
+                        <label className="text-[10px] sm:text-[11px] text-gray-500 uppercase tracking-wide font-semibold mb-1 block">
+                          Job Title
+                        </label>
+                        <select
+                          value={jobTitleFilter}
+                          onChange={(e) => setJobTitleFilter(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-full text-xs sm:text-[13px] bg-white border border-gray-200 rounded-md px-2 py-1.5 hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 cursor-pointer outline-none appearance-none"
+                          style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition: "right 0.5rem center",
+                            backgroundSize: "1.2rem",
+                            paddingRight: "2rem",
+                          }}
+                        >
+                          <option value="">Job Titles</option>
+                          {uniqueJobTitles.map((jobTitle) => (
+                            <option key={jobTitle} value={jobTitle}>
+                              {jobTitle}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Clear Filters Button */}
+                      {(locationFilter ||
+                        companyFilter ||
+                        industryFilter ||
+                        jobTitleFilter) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setLocationFilter("");
+                            setCompanyFilter("");
+                            setIndustryFilter("");
+                            setJobTitleFilter("");
+                          }}
+                          className="w-full mt-2 text-xs sm:text-[13px] bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-2 rounded-md font-medium hover:from-red-600 hover:to-pink-600 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-[1.02]"
+                        >
+                          Clear All Filters
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="w-[80%] min-h-screen">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-9">
+        <div className="w-full lg:w-[82%] min-h-screen">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-9">
             {stats.map((stat) => {
               const Icon = stat.icon;
               return (
                 <div
                   key={stat.name}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 py-6 px-3 hover:shadow-lg"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 py-4 sm:py-6 px-3 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex items-center">
-                    <div className={`${stat.bgColor} p-3 rounded-lg`}>
-                      <Icon className={`w-6 h-6 ${stat.color}`} />
+                    <div className={`${stat.bgColor} p-2 sm:p-3 rounded-lg`}>
+                      <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${stat.color}`} />
                     </div>
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">
+                    <div className="ml-3 sm:ml-4">
+                      <p className="text-xs sm:text-sm font-medium text-gray-600">
                         {stat.name}
                       </p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900">
                         {stat.value.toLocaleString()}
                       </p>
                     </div>
@@ -951,25 +1131,25 @@ const AdminPage: React.FC = () => {
               );
             })}
           </div>
-          <div className="px-2">
+          <div className="px-0 sm:px-2">
             {activeTab === "overview" && (
-              <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-gray-900">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                     Platform Overview
                   </h2>
-                  <div className="flex space-x-3">
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                     <button
                       onClick={handleExportContactsCSV}
                       disabled={adminContacts.length === 0}
-                      className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center space-x-2 bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                     >
                       <Download className="w-4 h-4" />
                       <span>Export Contacts CSV</span>
                     </button>
                     <button
                       onClick={handleExportAllData}
-                      className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                      className="flex items-center justify-center space-x-2 bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors text-sm sm:text-base"
                     >
                       <Download className="w-4 h-4" />
                       <span>Export All Data</span>
@@ -977,64 +1157,68 @@ const AdminPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-xl">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 sm:p-6 rounded-xl">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
                       Recent Activity
                     </h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                          <Users className="w-4 h-4 text-green-600" />
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Users className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-xs sm:text-sm font-medium text-gray-900">
                             New user registered
                           </p>
-                          <p className="text-xs text-gray-500">2 hours ago</p>
+                          <p className="text-[10px] sm:text-xs text-gray-500">
+                            2 hours ago
+                          </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Database className="w-4 h-4 text-blue-600" />
+                      <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Database className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-xs sm:text-sm font-medium text-gray-900">
                             5 contacts uploaded
                           </p>
-                          <p className="text-xs text-gray-500">4 hours ago</p>
+                          <p className="text-[10px] sm:text-xs text-gray-500">
+                            4 hours ago
+                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-xl">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  <div className="bg-gradient-to-r from-green-50 to-teal-50 p-4 sm:p-6 rounded-xl">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
                       Top Contributors
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                       {users
                         .sort((a, b) => b.uploads - a.uploads)
                         .slice(0, 3)
                         .map((user, index) => (
                           <div
                             key={user.id}
-                            className="flex items-center space-x-3"
+                            className="flex items-center space-x-2 sm:space-x-3"
                           >
-                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                              <span className="text-sm font-bold text-gray-700">
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs sm:text-sm font-bold text-gray-700">
                                 {index + 1}
                               </span>
                             </div>
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-gray-900">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
                                 {user.name}
                               </p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-[10px] sm:text-xs text-gray-500">
                                 {user.uploads} uploads
                               </p>
                             </div>
-                            <div className="text-sm font-medium text-gray-700">
+                            <div className="text-xs sm:text-sm font-medium text-gray-700 flex-shrink-0">
                               {user.points} pts
                             </div>
                           </div>
@@ -1048,48 +1232,45 @@ const AdminPage: React.FC = () => {
             {activeTab === "users" && (
               <div>
                 {error && activeTab === "users" && (
-                  <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
                     <div className="flex items-center space-x-2">
-                      <AlertCircle className="w-5 h-5 text-red-600" />
-                      <p className="text-red-700">{error}</p>
+                      <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 flex-shrink-0" />
+                      <p className="text-xs sm:text-sm text-red-700">{error}</p>
                     </div>
                   </div>
                 )}
 
-                <div
-                  className="flex justify-between items-center mb-6 p-5 z-50 rounded-2xl sticky top-20
-                  border bg-gradient-to-b from-white/80 via-slate-200 to-white/80 backdrop-blur-sm border-b border-gray-200"
-                >
-                  <h2 className="text-xl font-semibold text-gray-900">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6 p-3 sm:p-5 z-50 rounded-2xl sticky top-16 sm:top-20 border bg-gradient-to-b from-white/80 via-slate-200 to-white/80 backdrop-blur-sm border-b border-gray-200">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                     User Management
                   </h2>
-                  <div className="flex space-x-3">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                  <div className="flex space-x-3 w-full sm:w-auto">
+                    <div className="relative flex-1 sm:flex-initial">
+                      <Search className="absolute left-3 top-2.5 sm:top-3.5 h-4 w-4 text-gray-400" />
                       <input
                         type="text"
                         placeholder="Search users..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                       />
                     </div>
                   </div>
                 </div>
 
                 {renderLoadingState() || (
-                  <div className="overflow-x-auto px-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
+                  <div className="overflow-x-auto px-0 sm:px-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pb-10">
                       {filteredUsers.map((user) => (
                         <div
                           key={user.id}
                           className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-200 transform"
                         >
                           {/* User Avatar */}
-                          <div className="p-6 pb-4">
+                          <div className="p-4 sm:p-6 pb-3 sm:pb-4">
                             <div className="flex items-center justify-center">
                               <div
-                                className={`w-20 h-20 rounded-full flex items-center justify-center ${
+                                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center ${
                                   user.isSuperAdmin
                                     ? "bg-purple-100 text-purple-800 shadow-md shadow-purple-300"
                                     : user.isAdmin
@@ -1098,7 +1279,7 @@ const AdminPage: React.FC = () => {
                                 }`}
                               >
                                 <Users
-                                  className={`w-8 h-8 ${
+                                  className={`w-6 h-6 sm:w-8 sm:h-8 ${
                                     user.isSuperAdmin
                                       ? "text-purple-800"
                                       : user.isAdmin
@@ -1111,25 +1292,25 @@ const AdminPage: React.FC = () => {
                           </div>
 
                           {/* User Info */}
-                          <div className="px-6 pb-6">
-                            <div className="text-center mb-4">
-                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+                            <div className="text-center mb-3 sm:mb-4">
+                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 truncate">
                                 {user.name}
                               </h3>
-                              <p className="text-blue-600 text-sm mb-2">
+                              <p className="text-xs sm:text-sm text-blue-600 mb-2 truncate">
                                 {user.email}
                               </p>
                               <div className="flex items-center justify-center space-x-2 mb-3">
                                 {user.isSuperAdmin ? (
-                                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border-x-2 border-purple-300">
+                                  <span className="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium bg-purple-100 text-purple-800 border-x-2 border-purple-300">
                                     Super Admin
                                   </span>
                                 ) : user.isAdmin ? (
-                                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border-x-2 border-red-300">
+                                  <span className="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium bg-red-100 text-red-800 border-x-2 border-red-300">
                                     Admin
                                   </span>
                                 ) : (
-                                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border-x-2 border-green-300">
+                                  <span className="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium bg-green-100 text-green-800 border-x-2 border-green-300">
                                     User
                                   </span>
                                 )}
@@ -1137,29 +1318,29 @@ const AdminPage: React.FC = () => {
                             </div>
 
                             {/* Stats */}
-                            <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                            <div className="bg-gray-50 rounded-lg p-2 sm:p-3 mb-3 sm:mb-4">
                               <div className="grid grid-cols-3 gap-2 text-center">
                                 <div>
-                                  <p className="text-sm text-gray-600">
+                                  <p className="text-xs sm:text-sm text-gray-600">
                                     Points
                                   </p>
-                                  <p className="font-semibold text-gray-900">
+                                  <p className="text-sm sm:text-base font-semibold text-gray-900">
                                     {user.points}
                                   </p>
                                 </div>
                                 <div>
-                                  <p className="text-sm text-gray-600">
+                                  <p className="text-xs sm:text-sm text-gray-600">
                                     Uploads
                                   </p>
-                                  <p className="font-semibold text-gray-900">
+                                  <p className="text-sm sm:text-base font-semibold text-gray-900">
                                     {user.uploads}
                                   </p>
                                 </div>
                                 <div>
-                                  <p className="text-sm text-gray-600">
+                                  <p className="text-xs sm:text-sm text-gray-600">
                                     Unlocks
                                   </p>
-                                  <p className="font-semibold text-gray-900">
+                                  <p className="text-sm sm:text-base font-semibold text-gray-900">
                                     {user.unlocks}
                                   </p>
                                 </div>
@@ -1167,9 +1348,11 @@ const AdminPage: React.FC = () => {
                             </div>
 
                             {/* Joined Date */}
-                            <div className="text-center mb-4">
-                              <p className="text-sm text-gray-600">Joined</p>
-                              <p className="font-medium text-gray-900">
+                            <div className="text-center mb-3 sm:mb-4">
+                              <p className="text-xs sm:text-sm text-gray-600">
+                                Joined
+                              </p>
+                              <p className="text-sm sm:text-base font-medium text-gray-900">
                                 {user.joinedAt.toLocaleDateString()}
                               </p>
                             </div>
@@ -1206,7 +1389,7 @@ const AdminPage: React.FC = () => {
                                         onClick={() =>
                                           handleToggleAdmin(user.id, true)
                                         }
-                                        className="w-full bg-purple-100 text-purple-600 py-2 rounded-lg font-medium hover:bg-purple-200 transition-colors"
+                                        className="w-full bg-purple-100 text-purple-600 py-2 rounded-lg font-medium hover:bg-purple-200 transition-colors text-xs sm:text-sm"
                                       >
                                         Make Admin
                                       </button>
@@ -1218,7 +1401,7 @@ const AdminPage: React.FC = () => {
                                         onClick={() =>
                                           handleToggleAdmin(user.id, false)
                                         }
-                                        className="w-full bg-yellow-100 text-yellow-600 py-2 rounded-lg font-medium hover:bg-yellow-200 transition-colors"
+                                        className="w-full bg-yellow-100 text-yellow-600 py-2 rounded-lg font-medium hover:bg-yellow-200 transition-colors text-xs sm:text-sm"
                                       >
                                         Remove Admin
                                       </button>
@@ -1230,9 +1413,9 @@ const AdminPage: React.FC = () => {
                                         onClick={() =>
                                           handleDeleteUser(user.id)
                                         }
-                                        className="w-full bg-red-100 text-red-600 py-2 rounded-lg font-medium hover:bg-red-200 transition-colors flex items-center justify-center space-x-2"
+                                        className="w-full bg-red-100 text-red-600 py-2 rounded-lg font-medium hover:bg-red-200 transition-colors flex items-center justify-center space-x-2 text-xs sm:text-sm"
                                       >
-                                        <Trash2 className="w-4 h-4" />
+                                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                         <span>Delete</span>
                                       </button>
                                     )}
@@ -1253,28 +1436,25 @@ const AdminPage: React.FC = () => {
 
             {activeTab === "contacts" && (
               <div>
-                <div
-                  className="flex justify-between items-center mb-6 p-5 z-50 rounded-2xl sticky top-20
-                  border bg-gradient-to-b from-white/80 via-slate-200 to-white/80 backdrop-blur-sm border-b border-gray-200"
-                >
-                  <h2 className="text-xl font-semibold text-gray-900">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6 p-3 sm:p-5 z-50 rounded-2xl sticky top-16 sm:top-20 border bg-gradient-to-b from-white/80 via-slate-200 to-white/80 backdrop-blur-sm border-b border-gray-200">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                     Contact Database
                   </h2>
-                  <div className="flex space-x-3">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                    <div className="relative flex-1 sm:flex-initial">
+                      <Search className="absolute left-3 top-2.5 sm:top-3.5 h-4 w-4 text-gray-400" />
                       <input
                         type="text"
                         placeholder="Search contacts..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                       />
                     </div>
                     <button
                       onClick={handleExportContactsCSV}
                       disabled={adminContacts.length === 0}
-                      className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center space-x-2 bg-green-600 text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                     >
                       <Download className="w-4 h-4" />
                       <span>Export CSV</span>
@@ -1283,8 +1463,8 @@ const AdminPage: React.FC = () => {
                 </div>
 
                 {renderLoadingState() || (
-                  <div className="overflow-x-auto px-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-10">
+                  <div className="overflow-x-auto px-0 sm:px-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pb-10">
                       {filteredContacts.map((contact) => (
                         <div
                           key={contact.id}
@@ -1292,50 +1472,50 @@ const AdminPage: React.FC = () => {
                           onClick={() => handleViewContact(contact)}
                         >
                           {/* Profile Image */}
-                          <div className="p-6 pb-4">
+                          <div className="p-4 sm:p-6 pb-3 sm:pb-4">
                             <div className="flex items-center justify-center">
                               <img
                                 src={contact.avatar}
                                 alt={contact.name}
-                                className="w-20 h-20 rounded-full object-cover"
+                                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover"
                               />
                             </div>
                           </div>
 
                           {/* Contact Info */}
-                          <div className="px-6 pb-6">
-                            <div className="text-center mb-4">
-                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+                            <div className="text-center mb-3 sm:mb-4">
+                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 truncate">
                                 {contact.name}
                               </h3>
-                              <p className="text-blue-600 font-medium mb-2">
+                              <p className="text-sm sm:text-base text-blue-600 font-medium mb-2 truncate">
                                 {contact.jobTitle}
                               </p>
                               <div className="flex items-center justify-center space-x-1 text-gray-600 mb-2">
-                                <Building className="w-4 h-4" />
-                                <span className="text-sm">
+                                <Building className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                                <span className="text-xs sm:text-sm truncate">
                                   {contact.company}
                                 </span>
                               </div>
                               <div className="flex items-center justify-center space-x-1 text-gray-600">
-                                <MapPin className="w-4 h-4" />
-                                <span className="text-xs">
+                                <MapPin className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                                <span className="text-[10px] sm:text-xs truncate">
                                   {contact.location}
                                 </span>
                               </div>
                             </div>
 
                             {/* Upload Info */}
-                            <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                              <div className="flex items-center justify-between text-sm">
+                            <div className="bg-gray-50 rounded-lg p-2 sm:p-3 mb-3 sm:mb-4">
+                              <div className="flex items-center justify-between text-xs sm:text-sm">
                                 <span className="text-gray-600">
                                   Uploaded by :
                                 </span>
-                                <span className="font-medium text-gray-900">
+                                <span className="font-medium text-gray-900 truncate ml-2">
                                   {contact.uploaderName}
                                 </span>
                               </div>
-                              <div className="flex items-center justify-between text-sm mt-1">
+                              <div className="flex items-center justify-between text-xs sm:text-sm mt-1">
                                 <span className="text-gray-600">
                                   Upload Date :
                                 </span>
@@ -1352,9 +1532,9 @@ const AdminPage: React.FC = () => {
                                   e.stopPropagation();
                                   handleDeleteContact(contact.id);
                                 }}
-                                className="w-full bg-red-50 text-red-600 py-2 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center justify-center space-x-2"
+                                className="w-full bg-red-50 text-red-600 py-2 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center justify-center space-x-2 text-xs sm:text-sm"
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                 <span>Delete</span>
                               </button>
                             </div>

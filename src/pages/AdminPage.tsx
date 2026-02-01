@@ -234,7 +234,7 @@ const AdminPage: React.FC = () => {
       }
 
       const activities = await response.json();
-      const recentSevenActivities = activities.slice(0, 7);
+      const recentSevenActivities = activities.slice(0, 8);
       setRecentActivities(recentSevenActivities);
     } catch (err) {
       console.error("Error fetching activities:", err);
@@ -1208,7 +1208,7 @@ const AdminPage: React.FC = () => {
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
                       Recent Activity{" "}
                       <span className="text-sm opacity-50">
-                        ( Last 7 activities )
+                        ( Last 8 activities )
                       </span>
                     </h3>
                     <div className="space-y-2 sm:space-y-3">

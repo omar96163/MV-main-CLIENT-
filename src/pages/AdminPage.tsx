@@ -1256,7 +1256,7 @@ const AdminPage: React.FC = () => {
 
                     {/* Top Uploaders */}
                     <div className="mb-4">
-                      <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                      <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2 bg-gradient-to-r from-green-300  w-fit px-3 py-1 rounded-xl">
                         Top Uploaders
                       </h4>
                       <div className="space-y-2 sm:space-y-3">
@@ -1268,9 +1268,13 @@ const AdminPage: React.FC = () => {
                               key={`upload-${user.id}`}
                               className="flex items-center space-x-2 sm:space-x-3"
                             >
-                              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span className="text-xs sm:text-sm font-bold text-blue-700">
-                                  {index + 1}
+                              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-xs sm:text-sm font-bold">
+                                  {index === 0
+                                    ? "🥇"
+                                    : index === 1
+                                    ? "🥈"
+                                    : "🥉"}
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
@@ -1291,7 +1295,7 @@ const AdminPage: React.FC = () => {
 
                     {/* Top Unlockers */}
                     <div>
-                      <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                      <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2 bg-gradient-to-r from-green-300  w-fit px-3 py-1 rounded-xl">
                         Top Unlockers
                       </h4>
                       <div className="space-y-2 sm:space-y-3">
@@ -1303,9 +1307,13 @@ const AdminPage: React.FC = () => {
                               key={`unlock-${user.id}`}
                               className="flex items-center space-x-2 sm:space-x-3"
                             >
-                              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span className="text-xs sm:text-sm font-bold text-orange-700">
-                                  {index + 1}
+                              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-xs sm:text-sm font-bold">
+                                  {index === 0
+                                    ? "🥇"
+                                    : index === 1
+                                    ? "🥈"
+                                    : "🥉"}
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">

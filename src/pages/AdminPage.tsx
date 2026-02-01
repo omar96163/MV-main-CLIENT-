@@ -69,6 +69,10 @@ const AdminPage: React.FC = () => {
   const [loadingContacts, setLoadingContacts] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [recentActivities, setRecentActivities] = useState<
+    { message: string; timestamp: string }[]
+  >([]);
+  const [loadingActivities, setLoadingActivities] = useState(true);
 
   // Modal state
   const [selectedContact, setSelectedContact] = useState<AdminContact | null>(
@@ -210,10 +214,52 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  // Fetch recent activities
+  const fetchRecentActivities = async () => {
+    try {
+      setLoadingActivities(true);
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "https://mv-main-server.vercel.app/api/admin/recent-activities",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch activities");
+      }
+
+      const activities = await response.json();
+      const recentSevenActivities = activities.slice(0, 7);
+      setRecentActivities(recentSevenActivities);
+    } catch (err) {
+      console.error("Error fetching activities:", err);
+      // Fallback to static data
+      setRecentActivities([
+        { message: "New user registered", timestamp: "2 hours ago" },
+        { message: "5 contacts uploaded", timestamp: "4 hours ago" },
+      ]);
+    } finally {
+      setLoadingActivities(false);
+    }
+  };
+
   // Initial data fetch
   useEffect(() => {
     fetchUsers();
     fetchAdminContacts();
+    fetchRecentActivities();
+
+    // Refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchRecentActivities();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Handle view contact modal
@@ -251,7 +297,7 @@ const AdminPage: React.FC = () => {
       bgColor: "bg-purple-50",
     },
     {
-      name: "Active This Month",
+      name: "New Users This Month",
       value: users.filter(
         (user) =>
           new Date().getMonth() === user.joinedAt.getMonth() &&
@@ -1158,71 +1204,124 @@ const AdminPage: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 sm:p-6 rounded-xl">
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 sm:p-6 rounded-xl">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
-                      Recent Activity
+                      Recent Activity{" "}
+                      <span className="text-sm opacity-50">
+                        ( Last 7 activities )
+                      </span>
                     </h3>
                     <div className="space-y-2 sm:space-y-3">
-                      <div className="flex items-center space-x-2 sm:space-x-3">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Users className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
+                      {recentActivities.length > 0 ? (
+                        recentActivities.map((activity, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center space-x-2 sm:space-x-3"
+                          >
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                              {activity.message.includes("registered") ? (
+                                <Users className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
+                              ) : (
+                                <Database className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-xs sm:text-sm font-medium text-gray-900">
+                                {activity.message}
+                              </p>
+                              <p className="text-[10px] sm:text-xs text-gray-500">
+                                {activity.timestamp}
+                              </p>
+                            </div>
+                          </div>
+                        ))
+                      ) : loadingActivities ? (
+                        <div className="text-center py-4">
+                          <Loader className="w-4 h-4 animate-spin text-blue-600 mx-auto" />
                         </div>
-                        <div>
-                          <p className="text-xs sm:text-sm font-medium text-gray-900">
-                            New user registered
-                          </p>
-                          <p className="text-[10px] sm:text-xs text-gray-500">
-                            2 hours ago
+                      ) : (
+                        <div className="text-center py-4">
+                          <p className="text-xs sm:text-sm text-gray-500">
+                            No recent activity
                           </p>
                         </div>
-                      </div>
-                      <div className="flex items-center space-x-2 sm:space-x-3">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Database className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs sm:text-sm font-medium text-gray-900">
-                            5 contacts uploaded
-                          </p>
-                          <p className="text-[10px] sm:text-xs text-gray-500">
-                            4 hours ago
-                          </p>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-r from-green-50 to-teal-50 p-4 sm:p-6 rounded-xl">
+                  <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 sm:p-6 rounded-xl">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
                       Top Contributors
                     </h3>
-                    <div className="space-y-2 sm:space-y-3">
-                      {users
-                        .sort((a, b) => b.uploads - a.uploads)
-                        .slice(0, 3)
-                        .map((user, index) => (
-                          <div
-                            key={user.id}
-                            className="flex items-center space-x-2 sm:space-x-3"
-                          >
-                            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs sm:text-sm font-bold text-gray-700">
-                                {index + 1}
-                              </span>
+
+                    {/* Top Uploaders */}
+                    <div className="mb-4">
+                      <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                        Top Uploaders
+                      </h4>
+                      <div className="space-y-2 sm:space-y-3">
+                        {users
+                          .sort((a, b) => b.uploads - a.uploads)
+                          .slice(0, 3)
+                          .map((user, index) => (
+                            <div
+                              key={`upload-${user.id}`}
+                              className="flex items-center space-x-2 sm:space-x-3"
+                            >
+                              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-xs sm:text-sm font-bold text-blue-700">
+                                  {index + 1}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
+                                  {user.name}
+                                </p>
+                                <p className="text-[10px] sm:text-xs text-gray-500">
+                                  {user.uploads} uploads
+                                </p>
+                              </div>
+                              <div className="text-xs sm:text-sm font-medium text-gray-700 flex-shrink-0">
+                                {user.points} pts
+                              </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
-                                {user.name}
-                              </p>
-                              <p className="text-[10px] sm:text-xs text-gray-500">
-                                {user.uploads} uploads
-                              </p>
+                          ))}
+                      </div>
+                    </div>
+
+                    {/* Top Unlockers */}
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                        Top Unlockers
+                      </h4>
+                      <div className="space-y-2 sm:space-y-3">
+                        {users
+                          .sort((a, b) => b.unlocks - a.unlocks)
+                          .slice(0, 3)
+                          .map((user, index) => (
+                            <div
+                              key={`unlock-${user.id}`}
+                              className="flex items-center space-x-2 sm:space-x-3"
+                            >
+                              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-orange-200 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-xs sm:text-sm font-bold text-orange-700">
+                                  {index + 1}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
+                                  {user.name}
+                                </p>
+                                <p className="text-[10px] sm:text-xs text-gray-500">
+                                  {user.unlocks} unlocks
+                                </p>
+                              </div>
+                              <div className="text-xs sm:text-sm font-medium text-gray-700 flex-shrink-0">
+                                {user.points} pts
+                              </div>
                             </div>
-                            <div className="text-xs sm:text-sm font-medium text-gray-700 flex-shrink-0">
-                              {user.points} pts
-                            </div>
-                          </div>
-                        ))}
+                          ))}
+                      </div>
                     </div>
                   </div>
                 </div>

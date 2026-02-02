@@ -18,6 +18,7 @@ import {
   Calendar,
   Menu,
   X,
+  CheckCircle,
 } from "lucide-react";
 
 // User interface
@@ -31,6 +32,7 @@ interface AdminUser {
   uploads: number;
   unlocks: number;
   isSuperAdmin?: boolean;
+  isVerified: boolean;
 }
 
 // Contact interface for admin
@@ -140,6 +142,7 @@ const AdminPage: React.FC = () => {
           unlocks: user.unlocks || 0,
           joinedAt: new Date(user.joinedAt || user.createdAt),
           isSuperAdmin: user.isSuperAdmin,
+          isVerified: user.isVerified,
         })),
       );
     } catch (err) {
@@ -1308,6 +1311,7 @@ const AdminPage: React.FC = () => {
                               className="flex items-center space-x-2 sm:space-x-3"
                             >
                               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                                {/* 🥇🥈🥉 Medals instead of numbers */}
                                 <span className="text-xs sm:text-sm font-bold">
                                   {index === 0
                                     ? "🥇"
@@ -1407,6 +1411,19 @@ const AdminPage: React.FC = () => {
                               <p className="text-xs sm:text-sm text-blue-600 mb-2 truncate">
                                 {user.email}
                               </p>
+                              <div className="flex items-center justify-center space-x-2 mb-2">
+                                {user.isVerified ? (
+                                  <span className="px-2 py-1 rounded-full text-[10px] sm:text-xs font-medium bg-green-100 text-green-800 flex items-center">
+                                    <CheckCircle className="w-3 h-3 mr-1" />
+                                    Verified
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-1 rounded-full text-[10px] sm:text-xs font-medium bg-yellow-100 text-yellow-800 flex items-center">
+                                    <AlertCircle className="w-3 h-3 mr-1" />
+                                    Not Verified
+                                  </span>
+                                )}
+                              </div>
                               <div className="flex items-center justify-center space-x-2 mb-3">
                                 {user.isSuperAdmin ? (
                                   <span className="px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-medium bg-purple-100 text-purple-800 border-x-2 border-purple-300">

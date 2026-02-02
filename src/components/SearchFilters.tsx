@@ -257,8 +257,17 @@ const SearchFiltersComponent: React.FC<SearchFiltersProps> = ({
           <input
             type="text"
             value={filters.linkedinUrl || ""}
-            onChange={(e) => handleFilterChange("linkedinUrl", e.target.value)}
-            placeholder="e.g. https://www.linkedin.com/in/username"
+            onChange={(e) => {
+              let value = e.target.value.trim();
+              if (!value) {
+                handleFilterChange("linkedinUrl", "");
+                return;
+              }
+              value = value.replace(/^https?:\/\//, "").replace(/^www\./, "");
+              value = "https://www." + value;
+              handleFilterChange("linkedinUrl", value);
+            }}
+            placeholder="https://www.linkedin.com/in/username"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>

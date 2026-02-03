@@ -187,21 +187,58 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
                 Contact Details Unlocked
               </span>
             </div>
-            {contact.email && (
+
+            {/* Email with truncation */}
+            {contact.email &&
+            (Array.isArray(contact.email)
+              ? contact.email.length > 0
+              : contact.email.trim() !== "") ? (
               <div className="flex items-center space-x-2 text-gray-700">
                 <Mail className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium">{contact.email}</span>
+                <span className="text-sm font-medium">
+                  {
+                    (Array.isArray(contact.email)
+                      ? contact.email
+                      : [contact.email]
+                    ).filter((e) => e.trim() !== "")[0]
+                  }
+                  {(Array.isArray(contact.email)
+                    ? contact.email
+                    : [contact.email]
+                  ).filter((e) => e.trim() !== "").length > 1 && " ..."}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 text-gray-500">
+                <Mail className="w-4 h-4 text-gray-400" />
+                <span className="text-sm italic">N/A</span>
               </div>
             )}
-            {contact.phone && (
+
+            {/* Phone with truncation */}
+            {contact.phone &&
+            (Array.isArray(contact.phone)
+              ? contact.phone.length > 0
+              : contact.phone.trim() !== "") ? (
               <div className="flex items-center space-x-2 text-gray-700">
                 <Phone className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium">{contact.phone}</span>
+                <span className="text-sm font-medium">
+                  {
+                    (Array.isArray(contact.phone)
+                      ? contact.phone
+                      : [contact.phone]
+                    ).filter((p) => p.trim() !== "")[0]
+                  }
+                  {(Array.isArray(contact.phone)
+                    ? contact.phone
+                    : [contact.phone]
+                  ).filter((p) => p.trim() !== "").length > 1 && " ..."}
+                </span>
               </div>
-            )}
-            {!contact.email && !contact.phone && (
-              <div className="text-sm text-gray-500 italic">
-                No contact information available
+            ) : (
+              <div className="flex items-center space-x-2 text-gray-500">
+                <Phone className="w-4 h-4 text-gray-400" />
+                <span className="text-sm italic">N/A</span>
               </div>
             )}
           </div>

@@ -8,7 +8,6 @@ import {
   MapPin,
   Building,
   Calendar,
-  GraduationCap,
   Award,
   Mail,
   Phone,
@@ -18,6 +17,7 @@ import {
   AlertCircle,
   Loader,
   Briefcase,
+  Link,
 } from "lucide-react";
 
 // Work Experience Parser and Display Component
@@ -360,7 +360,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Back Button */}
       <button
         onClick={() => navigate("/search")}
@@ -371,9 +371,9 @@ const ProfilePage: React.FC = () => {
       </button>
 
       {/* Profile Header */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-        <div className="p-8">
-          <div className="flex items-start space-x-6">
+      <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200 overflow-hidden mb-8">
+        <div className="flex flex-col md:flex-row justify-evenly items-center">
+          <div className="flex flex-col items-center space-y-2">
             {contact.avatar ? (
               <img
                 src={contact.avatar}
@@ -385,32 +385,24 @@ const ProfilePage: React.FC = () => {
                 <User className="w-12 h-12 text-gray-400" />
               </div>
             )}
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {contact.name}
-              </h1>
-              <p className="text-xl text-blue-600 font-medium mb-4">
-                {contact.jobTitle}
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <Building className="w-5 h-5" />
-                  <span>{contact.company}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <MapPin className="w-5 h-5" />
-                  <span>{contact.location}</span>
-                </div>
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <Calendar className="w-5 h-5" />
-                  <span>{contact.experience} years experience</span>
-                </div>
-                {contact.education && (
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <GraduationCap className="w-5 h-5" />
-                    <span>{contact.education}</span>
-                  </div>
-                )}
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {contact.name}
+            </h1>
+            <p className="text-blue-600 font-medium mb-4">{contact.jobTitle}</p>
+          </div>
+          <div>
+            <div className="flex flex-col space-y-7">
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Building className="w-5 h-5" />
+                <span>{contact.company}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-600">
+                <MapPin className="w-5 h-5" />
+                <span>{contact.location}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-600">
+                <Calendar className="w-5 h-5" />
+                <span>{contact.experience} years experience</span>
               </div>
             </div>
           </div>
@@ -523,14 +515,14 @@ const ProfilePage: React.FC = () => {
         <div className="space-y-6">
           {/* Contact Information Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
               Contact Information
             </h2>
 
             {contact.isUnlocked || user?.id === contact?.uploadedBy ? (
               <div className="space-y-4">
-                <div className="flex items-center space-x-3 text-green-700 mb-4 p-3 bg-green-50 rounded-lg">
-                  <Unlock className="w-5 h-5" />
+                <div className="flex items-center text-sm text-green-700 mb-4 p-2 bg-green-100 rounded-lg">
+                  <Unlock className="w-4 h-4 mr-2" />
                   <span className="font-semibold">
                     Contact Details Unlocked
                   </span>
@@ -565,35 +557,87 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
 
-                {contact.email && (
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <Mail className="w-5 h-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="font-medium text-gray-900">
-                        {contact.email}
-                      </p>
+                {contact.email &&
+                  (Array.isArray(contact.email)
+                    ? contact.email.length > 0
+                    : contact.email.trim() !== "") && (
+                    <div className="flex flex-col space-y-2 p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Mail className="w-5 h-5 text-gray-500" />
+                        <p className="text-sm text-gray-500">Email</p>
+                      </div>
+                      <div className="space-y-1">
+                        {(Array.isArray(contact.email)
+                          ? contact.email
+                          : [contact.email]
+                        )
+                          .filter((email) => email.trim() !== "")
+                          .map((email, index) => (
+                            <p
+                              key={index}
+                              className="text-blue-600 hover:text-blue-800 text-sm break-all block"
+                            >
+                              {email}
+                            </p>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Phone */}
+                {contact.phone &&
+                  (Array.isArray(contact.phone)
+                    ? contact.phone.length > 0
+                    : contact.phone.trim() !== "") && (
+                    <div className="flex flex-col space-y-2 p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <Phone className="w-5 h-5 text-gray-500" />
+                        <p className="text-sm text-gray-500">Phone</p>
+                      </div>
+                      <div className="space-y-1">
+                        {(Array.isArray(contact.phone)
+                          ? contact.phone
+                          : [contact.phone]
+                        )
+                          .filter((phone) => phone.trim() !== "")
+                          .map((phone, index) => (
+                            <p
+                              key={index}
+                              className="text-blue-600 hover:text-blue-800 text-sm break-all block"
+                            >
+                              {phone}
+                            </p>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                {contact.extraLinks && contact.extraLinks.length > 0 && (
+                  <div className="flex flex-col space-y-2 p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <Link className="w-5 h-5 text-gray-500" />
+                      <p className="text-sm text-gray-500">Extra Links</p>
+                    </div>
+                    <div className="space-y-1">
+                      {contact.extraLinks.map((link, index) => (
+                        <p
+                          key={index}
+                          className="text-blue-600 hover:text-blue-800 text-sm break-all block"
+                        >
+                          {link}
+                        </p>
+                      ))}
                     </div>
                   </div>
                 )}
 
-                {contact.phone && (
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <Phone className="w-5 h-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm text-gray-500">Phone</p>
-                      <p className="font-medium text-gray-900">
-                        {contact.phone}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {!contact.email && !contact.phone && (
-                  <p className="text-gray-500 italic text-center py-4">
-                    No contact information available
-                  </p>
-                )}
+                {!contact.email &&
+                  !contact.phone &&
+                  !contact.extraLinks?.length && (
+                    <p className="text-gray-500 italic text-center py-4">
+                      No contact information available
+                    </p>
+                  )}
               </div>
             ) : (
               <div className="text-center">

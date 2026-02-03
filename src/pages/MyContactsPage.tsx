@@ -421,34 +421,60 @@ const MyContactsPage: React.FC = () => {
 
                     {/* Contact Info */}
                     <div className="space-y-2 mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                      {contact.email ? (
+                      {contact.email &&
+                      (Array.isArray(contact.email)
+                        ? contact.email.length > 0
+                        : contact.email.trim() !== "") ? (
                         <div className="flex items-center space-x-2">
                           <Mail className="w-4 h-4 text-green-600" />
                           <span className="text-sm font-medium text-gray-700 truncate">
-                            {contact.email}
+                            {
+                              (Array.isArray(contact.email)
+                                ? contact.email
+                                : [contact.email]
+                              ).filter((e) => e.trim() !== "")[0]
+                            }
+                            {(Array.isArray(contact.email)
+                              ? contact.email
+                              : [contact.email]
+                            ).filter((e) => e.trim() !== "").length > 1 &&
+                              " ..."}
                           </span>
                         </div>
                       ) : (
                         <div className="flex items-center space-x-2">
                           <Mail className="w-4 h-4 text-green-600" />
                           <span className="text-sm italic text-gray-400">
-                            No email
+                            N/A
                           </span>
                         </div>
                       )}
 
-                      {contact.phone ? (
+                      {contact.phone &&
+                      (Array.isArray(contact.phone)
+                        ? contact.phone.length > 0
+                        : contact.phone.trim() !== "") ? (
                         <div className="flex items-center space-x-2">
                           <Phone className="w-4 h-4 text-green-600" />
                           <span className="text-sm font-medium text-gray-700">
-                            {contact.phone}
+                            {
+                              (Array.isArray(contact.phone)
+                                ? contact.phone
+                                : [contact.phone]
+                              ).filter((p) => p.trim() !== "")[0]
+                            }
+                            {(Array.isArray(contact.phone)
+                              ? contact.phone
+                              : [contact.phone]
+                            ).filter((p) => p.trim() !== "").length > 1 &&
+                              " ..."}
                           </span>
                         </div>
                       ) : (
                         <div className="flex items-center space-x-2">
                           <Phone className="w-4 h-4 text-green-600" />
                           <span className="text-sm italic text-gray-400">
-                            No phone
+                            N/A
                           </span>
                         </div>
                       )}

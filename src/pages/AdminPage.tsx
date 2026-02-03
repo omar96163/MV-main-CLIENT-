@@ -48,8 +48,8 @@ interface AdminContact {
   skills?: string[];
   education?: string;
   workExperience?: string;
-  email?: string;
-  phone?: string;
+  email?: string[];
+  phone?: string[];
   avatar: string;
   linkedinUrl?: string;
   linkedinId?: string;
@@ -189,8 +189,16 @@ const AdminPage: React.FC = () => {
           skills: Array.isArray(contact.skills) ? contact.skills : [],
           education: contact.education || "",
           workExperience: contact.workExperience || "",
-          email: contact.email || "",
-          phone: contact.phone || "",
+          email: Array.isArray(contact.email)
+            ? contact.email
+            : contact.email
+            ? [contact.email]
+            : [],
+          phone: Array.isArray(contact.phone)
+            ? contact.phone
+            : contact.phone
+            ? [contact.phone]
+            : [],
           avatar:
             contact.avatar ||
             "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
@@ -742,25 +750,54 @@ const AdminPage: React.FC = () => {
                   Contact Information
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  {/* Phone */}
                   <div>
                     <span className="text-xs sm:text-sm text-gray-500">
-                      Email :
+                      Phone:
                     </span>
-                    <p className="text-sm sm:text-base text-blue-700 font-medium break-all">
-                      {selectedContact.email || "N/A"}
-                    </p>
+                    {Array.isArray(selectedContact.phone) &&
+                    selectedContact.phone.length > 0 ? (
+                      <div className="space-y-1">
+                        {selectedContact.phone.map((phone, index) => (
+                          <p
+                            key={index}
+                            className="text-sm sm:text-base text-blue-700 font-medium"
+                          >
+                            {phone}
+                          </p>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm sm:text-base text-gray-500">N/A</p>
+                    )}
                   </div>
+
+                  {/* Email */}
                   <div>
                     <span className="text-xs sm:text-sm text-gray-500">
-                      Phone :
+                      Email:
                     </span>
-                    <p className="text-sm sm:text-base text-blue-700 font-medium">
-                      {selectedContact.phone || "N/A"}
-                    </p>
+                    {Array.isArray(selectedContact.email) &&
+                    selectedContact.email.length > 0 ? (
+                      <div className="space-y-1">
+                        {selectedContact.email.map((email, index) => (
+                          <p
+                            key={index}
+                            className="text-sm sm:text-base text-blue-700 font-medium break-all"
+                          >
+                            {email}
+                          </p>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm sm:text-base text-gray-500">N/A</p>
+                    )}
                   </div>
+
+                  {/* LinkedIn URL */}
                   <div className="sm:col-span-2">
                     <span className="text-xs sm:text-sm text-gray-500">
-                      LinkedIn URL :{" "}
+                      LinkedIn URL: <br></br>
                     </span>
                     <a
                       href={selectedContact.linkedinUrl}
@@ -771,27 +808,31 @@ const AdminPage: React.FC = () => {
                       {selectedContact.linkedinUrl || "N/A"}
                     </a>
                   </div>
-                  {selectedContact.extraLinks &&
-                    selectedContact.extraLinks.length > 0 && (
-                      <div className="sm:col-span-2">
-                        <span className="text-xs sm:text-sm text-gray-500">
-                          Extra Links :
-                        </span>
-                        <div className="space-y-1">
-                          {selectedContact.extraLinks.map((link, index) => (
-                            <a
-                              key={index}
-                              href={link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm break-all block"
-                            >
-                              {link}
-                            </a>
-                          ))}
-                        </div>
+
+                  {/* Extra Links */}
+                  <div className="sm:col-span-2">
+                    <span className="text-xs sm:text-sm text-gray-500">
+                      Extra Links:
+                    </span>
+                    {Array.isArray(selectedContact.extraLinks) &&
+                    selectedContact.extraLinks.length > 0 ? (
+                      <div className="space-y-1">
+                        {selectedContact.extraLinks.map((link, index) => (
+                          <a
+                            key={index}
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 text-xs sm:text-sm break-all block"
+                          >
+                            {link}
+                          </a>
+                        ))}
                       </div>
+                    ) : (
+                      <p className="text-sm sm:text-base text-gray-500">N/A</p>
                     )}
+                  </div>
                 </div>
               </div>
 

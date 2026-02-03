@@ -1,4 +1,3 @@
-// src/contexts/ContactContext.tsx
 import React, {
   createContext,
   useContext,
@@ -21,8 +20,8 @@ export interface Contact {
   skills: string[];
   education: string;
   workExperience?: string;
-  email?: string;
-  phone?: string;
+  email?: string | string[];
+  phone?: string | string[];
   avatar: string;
   isUnlocked: boolean;
   uploadedBy: string;

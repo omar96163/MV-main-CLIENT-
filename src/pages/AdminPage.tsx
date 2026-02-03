@@ -660,13 +660,17 @@ const AdminPage: React.FC = () => {
                   {selectedContact.name}
                 </h3>
                 <p className="text-lg sm:text-xl text-blue-600 font-medium mb-4">
-                  {selectedContact.jobTitle}
+                  {selectedContact.jobTitle || (
+                    <span className="italic text-gray-400">No job title</span>
+                  )}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   <div className="flex items-center justify-center sm:justify-start space-x-2 text-gray-600">
                     <Building className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="text-sm sm:text-base">
-                      {selectedContact.company}
+                      {selectedContact.company || (
+                        <span className="italic text-gray-400">No company</span>
+                      )}
                     </span>
                   </div>
                   <div className="flex items-center justify-center sm:justify-start space-x-2 text-gray-600">
@@ -706,7 +710,11 @@ const AdminPage: React.FC = () => {
                       Job Title :
                     </span>
                     <p className="text-sm sm:text-base text-gray-900 font-medium">
-                      {selectedContact.jobTitle || "N/A"}
+                      {selectedContact.jobTitle || (
+                        <span className="italic text-gray-400">
+                          No job title
+                        </span>
+                      )}
                     </p>
                   </div>
                   <div>
@@ -714,7 +722,9 @@ const AdminPage: React.FC = () => {
                       Company :
                     </span>
                     <p className="text-sm sm:text-base text-gray-900 font-medium">
-                      {selectedContact.company || "N/A"}
+                      {selectedContact.company || (
+                        <span className="italic text-gray-400">No company</span>
+                      )}
                     </p>
                   </div>
                   <div>
@@ -1654,12 +1664,20 @@ const AdminPage: React.FC = () => {
                                 {contact.name}
                               </h3>
                               <p className="text-sm sm:text-base text-blue-600 font-medium mb-2 truncate">
-                                {contact.jobTitle}
+                                {contact.jobTitle || (
+                                  <span className="italic text-gray-400">
+                                    No job title
+                                  </span>
+                                )}
                               </p>
                               <div className="flex items-center justify-center space-x-1 text-gray-600 mb-2">
                                 <Building className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                                 <span className="text-xs sm:text-sm truncate">
-                                  {contact.company}
+                                  {contact.company || (
+                                    <span className="italic text-gray-400">
+                                      No company
+                                    </span>
+                                  )}
                                 </span>
                               </div>
                               <div className="flex items-center justify-center space-x-1 text-gray-600">

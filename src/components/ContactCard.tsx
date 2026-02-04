@@ -82,6 +82,10 @@ const ContactCard: React.FC<ContactCardProps> = ({ contact }) => {
             <img
               src={contact.avatar}
               alt={contact.name}
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
+              }}
               className="w-16 h-16 rounded-full object-cover"
             />
           ) : (

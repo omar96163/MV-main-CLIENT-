@@ -335,6 +335,10 @@ const MyContactsPage: React.FC = () => {
                           src={contact.avatar}
                           alt={contact.name}
                           className="w-12 h-12 rounded-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
+                          }}
                         />
                       ) : (
                         <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">

@@ -650,11 +650,17 @@ const AdminPage: React.FC = () => {
           <div className="p-4 sm:p-6">
             {/* Profile Header */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 mb-8">
-              <img
-                src={selectedContact.avatar}
-                alt={selectedContact.name}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover"
-              />
+              {selectedContact.avatar && (
+                <img
+                  src={selectedContact.avatar}
+                  alt={selectedContact.name}
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
+                  }}
+                  className="w-16 h-16 rounded-full object-cover"
+                />
+              )}
               <div className="flex-1 text-center sm:text-left">
                 <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                   {selectedContact.name}
@@ -1422,7 +1428,7 @@ const AdminPage: React.FC = () => {
 
                 {renderLoadingState() || (
                   <div className="overflow-x-auto px-0 sm:px-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pb-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-10">
                       {filteredUsers.map((user) => (
                         <div
                           key={user.id}
@@ -1639,7 +1645,7 @@ const AdminPage: React.FC = () => {
 
                 {renderLoadingState() || (
                   <div className="overflow-x-auto px-0 sm:px-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pb-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-10">
                       {filteredContacts.map((contact) => (
                         <div
                           key={contact.id}
@@ -1649,11 +1655,17 @@ const AdminPage: React.FC = () => {
                           {/* Profile Image */}
                           <div className="p-4 sm:p-6 pb-3 sm:pb-4">
                             <div className="flex items-center justify-center">
-                              <img
-                                src={contact.avatar}
-                                alt={contact.name}
-                                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover"
-                              />
+                              {contact.avatar && (
+                                <img
+                                  src={contact.avatar}
+                                  alt={contact.name}
+                                  onError={(e) => {
+                                    e.currentTarget.src =
+                                      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
+                                  }}
+                                  className="w-16 h-16 rounded-full object-cover"
+                                />
+                              )}
                             </div>
                           </div>
 

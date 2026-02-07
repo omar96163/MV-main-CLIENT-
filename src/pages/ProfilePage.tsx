@@ -326,6 +326,15 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  const getProxiedImageUrl = (avatarUrl: string | null | undefined) => {
+    if (!avatarUrl || !avatarUrl.includes("media.licdn.com")) {
+      return "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
+    }
+    return `https://mv-main-server.vercel.app/api/admin/proxy-image?url=${encodeURIComponent(
+      avatarUrl,
+    )}`;
+  };
+
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -375,20 +384,16 @@ const ProfilePage: React.FC = () => {
           <div className="flex flex-col items-center space-y-2">
             {contact.avatar ? (
               <img
-                src={contact.avatar}
+                src={getProxiedImageUrl(contact.avatar)}
                 alt={contact.name}
                 className="w-24 h-24 rounded-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src =
-                    "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
-                }}
               />
             ) : (
               <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
                 <User className="w-12 h-12 text-gray-400" />
               </div>
             )}
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {contact.name}
             </h1>
             <p className="text-blue-600 font-medium mb-4">{contact.jobTitle}</p>

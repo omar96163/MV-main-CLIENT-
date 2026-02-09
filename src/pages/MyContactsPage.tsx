@@ -135,29 +135,43 @@ const MyContactsPage: React.FC = () => {
     ];
     const csvContent = [
       headers.join(","),
-      ...filteredContacts.map((contact) =>
-        [
-          contact.name,
-          contact.jobTitle,
-          contact.company,
-          contact.location,
-          contact.industry,
+      ...filteredContacts.map((contact) => {
+        const formatField = (value) => {
+          if (
+            value === null ||
+            value === undefined ||
+            value === "" ||
+            (Array.isArray(value) && value.length === 0)
+          )
+            return " -- ";
+          if (Array.isArray(value)) return value.join("; ");
+          return String(value).replace(/"/g, '""');
+        };
+
+        return [
+          formatField(contact.name),
+          formatField(contact.jobTitle),
+          formatField(contact.company),
+          formatField(contact.location),
+          formatField(contact.industry),
           contact.experience,
-          contact.workExperience || "",
-          contact.email || "",
-          contact.phone || "",
-          contact.skills.join("; "),
+          formatField(contact.workExperience),
+          formatField(contact.email),
+          formatField(contact.phone),
+          formatField(contact.skills),
         ]
           .map((field) => `"${field}"`)
-          .join(","),
-      ),
+          .join(",");
+      }),
     ].join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    const blob = new Blob(["\ufeff", csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "my-contacts.csv";
+    a.download = `my-contacts-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };

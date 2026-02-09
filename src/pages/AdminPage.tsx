@@ -374,36 +374,65 @@ const AdminPage: React.FC = () => {
         "Name",
         "Job Title",
         "Company",
+        "Location",
         "Industry",
         "Experience",
+        "Seniority Level",
+        "Skills",
+        "Education",
+        "Work Experience",
+        "Email",
+        "Phone",
+        "Avatar",
+        "LinkedIn URL",
+        "LinkedIn ID",
+        "Extra Links",
         "Uploaded By",
-        "Uploader Name",
         "Uploaded At",
+        "Uploader Name",
       ];
 
       const csvContent = [
         headers.join(","),
-        ...adminContacts.map(
-          (contact) =>
-            `"${contact.name.replace(/"/g, '""')}","${contact.jobTitle.replace(
-              /"/g,
-              '""',
-            )}","${contact.company.replace(
-              /"/g,
-              '""',
-            )}","${contact.industry.replace(/"/g, '""')}",${
-              contact.experience
-            },"${contact.uploadedBy.replace(
-              /"/g,
-              '""',
-            )}","${contact.uploaderName.replace(
-              /"/g,
-              '""',
-            )}","${contact.uploadedAt.toISOString()}"`,
-        ),
+        ...adminContacts.map((contact) => {
+          // Helper function to safely format values
+          const formatValue = (value) => {
+            if (
+              value === null ||
+              value === undefined ||
+              value === "" ||
+              (Array.isArray(value) && value.length === 0)
+            )
+              return " -- ";
+            if (Array.isArray(value)) return value.join("; ");
+            return String(value).replace(/"/g, '""');
+          };
+
+          return `"${formatValue(contact.name)}","${formatValue(
+            contact.jobTitle,
+          )}","${formatValue(contact.company)}","${formatValue(
+            contact.location,
+          )}","${formatValue(contact.industry)}",${
+            contact.experience
+          },"${formatValue(contact.seniorityLevel)}","${formatValue(
+            contact.skills,
+          )}","${formatValue(contact.education)}","${formatValue(
+            contact.workExperience,
+          )}","${formatValue(contact.email)}","${formatValue(
+            contact.phone,
+          )}","${formatValue(contact.avatar)}","${formatValue(
+            contact.linkedinUrl,
+          )}","${formatValue(contact.linkedinId)}","${formatValue(
+            contact.extraLinks,
+          )}","${formatValue(contact.uploadedBy)}","${
+            contact.uploadedAt?.toISOString() || ""
+          }","${formatValue(contact.uploaderName)}"`;
+        }),
       ].join("\n");
 
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob(["\ufeff", csvContent], {
+        type: "text/csv;charset=utf-8;",
+      });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;

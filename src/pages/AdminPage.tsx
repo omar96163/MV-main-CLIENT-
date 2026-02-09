@@ -615,15 +615,6 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const getProxiedImageUrl = (avatarUrl: string | null | undefined) => {
-    if (!avatarUrl || !avatarUrl.includes("media.licdn.com")) {
-      return "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
-    }
-    return `https://mv-main-server.vercel.app/api/admin/proxy-image?url=${encodeURIComponent(
-      avatarUrl,
-    )}`;
-  };
-
   // Render modal if open
   if (isModalOpen && selectedContact) {
     return (
@@ -661,9 +652,13 @@ const AdminPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 mb-8">
               {selectedContact.avatar && (
                 <img
-                  src={getProxiedImageUrl(selectedContact.avatar)}
+                  src={selectedContact.avatar}
                   alt={selectedContact.name}
                   className="w-16 h-16 rounded-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
+                  }}
                 />
               )}
               <div className="flex-1 text-center sm:text-left">
@@ -1662,9 +1657,13 @@ const AdminPage: React.FC = () => {
                             <div className="flex items-center justify-center">
                               {contact.avatar && (
                                 <img
-                                  src={getProxiedImageUrl(contact.avatar)}
+                                  src={contact.avatar}
                                   alt={contact.name}
                                   className="w-16 h-16 rounded-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.src =
+                                      "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
+                                  }}
                                 />
                               )}
                             </div>

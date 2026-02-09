@@ -162,15 +162,6 @@ const MyContactsPage: React.FC = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  const getProxiedImageUrl = (avatarUrl: string | null | undefined) => {
-    if (!avatarUrl || !avatarUrl.includes("media.licdn.com")) {
-      return "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
-    }
-    return `https://mv-main-server.vercel.app/api/admin/proxy-image?url=${encodeURIComponent(
-      avatarUrl,
-    )}`;
-  };
-
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -341,9 +332,13 @@ const MyContactsPage: React.FC = () => {
                     <div className="flex items-start space-x-4">
                       {contact.avatar ? (
                         <img
-                          src={getProxiedImageUrl(contact.avatar)}
+                          src={contact.avatar}
                           alt={contact.name}
                           className="w-12 h-12 rounded-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
+                          }}
                         />
                       ) : (
                         <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">

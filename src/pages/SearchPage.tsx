@@ -1,4 +1,3 @@
-// src/pages/SearchPage.tsx
 import React, { useState, useEffect } from "react";
 import { useContacts, SearchFilters } from "../contexts/ContactContext";
 import SearchFiltersComponent from "../components/SearchFilters";
@@ -33,7 +32,7 @@ const SearchPage: React.FC = () => {
 
     const searchFilters = {
       ...filters,
-      query: searchQuery || filters.query,
+      ...(filters.linkedinUrl ? {} : { query: searchQuery || filters.query }),
     };
 
     console.log("🔎 SearchPage - final search filters:", searchFilters);
@@ -44,7 +43,13 @@ const SearchPage: React.FC = () => {
   const handleQuickSearch = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("⚡ SearchPage - quick search with query:", searchQuery);
-    handleSearch({ query: searchQuery });
+    const isLinkedinUrl = searchQuery.trim().includes("linkedin.com");
+
+    if (isLinkedinUrl) {
+      handleSearch({ linkedinUrl: searchQuery });
+    } else {
+      handleSearch({ query: searchQuery });
+    }
   };
 
   const handleReset = () => {
@@ -100,8 +105,8 @@ const SearchPage: React.FC = () => {
           Search Professionals
         </h1>
         <p className="text-gray-600">
-          Find the right contacts with our advanced search filters (
-          {contacts.length} contacts available)
+          Find the right contacts with our advanced search filters ({" "}
+          {contacts.length} contacts available )
         </p>
       </div>
 
@@ -117,7 +122,7 @@ const SearchPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Search with Boolean logic : "Frontend Developer" AND React NOT Angular'
+              placeholder="Search by name, job, company, skills, LinkedIn URL, or Boolean logic (e.g., 'React AND Python')"
               className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
             <button

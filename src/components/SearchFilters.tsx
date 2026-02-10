@@ -1,4 +1,3 @@
-// src/components/SearchFiltersComponent.tsx
 import React, { useState } from "react";
 import { SearchFilters } from "../contexts/ContactContext";
 import { X } from "lucide-react";
@@ -13,6 +12,7 @@ const SearchFiltersComponent: React.FC<SearchFiltersProps> = ({
   onReset,
 }) => {
   const [filters, setFilters] = useState<SearchFilters>({});
+  const [skillsInput, setSkillsInput] = useState("");
 
   const industries = [
     "Technology",
@@ -37,40 +37,83 @@ const SearchFiltersComponent: React.FC<SearchFiltersProps> = ({
   ];
 
   const handleFilterChange = (key: keyof SearchFilters, value: any) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setFilters((prev) => {
+      const newFilters = { ...prev };
+
+      if (
+        value === null ||
+        value === undefined ||
+        (Array.isArray(value) && value.length === 0) ||
+        (typeof value === "object" && Object.keys(value).length === 0)
+      ) {
+        delete newFilters[key];
+      } else {
+        // Set the new value
+        newFilters[key] = value;
+      }
+
+      return newFilters;
+    });
   };
 
-  const handleSkillsChange = (value: string) => {
-    const skills = value
+  const handleSkillsInputChange = (value: string) => {
+    setSkillsInput(value);
+  };
+
+  const applySkillsFilter = () => {
+    const skills = skillsInput
       .split(",")
       .map((s) => s.trim())
       .filter((s) => s);
-    handleFilterChange("skills", skills);
+
+    if (skills.length === 0) {
+      // Remove skills filter
+      setFilters((prev) => {
+        const newFilters = { ...prev };
+        delete newFilters.skills;
+        return newFilters;
+      });
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        skills: skills,
+      }));
+    }
+  };
+
+  // Apply filter when user presses Enter or blurs
+  const handleSkillsInputKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      applySkillsFilter();
+    }
+  };
+
+  const handleSkillsInputBlur = () => {
+    applySkillsFilter();
   };
 
   const handleExperienceChange = (type: "min" | "max", value: string) => {
-    const numValue = parseInt(value);
-    if (isNaN(numValue)) {
-      const newExp = { ...filters.experience };
-      if (type === "min") {
-        delete newExp?.min;
+    const numValue = value === "" ? null : parseInt(value);
+
+    setFilters((prev) => {
+      const newFilters = { ...prev };
+      const currentExp = { ...newFilters.experience };
+
+      if (numValue === null || isNaN(numValue)) {
+        delete currentExp[type];
       } else {
-        delete newExp?.max;
+        currentExp[type] = numValue;
       }
 
-      if (!newExp?.min && !newExp?.max) {
-        const newFilters = { ...filters };
+      if (Object.keys(currentExp).length === 0) {
         delete newFilters.experience;
-        setFilters(newFilters);
       } else {
-        handleFilterChange("experience", newExp);
+        newFilters.experience = currentExp;
       }
-    } else {
-      handleFilterChange("experience", {
-        ...filters.experience,
-        [type]: numValue,
-      });
-    }
+
+      return newFilters;
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -242,8 +285,10 @@ const SearchFiltersComponent: React.FC<SearchFiltersProps> = ({
           </label>
           <input
             type="text"
-            value={filters.skills?.join(", ") || ""}
-            onChange={(e) => handleSkillsChange(e.target.value)}
+            value={skillsInput}
+            onChange={(e) => handleSkillsInputChange(e.target.value)}
+            onBlur={handleSkillsInputBlur}
+            onKeyPress={handleSkillsInputKeyPress}
             placeholder="e.g. React, Node.js, Python, AWS"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />

@@ -205,9 +205,11 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
         skills: Array.isArray(profile.skills) ? profile.skills : [],
         education: profile.education || "",
         workExperience: profile.workExperience || "",
-        email: profile.email,
-        phone: profile.phone,
-        avatar: profile.avatar || "",
+        email: profile.email || [],
+        phone: profile.phone || [],
+        avatar:
+          profile.avatar ||
+          "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
         isUnlocked: profile.isUnlocked || false,
         uploadedBy: profile.uploadedBy || "",
         uploadedAt: profile.uploadedAt
@@ -235,88 +237,116 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
   }, [user]);
 
   const searchContacts = (filters: SearchFilters) => {
-    let results = [...contacts];
-
-    // Boolean Search filter
-    if (filters.query?.trim()) {
-      results = booleanSearch(results, filters.query);
+    // Early return for empty contacts
+    if (contacts.length === 0) {
+      setSearchResults([]);
+      return;
     }
 
-    // LinkedIn URL
-    if (filters.linkedinUrl?.trim()) {
-      const searchUrl = filters.linkedinUrl
-        .trim()
-        .toLowerCase()
-        .replace(/\/+$/, "");
+    let results = [...contacts];
 
+    // Boolean Search filter (with case-insensitive optimization)
+    if (filters.query?.trim()) {
+      results = booleanSearch(results, filters.query.trim());
+    }
+
+    // LinkedIn URL (exact match with URL normalization)
+    if (filters.linkedinUrl?.trim()) {
+      const normalizeUrl = (url: string): string => {
+        return url
+          .trim()
+          .toLowerCase()
+          .replace(/^https?:\/\//, "")
+          .replace(/\/+$/, "")
+          .replace(/^www\./, "");
+      };
+
+      const searchUrl = normalizeUrl(filters.linkedinUrl);
       results = results.filter((contact) => {
         if (!contact.linkedinUrl) return false;
-        const contactUrl = contact.linkedinUrl
-          .toLowerCase()
-          .replace(/\/+$/, "");
+        const contactUrl = normalizeUrl(contact.linkedinUrl);
         return contactUrl === searchUrl;
       });
     }
 
-    // Job title filter
+    // Text filters with case-insensitive and whitespace handling
+    const applyTextFilter = (
+      contactValue: string,
+      filterValue: string,
+    ): boolean => {
+      if (!filterValue.trim()) return true;
+      return contactValue
+        .toLowerCase()
+        .includes(filterValue.toLowerCase().trim());
+    };
+
     if (filters.jobTitle?.trim()) {
       results = results.filter((contact) =>
-        contact.jobTitle
-          .toLowerCase()
-          .includes(filters.jobTitle!.toLowerCase().trim()),
+        applyTextFilter(contact.jobTitle, filters.jobTitle!),
       );
     }
 
     // Company filter
     if (filters.company?.trim()) {
       results = results.filter((contact) =>
-        contact.company
-          .toLowerCase()
-          .includes(filters.company!.toLowerCase().trim()),
+        applyTextFilter(contact.company, filters.company!),
       );
     }
 
     // Location filter
     if (filters.location?.trim()) {
       results = results.filter((contact) =>
-        contact.location
-          .toLowerCase()
-          .includes(filters.location!.toLowerCase().trim()),
+        applyTextFilter(contact.location, filters.location!),
       );
     }
 
-    // Industry filter
-    if (filters.industry) {
+    // Industry filter (exact match, case-insensitive)
+    if (filters.industry?.trim()) {
       results = results.filter(
         (contact) =>
-          contact.industry.toLowerCase() === filters.industry!.toLowerCase(),
+          contact.industry.toLowerCase() ===
+          filters.industry!.toLowerCase().trim(),
       );
     }
 
-    // Seniority level filter
+    // Seniority level filter (exact match)
     if (filters.seniorityLevel) {
       results = results.filter(
         (contact) => contact.seniorityLevel === filters.seniorityLevel,
       );
     }
 
-    // Experience range filter
-    if (filters.experience) {
+    // Experience range filter (with validation)
+    if (
+      filters.experience &&
+      (filters.experience.min !== undefined ||
+        filters.experience.max !== undefined)
+    ) {
       const { min = 0, max = 50 } = filters.experience;
+      const actualMin = Math.min(min, max);
+      const actualMax = Math.max(min, max);
+
       results = results.filter(
-        (contact) => contact.experience >= min && contact.experience <= max,
+        (contact) =>
+          contact.experience >= actualMin && contact.experience <= actualMax,
       );
     }
 
-    // Skills filter
+    // Skills filter (OR logic between skills, partial match within skills)
     if (filters.skills && filters.skills.length > 0) {
-      results = results.filter((contact) =>
-        filters.skills!.some((skill) =>
-          contact.skills.some((contactSkill) =>
-            contactSkill.toLowerCase().includes(skill.toLowerCase().trim()),
+      const normalizedSkills = filters.skills
+        .map((skill) => skill.toLowerCase().trim())
+        .filter((skill) => skill.length > 0);
+
+      if (normalizedSkills.length > 0) {
+        results = results.filter((contact) =>
+          normalizedSkills.some((filterSkill) =>
+            contact.skills.some((contactSkill) =>
+              contactSkill.toLowerCase().includes(filterSkill),
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
 
     // Verified filter
@@ -328,10 +358,12 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
     // Has contact info filter
     if (filters.hasContactInfo !== undefined) {
-      results = results.filter(
-        (contact) =>
-          (contact.email || contact.phone) === filters.hasContactInfo,
-      );
+      results = results.filter((contact) => {
+        const hasInfo =
+          !!(contact.email && contact.email.length > 0) ||
+          !!(contact.phone && contact.phone.length > 0);
+        return hasInfo === filters.hasContactInfo;
+      });
     }
 
     setSearchResults(results);

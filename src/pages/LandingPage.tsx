@@ -116,7 +116,7 @@ const LandingPage: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pb-28 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-row justify-center items-center bg-gradient-to-b via-slate-300">
+      <section className="relative px-4 sm:px-6 lg:px-8 min-h-screen flex flex-row justify-center items-center bg-gradient-to-b via-slate-300">
         <div className="max-w-7xl mx-auto text-center">
           <div className="mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-200 border border-blue-100 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-3">
@@ -154,140 +154,51 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Problem / Solution Section */}
-      <section className="py-28">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-28">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col justify-center items-center text-center mb-16">
-            <h2 className="text-3xl font-bold mb-6 font-display">
-              <strong className="p-2 rounded-l-lg bg-gradient-to-r from-red-300 text-red-600 mr-5">
-                The Old Way
-              </strong>{" "}
-              vs.{" "}
-              <strong className="p-2 rounded-r-lg bg-gradient-to-l from-blue-300 text-blue-600 ml-5">
-                Dalily AI
-              </strong>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold font-display text-slate-900">
+              The Cycle of Success
             </h2>
-            <p className="text-slate-600 mb-8 leading-relaxed">
-              Traditional databases are expensive, outdated, and lack MENA
-              coverage.<br></br> Dalily AI introduces a fair, community-driven
-              model.
+            <p className="text-slate-500 mt-2">
+              A transparent system for mutual benefit among community members.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-12 items-center lg:px-20">
-            <div className="space-y-6">
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-red-50/50 border border-red-100">
-                <div className="bg-red-100 text-red-600 p-2 rounded-lg shrink-0">
-                  <span className="w-5 h-5">❌</span>
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900">
-                    Expensive Subscriptions
-                  </h4>
-                  <p className="text-sm text-slate-500 mt-1">
-                    High monthly fees even if you don't use the data.
-                  </p>
-                </div>
+
+          <div className="grid md:grid-cols-3 gap-8 text-center relative">
+            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-slate-200 via-blue-200 to-slate-200 -z-10"></div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-blue-100 hover:shadow-lg transition-all duration-500 hover:border-blue-300">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <UserPlus className="w-8 h-8 text-blue-600" />
               </div>
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-blue-50/50 border border-blue-100">
-                <div className="bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0">
-                  <span className="w-5 h-5">✔️</span>
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900">
-                    Points-Based Exchange
-                  </h4>
-                  <p className="text-sm text-slate-500 mt-1">
-                    Pay with data or points. No forced subscriptions.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-red-50/50 border border-red-100">
-                <div className="bg-red-100 text-red-600 p-2 rounded-lg shrink-0">
-                  <span className="w-5 h-5">❌</span>
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900">
-                    Outdated Global Data
-                  </h4>
-                  <p className="text-sm text-slate-500 mt-1">
-                    Irrelevant to the local MENA market nuances.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 rounded-xl bg-blue-50/50 border border-blue-100">
-                <div className="bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0">
-                  <span className="w-5 h-5">✔️</span>
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-900">
-                    Verified Local Data
-                  </h4>
-                  <p className="text-sm text-slate-500 mt-1">
-                    Community-verified with strong Arabic support.
-                  </p>
-                </div>
-              </div>
+              <h3 className="text-xl font-bold mb-2">Add Data</h3>
+              <p className="text-slate-500 text-sm">
+                Safely contribute verified professional contact information to
+                the platform.
+              </p>
             </div>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary-100 to-slate-100 rounded-3xl transform rotate-3 scale-95 opacity-50"></div>
-              <div className="relative bg-slate-900 rounded-2xl shadow-2xl p-6 md:p-8 text-white">
-                <div className="flex items-center justify-between mb-8 border-b border-slate-700 pb-4">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <span className="text-xs text-slate-400 font-mono">
-                    dashboard.dalily.ai
-                  </span>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-slate-400 text-xs uppercase tracking-wider">
-                        Total Points
-                      </p>
-                      <p className="text-3xl font-bold text-primary-400">
-                        1,250
-                      </p>
-                    </div>
-                    <div className="bg-primary-600 px-3 py-1 rounded text-xs font-bold">
-                      +50 Today
-                    </div>
-                  </div>
-                  <div className="h-px bg-slate-700 my-4"></div>
-                  <div className="bg-slate-800 p-4 rounded-lg flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center">
-                        JD
-                      </div>
-                      <div>
-                        <p className="font-bold text-sm">John Doe</p>
-                        <p className="text-xs text-slate-400">CTO @ TechMena</p>
-                      </div>
-                    </div>
-                    <button className="text-primary-400 text-xs font-bold hover:underline">
-                      UNLOCKED
-                    </button>
-                  </div>
-                  <div className="bg-slate-800 p-4 rounded-lg flex items-center justify-between opacity-50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center">
-                        ?
-                      </div>
-                      <div>
-                        <p className="font-bold text-sm">Hidden Profile</p>
-                        <p className="text-xs text-slate-400">
-                          Head of Sales @ DubaiCo
-                        </p>
-                      </div>
-                    </div>
-                    <button className="bg-primary-600 text-white px-3 py-1.5 rounded text-xs font-bold">
-                      Unlock (20pts)
-                    </button>
-                  </div>
-                </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-yellow-100 hover:shadow-lg transition-all duration-500 hover:border-yellow-300">
+              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Coins className="w-8 h-8 text-yellow-600" />
               </div>
+              <h3 className="text-xl font-bold mb-2">Earn Points</h3>
+              <p className="text-slate-500 text-sm">
+                Receive instant points for every contribution reviewed and
+                accepted.
+              </p>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-green-100 hover:shadow-lg transition-all duration-500 hover:border-green-300">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Unlock className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Unlock Opportunities</h3>
+              <p className="text-slate-500 text-sm">
+                Use your points to access the lead data you actually need.
+              </p>
             </div>
           </div>
         </div>
@@ -369,56 +280,6 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-28">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold font-display text-slate-900">
-              The Cycle of Success
-            </h2>
-            <p className="text-slate-500 mt-2">
-              A transparent system for mutual benefit among community members.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 text-center relative">
-            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-slate-200 via-blue-200 to-slate-200 -z-10"></div>
-
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-blue-100 hover:shadow-lg transition-all duration-500 hover:border-blue-300">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <UserPlus className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Add Data</h3>
-              <p className="text-slate-500 text-sm">
-                Safely contribute verified professional contact information to
-                the platform.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-yellow-100 hover:shadow-lg transition-all duration-500 hover:border-yellow-300">
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Coins className="w-8 h-8 text-yellow-600" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Earn Points</h3>
-              <p className="text-slate-500 text-sm">
-                Receive instant points for every contribution reviewed and
-                accepted.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-green-100 hover:shadow-lg transition-all duration-500 hover:border-green-300">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Unlock className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Unlock Opportunities</h3>
-              <p className="text-slate-500 text-sm">
-                Use your points to access the lead data you actually need.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Comparison Section */}
       <section id="comparison" className="py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -486,6 +347,162 @@ const LandingPage: React.FC = () => {
                 LinkedIn-style filters with AI-powered matching and boolean
                 search operators
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem / Solution Section */}
+      <section className="py-28">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col justify-center items-center text-center mb-16">
+            <h2 className="text-3xl font-bold mb-6 font-display">
+              <strong className="p-2 rounded-l-lg bg-gradient-to-r from-red-300 text-red-600 mr-5">
+                The Old Way
+              </strong>{" "}
+              vs.{" "}
+              <strong className="p-2 rounded-r-lg bg-gradient-to-l from-blue-300 text-blue-600 ml-5">
+                Dalily AI
+              </strong>
+            </h2>
+            <p className="text-slate-600 mb-8 leading-relaxed">
+              Traditional databases are expensive, outdated, and lack MENA
+              coverage.<br></br> Dalily AI introduces a fair, community-driven
+              model.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-12 items-center lg:px-20">
+            <div className="space-y-6">
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-red-50/50 border border-red-100">
+                <div className="bg-red-100 text-red-600 p-2 rounded-lg shrink-0">
+                  <span className="w-5 h-5">❌</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">
+                    Expensive Subscriptions
+                  </h4>
+                  <p className="text-sm text-slate-500 mt-1">
+                    High monthly fees even if you don't use the data.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-blue-50/50 border border-blue-100">
+                <div className="bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0">
+                  <span className="w-5 h-5">✔️</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">
+                    Points-Based Exchange
+                  </h4>
+                  <p className="text-sm text-slate-500 mt-1">
+                    Pay with data or points. No forced subscriptions.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-red-50/50 border border-red-100">
+                <div className="bg-red-100 text-red-600 p-2 rounded-lg shrink-0">
+                  <span className="w-5 h-5">❌</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">
+                    Outdated Global Data
+                  </h4>
+                  <p className="text-sm text-slate-500 mt-1">
+                    Irrelevant to the local MENA market nuances.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4 p-4 rounded-xl bg-blue-50/50 border border-blue-100">
+                <div className="bg-blue-100 text-blue-600 p-2 rounded-lg shrink-0">
+                  <span className="w-5 h-5">✔️</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">
+                    Verified Local Data
+                  </h4>
+                  <p className="text-sm text-slate-500 mt-1">
+                    Community-verified with strong Arabic support.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-tr from-blue-50 to-slate-100 rounded-3xl transform rotate-3 scale-95 opacity-50"></div>
+              <div className="relative bg-white rounded-2xl shadow-2xl p-6 md:p-8 border border-gray-200">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">
+                      Dashboard
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      Welcome back DalilyAi ! Here's your overview.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-4 text-white">
+                    <p className="text-sm opacity-90">Available Points</p>
+                    <p className="text-2xl font-bold mt-1">1,250</p>
+                  </div>
+                  <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-4 text-white">
+                    <p className="text-sm opacity-90">Total Contacts</p>
+                    <p className="text-2xl font-bold mt-1">87</p>
+                  </div>
+                  <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-4 text-white">
+                    <p className="text-sm opacity-90">Unlocked Profiles</p>
+                    <p className="text-2xl font-bold mt-1">42</p>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="flex gap-3 mb-6">
+                  <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                    Upload Profile
+                  </button>
+                  <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                    View All Contacts
+                  </button>
+                </div>
+
+                {/* Recent Activity */}
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                    Recent Activity
+                  </h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 p-3 bg-purple-100 rounded-lg">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span className="text-sm text-gray-700">
+                        Updated profile: Sarah Johnson
+                      </span>
+                      <span className="text-xs text-gray-500 ml-auto">
+                        1h ago
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-green-100 rounded-lg">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-sm text-gray-700">
+                        Uploaded profile: Sarah Johnson
+                      </span>
+                      <span className="text-xs text-gray-500 ml-auto">
+                        2h ago
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-blue-100 rounded-lg">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-sm text-gray-700">
+                        Unlocked profile: Michael Chen
+                      </span>
+                      <span className="text-xs text-gray-500 ml-auto">
+                        1d ago
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

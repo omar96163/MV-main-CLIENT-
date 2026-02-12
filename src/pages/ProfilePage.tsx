@@ -377,7 +377,7 @@ const ProfilePage: React.FC = () => {
               <img
                 src={contact.avatar}
                 alt={contact.name}
-                className="w-24 h-24 rounded-full object-cover"
+                className="w-28 h-28 rounded-full object-cover"
                 onError={(e) => {
                   e.currentTarget.src =
                     "https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop";
@@ -388,9 +388,7 @@ const ProfilePage: React.FC = () => {
                 <User className="w-12 h-12 text-gray-400" />
               </div>
             )}
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              {contact.name}
-            </h1>
+            <h1 className="font-bold text-gray-900 mb-2">{contact.name}</h1>
             <p className="text-blue-600 font-medium mb-4">{contact.jobTitle}</p>
           </div>
           <div>

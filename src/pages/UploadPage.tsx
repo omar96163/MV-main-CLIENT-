@@ -11,6 +11,7 @@ import {
   CheckCircle,
   Loader,
   Download,
+  AlertTriangle,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -58,9 +59,10 @@ const UploadPage: React.FC = () => {
     failed: number;
     results: Array<{
       url: string;
-      status: "success" | "failed";
+      status: "success" | "failed" | "warning";
       data?: any;
       error?: string;
+      warning?: string;
       pointsEarned?: number;
     }>;
   } | null>(null);
@@ -788,7 +790,6 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                       type="tel"
                       value={linkedinPhone}
                       onChange={(e) => setLinkedinPhone(e.target.value)}
-                      required
                       className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="+1-555-0123"
                     />
@@ -873,7 +874,6 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                   </div> */}
                 </div>
               )}
-
               <button
                 type="submit"
                 disabled={isProcessing}
@@ -944,11 +944,15 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                           className={`flex items-start space-x-3 p-3 rounded-lg ${
                             result.status === "success"
                               ? "bg-green-50 border border-green-200"
+                              : result.status === "warning"
+                              ? "bg-yellow-50 border border-yellow-200"
                               : "bg-red-50 border border-red-200"
                           }`}
                         >
                           {result.status === "success" ? (
                             <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                          ) : result.status === "warning" ? (
+                            <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
                           ) : (
                             <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
                           )}
@@ -961,12 +965,16 @@ https://www.linkedin.com/in/mikejohnson/,+1-555-0003,mike@example.com,"https://e
                                 ✓ Successfully processed !{" "}
                                 {result.pointsEarned === 10
                                   ? "New profile (+10 points )"
-                                  : "Updated existing profile (+5 points )"}
+                                  : "Updated profile (+5 points )"}
                                 {result.data?.name && ` - ${result.data.name}`}
                                 {result.data?.jobTitle &&
                                   ` - ${result.data.jobTitle}`}
                                 {result.data?.company &&
                                   ` at ${result.data.company}`}
+                              </p>
+                            ) : result.status === "warning" ? (
+                              <p className="text-sm text-yellow-700">
+                                !! {result.warning}
                               </p>
                             ) : (
                               <p className="text-sm text-red-700">

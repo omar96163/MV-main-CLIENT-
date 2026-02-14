@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useContacts } from "../contexts/ContactContext";
 import { useDashboard } from "../contexts/DashboardContext";
+import ImportContactsModal from "../components/ImportContactsModal";
 import { toast } from "react-hot-toast";
 import {
   Users,
@@ -19,6 +20,7 @@ import {
   Menu,
   X,
   CheckCircle,
+  Upload,
 } from "lucide-react";
 
 // User interface
@@ -61,6 +63,7 @@ interface AdminContact {
 
 const AdminPage: React.FC = () => {
   const { contacts: userContacts, refreshContacts } = useContacts();
+  const [showImportModal, setShowImportModal] = useState(false);
   const { refreshDashboard } = useDashboard();
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "contacts">(
     "overview",
@@ -489,6 +492,15 @@ const AdminPage: React.FC = () => {
         err instanceof Error ? err.message : "Failed to delete contact",
       );
     }
+  };
+
+  const handleImportSuccess = (result: any) => {
+    fetchAdminContacts();
+    refreshDashboard();
+    refreshContacts();
+    toast.success(
+      `${result.results.successful} contacts imported successfully`,
+    );
   };
 
   // Filter users based on search
@@ -1289,7 +1301,20 @@ const AdminPage: React.FC = () => {
                       <Download className="w-4 h-4" />
                       <span>Export All Data</span>
                     </button>
+                    <button
+                      onClick={() => setShowImportModal(true)}
+                      className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm sm:text-base"
+                    >
+                      <Upload className="w-4 h-4" />
+                      <span>Import Contacts</span>
+                    </button>
                   </div>
+                  {showImportModal && (
+                    <ImportContactsModal
+                      onClose={() => setShowImportModal(false)}
+                      onImportSuccess={handleImportSuccess}
+                    />
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
